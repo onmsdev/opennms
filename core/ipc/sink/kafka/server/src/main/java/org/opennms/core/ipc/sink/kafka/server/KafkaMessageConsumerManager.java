@@ -87,6 +87,19 @@ public class KafkaMessageConsumerManager extends AbstractMessageConsumerManager 
             topic = topicNameFactory.getName();
 
             consumer = new KafkaConsumer<>(kafkaConfig);
+            
+            consumer.subscribe(Arrays.asList(topic));
+            
+            while (!closed.get()) {
+                ConsumerRecords<String, byte[]> records = consumer.poll(100);
+                for (ConsumerRecord<String, byte[]> record : records) {
+                    try {
+                        dispatch(module, module.unmarshal(record.value()));
+                    } catch (RuntimeException e) {
+                        LOG.warn("Unexpected exception while dispatching message", e);
+                    }
+                }
+            }
         }
 
         @Override
