@@ -124,7 +124,6 @@ public class EventSinkConsumerIT {
         m_eventSinkConsumer.setconfig(m_config);
         m_eventSinkConsumer.setEventForwarder(mockIpcManager);
         m_eventSinkConsumer.setMessageConsumerManager(consumerManager);
-        consumerManager.afterPropertiesSet();
         
         File data = tempFolder.newFolder("data");
         Hashtable<String, Object> producerConfig = new Hashtable<>();
@@ -141,9 +140,18 @@ public class EventSinkConsumerIT {
 
         kafkaProducer = new SinkKafkaProducer(configAdmin);
         
+        System.setProperty(String.format("%sbootstrap.servers",
+                                         org.opennms.core.ipc.sink.kafka.common.KafkaSinkConstants.KAFKA_CONFIG_SYS_PROP_PREFIX),
+                           kafkaServer.getKafkaConnectString());
+        System.setProperty(String.format("%sauto.offset.reset",
+                                         KafkaSinkConstants.KAFKA_CONFIG_SYS_PROP_PREFIX),
+                           "earliest");
+        consumerManager.afterPropertiesSet();
+        
         final JmsQueueNameFactory topicNameFactory = new JmsQueueNameFactory(KafkaSinkConstants.KAFKA_TOPIC_PREFIX, m_eventsModule.getId());
         kafkaProducer.setEventTopic(topicNameFactory.getName());
         kafkaProducer.init();
+        kafkaProducer.forwardEvent(m_eventsModule.marshal(getEventLog()));
         
     }
 
@@ -161,8 +169,6 @@ public class EventSinkConsumerIT {
     @Test
     public void canProduceAndConsumeMessages() throws Exception {
         try {
-            
-            kafkaProducer.forwardEvent(m_eventsModule.marshal(getEventLog()));
             
             consumerManager.registerConsumer(m_eventSinkConsumer);
             
