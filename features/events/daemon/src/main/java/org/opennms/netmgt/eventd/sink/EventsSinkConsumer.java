@@ -49,6 +49,10 @@ public class EventsSinkConsumer implements MessageConsumer<Event, Log> {
     @Autowired
     private EventdConfig m_config;
 
+    public void setconfig(EventdConfig m_config) {
+        this.m_config = m_config;
+    }
+
     @PostConstruct
     public void init() throws Exception {
         messageConsumerManager.registerConsumer(this);
@@ -56,13 +60,23 @@ public class EventsSinkConsumer implements MessageConsumer<Event, Log> {
 
     @Autowired
     private MessageConsumerManager messageConsumerManager;
-
+    
     @Autowired
     private EventForwarder eventForwarder;
+
+
+    public void setMessageConsumerManager(
+            MessageConsumerManager messageConsumerManager) {
+        this.messageConsumerManager = messageConsumerManager;
+    }
 
     @Override
     public SinkModule<Event, Log> getModule() {
         return new EventsModule(m_config);
+    }
+
+    public void setEventForwarder(EventForwarder eventForwarder) {
+        this.eventForwarder = eventForwarder;
     }
 
     @Override
