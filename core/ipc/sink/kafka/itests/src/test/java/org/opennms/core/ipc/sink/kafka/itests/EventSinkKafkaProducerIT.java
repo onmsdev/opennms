@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2017 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2017 The OpenNMS Group, Inc.
+ * Copyright (C) 2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -28,7 +28,13 @@
 
 package org.opennms.core.ipc.sink.kafka.itests;
 
+import static com.jayway.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,57 +43,58 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.opennms.core.camel.JmsQueueNameFactory;
-import org.opennms.core.ipc.sink.kafka.common.KafkaSinkConstants;
+import org.opennms.core.ipc.sink.api.MessageConsumer;
+import org.opennms.core.ipc.sink.api.MessageDispatcherFactory;
+import org.opennms.core.ipc.sink.api.SinkModule;
+import org.opennms.core.ipc.sink.api.SyncDispatcher;
+import org.opennms.core.ipc.sink.kafka.client.KafkaRemoteMessageDispatcherFactory;
 import org.opennms.core.ipc.sink.kafka.server.KafkaMessageConsumerManager;
-import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.kafka.JUnitKafkaServer;
 import org.opennms.core.utils.InetAddressUtils;
+import org.opennms.netmgt.config.EventdConfigManager;
 import org.opennms.netmgt.config.api.EventdConfig;
-import org.opennms.netmgt.dao.mock.EventAnticipator;
-import org.opennms.netmgt.dao.mock.MockEventIpcManager;
 import org.opennms.netmgt.eventd.sink.EventsModule;
-import org.opennms.netmgt.eventd.sink.EventsSinkConsumer;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.model.events.EventBuilder;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.netmgt.xml.event.Log;
-import org.opennms.test.JUnitConfigurationEnvironment;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * @author Malatesh Sudarshan
  */
-@RunWith(OpenNMSJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:/META-INF/opennms/applicationContext-soa.xml",
-        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
-        "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
-        "classpath:/META-INF/opennms/applicationContext-mockEventd.xml",
-        "classpath:/META-INF/opennms/mockEventIpcManager.xml",
-        "classpath:/applicationContext-test-ipc-sink-kafka.xml" })
-@JUnitConfigurationEnvironment
-public class EventSinkConsumerIT {
+public class EventSinkKafkaProducerIT {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -97,35 +104,32 @@ public class EventSinkConsumerIT {
 
     private SinkKafkaProducer kafkaProducer;
 
-    @Autowired
-    private KafkaMessageConsumerManager consumerManager;
+    private static ExecutorService executor;
+
+    private static final String EVENT_TOPIC_NAME = "sink-events";
+
+    private static EventsModule eventsModule;
 
     private static final String EVENT_SOURCE = "trapd";
 
     private static final String LOCATION = "Default";
+    
+    @Autowired
+    private MessageDispatcherFactory localMessageDispatcherFactory;
 
     @Autowired
-    private MockEventIpcManager mockIpcManager;
+    private KafkaMessageConsumerManager consumerManager;
 
     @Autowired
     private EventdConfig m_config;
 
-    private EventsSinkConsumer m_eventSinkConsumer;
+    private KafkaRemoteMessageDispatcherFactory remoteMessageDispatcherFactory = new KafkaRemoteMessageDispatcherFactory();
 
-    private EventsModule m_eventsModule;
-
-    private final EventAnticipator m_anticipator = new EventAnticipator();
 
     @Before
-    public void setUp() throws Exception {
-        m_eventsModule=new EventsModule(m_config);
-        m_eventSinkConsumer=new EventsSinkConsumer();
-        mockIpcManager.addEventListener(m_anticipator);
-        m_eventSinkConsumer.setconfig(m_config);
-        m_eventSinkConsumer.setEventForwarder(mockIpcManager);
-        m_eventSinkConsumer.setMessageConsumerManager(consumerManager);
-        consumerManager.afterPropertiesSet();
-        
+    public void setUp() throws IOException {
+        System.setProperty("opennms.home", "src/test/resources");
+        eventsModule = new EventsModule(m_config);
         File data = tempFolder.newFolder("data");
         Hashtable<String, Object> producerConfig = new Hashtable<>();
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -140,45 +144,66 @@ public class EventSinkConsumerIT {
         when(configAdmin.getConfiguration(SinkKafkaProducer.KAFKA_CLIENT_PID).getProperties()).thenReturn(producerConfig);
 
         kafkaProducer = new SinkKafkaProducer(configAdmin);
-        
-        final JmsQueueNameFactory topicNameFactory = new JmsQueueNameFactory(KafkaSinkConstants.KAFKA_TOPIC_PREFIX, m_eventsModule.getId());
-        kafkaProducer.setEventTopic(topicNameFactory.getName());
+        kafkaProducer.setEventTopic(EVENT_TOPIC_NAME);
         kafkaProducer.init();
-        
-    }
 
-    private Log getEventLog() throws UnknownHostException {
-        EventBuilder eventBldr = new EventBuilder(org.opennms.netmgt.events.api.EventConstants.NEW_SUSPECT_INTERFACE_EVENT_UEI,
-                                             EVENT_SOURCE);
-        eventBldr.setInterface(InetAddress.getLocalHost());
-        eventBldr.setHost(InetAddressUtils.getLocalHostName());
-        eventBldr.setDistPoller(LOCATION);
-        Log messageLog = new Log();
-        messageLog.addEvent(eventBldr.getEvent());
-        return messageLog;
     }
 
     @Test
-    public void canProduceAndConsumeMessages() throws Exception {
-        try {
-            
-            kafkaProducer.forwardEvent(m_eventsModule.marshal(getEventLog()));
-            
-            consumerManager.registerConsumer(m_eventSinkConsumer);
-            
-       //     consumerManager.dispatch(m_eventsModule, getEventLog());
-            final List<Event> events = m_anticipator.getUnanticipatedEvents();
-            Event event=events.get(0);
-            assertEquals(2, events.size());
-            assertEquals(event.getUei(), EventConstants.NEW_SUSPECT_INTERFACE_EVENT_UEI);
-            assertEquals(event.getDistPoller(), LOCATION);
-            assertEquals(event.getSource(), EVENT_SOURCE);
-        } finally {
-            consumerManager.unregisterConsumer(m_eventSinkConsumer);
-        }
+    public void canProducerAndConsumeMessages() throws Exception {
 
+        kafkaProducer.forwardEvent(eventsModule.marshal(getEventLog()));
+        executor = Executors.newSingleThreadExecutor();
+        
+        
+        AtomicInteger eventsCount = new AtomicInteger();
+
+        final MessageConsumer<Event, Log> eventMessageConsumer = new MessageConsumer<Event, Log>() {
+
+            @Override
+            public void handleMessage(Log messageLog) {
+                eventsCount.incrementAndGet();
+            }
+
+            @Override
+            public SinkModule<Event, Log> getModule() {
+                return eventsModule;
+            }
+        };
+
+        try {
+            consumerManager.registerConsumer(eventMessageConsumer);
+
+            final SyncDispatcher<Event> localDispatcher = localMessageDispatcherFactory.createSyncDispatcher(eventsModule);
+            localDispatcher.send(new Event());
+            await().atMost(1, MINUTES).until(() -> eventsCount.get(),
+                                             equalTo(1));
+
+            final SyncDispatcher<Event> dispatcher = remoteMessageDispatcherFactory.createSyncDispatcher(new EventsModule(m_config));
+
+            dispatcher.send(new Event());
+            await().atMost(1, MINUTES).until(() -> eventsCount.get(),
+                                             equalTo(2));
+        } finally {
+            consumerManager.unregisterConsumer(eventMessageConsumer);
+        }
     }
-    
+
+    private Log getEventLog() throws UnknownHostException {
+        Event event = new Event();
+        EventBuilder bldr = new EventBuilder(org.opennms.netmgt.events.api.EventConstants.NEW_SUSPECT_INTERFACE_EVENT_UEI,
+                                             EVENT_SOURCE);
+        bldr.setInterface(InetAddress.getLocalHost());
+        bldr.setHost(InetAddressUtils.getLocalHostName());
+        bldr.setDistPoller(LOCATION);
+        bldr.setSource(EVENT_SOURCE);
+        event = bldr.getEvent();
+        Log messageLog = new Log();
+        messageLog.addEvent(event);
+        return messageLog;
+    }
+
+
     public class SinkKafkaProducer {
 
         public static final String KAFKA_CLIENT_PID = "org.opennms.features.sink.kafka.producer.client";
