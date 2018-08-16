@@ -151,7 +151,7 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-      <!-- Kafka -->
+     <!-- Kafka -->
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-streams</artifactId>
