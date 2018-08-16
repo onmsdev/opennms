@@ -87,7 +87,6 @@ public class KafkaMessageConsumerManager extends AbstractMessageConsumerManager 
             topic = topicNameFactory.getName();
 
             consumer = new KafkaConsumer<>(kafkaConfig);
-            
         }
 
         @Override
