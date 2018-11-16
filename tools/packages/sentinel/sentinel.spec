@@ -119,6 +119,7 @@ mv "%{buildroot}%{sentinelinstprefix}/etc/sentinel.conf" "%{buildroot}%{_sysconf
 find %{buildroot}%{sentinelinstprefix} ! -type d | \
     grep -v %{sentinelinstprefix}/bin | \
     grep -v %{sentinelrepoprefix} | \
+    grep -v %{sentinelinstprefix}/etc/featuresBoot.d | \
     sed -e "s|^%{buildroot}|%attr(644,sentinel,sentinel) |" | \
     sort > %{_tmppath}/files.sentinel
 find %{buildroot}%{sentinelinstprefix}/bin ! -type d | \
@@ -134,9 +135,10 @@ find %{buildroot}%{sentinelinstprefix} -type d | \
 rm -rf %{buildroot}
 
 %files -f %{_tmppath}/files.sentinel
-%defattr(664 root root 775)
+%defattr(664 sentinel sentinel 775)
 %attr(755,sentinel,sentinel) %{_initrddir}/sentinel
 %attr(644,sentinel,sentinel) %config(noreplace) %{_sysconfdir}/sysconfig/sentinel
+%attr(644,sentinel,sentinel) %{sentinelinstprefix}/etc/featuresBoot.d/.readme
 
 %pre
 ROOT_INST="${RPM_INSTALL_PREFIX0}"
@@ -166,6 +168,9 @@ if [ ! -f "${ROOT_INST}/etc/host.key" ]; then
     /usr/bin/ssh-keygen -t rsa -N "" -b 4096 -f "${ROOT_INST}/etc/host.key"
     chown sentinel:sentinel "${ROOT_INST}/etc/"host.key*
 fi
+
+# Set up ICMP for non-root users
+"${ROOT_INST}/bin/ensure-user-ping.sh" "sentinel" >/dev/null 2>&1 || echo "WARNING: Unable to enable ping by the 'sentinel' user. If you intend to run ping-related commands from the Sentinel container without running as root, try running ${ROOT_INST}/bin/ensure-user-ping.sh manually."
 
 %preun -p /bin/bash
 ROOT_INST="${RPM_INSTALL_PREFIX0}"

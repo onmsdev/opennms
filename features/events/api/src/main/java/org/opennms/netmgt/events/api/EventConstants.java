@@ -57,6 +57,11 @@ public abstract class EventConstants {
     //
 
     /**
+     * The situation event UEI.
+     */
+    public static final String SITUATION_EVENT_UEI = "uei.opennms.org/alarms/situation";
+
+    /**
      * The new suspect event UEI.
      */
     public static final String NEW_SUSPECT_INTERFACE_EVENT_UEI = "uei.opennms.org/internal/discovery/newSuspect";
@@ -937,13 +942,6 @@ public abstract class EventConstants {
     public static final String PARM_NEW_SEVERITY_LABEL = "newSeverityLabel";
     public static final String PARM_PREV_SEVERITY_ID = "prevSeverityId";
     public static final String PARM_PREV_SEVERITY_LABEL = "prevSeverityLabel";
-
-    //
-    // for NCS service
-    //
-    public static final String COMPONENT_ADDED_UEI   = "uei.opennms.org/internal/ncs/componentAdded";
-    public static final String COMPONENT_DELETED_UEI = "uei.opennms.org/internal/ncs/componentDeleted";
-    public static final String COMPONENT_UPDATED_UEI = "uei.opennms.org/internal/ncs/componentUpdated";
 
     //
     // For Trapd

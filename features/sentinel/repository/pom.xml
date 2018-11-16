@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.opennms.features.sentinel</groupId>
         <artifactId>sentinel-parent</artifactId>
-        <version>23.0.0-SNAPSHOT</version>
+        <version>24.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>repository</artifactId>
@@ -16,6 +16,7 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
+                <version>${karafVersion}</version>
                 <executions>
                     <execution>
                         <id>features-add-to-repository</id>
@@ -29,6 +30,7 @@
                                 <descriptor>mvn:org.apache.karaf.features/spring/${karafVersion}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karafVersion}/xml/features</descriptor>
                                 <!-- Add OpenNMS features -->
+                                <descriptor>mvn:org.opennms.newts/newts-karaf/${newtsVersion}/xml/features</descriptor>
                                 <descriptor>mvn:org.opennms.karaf/opennms/${project.version}/xml/features</descriptor>
                                 <!-- Add Sentinel features -->
                                 <descriptor>mvn:org.opennms.karaf/opennms/${project.version}/xml/sentinel</descriptor>
@@ -55,6 +57,13 @@
                                 <feature>sentinel-jms</feature>
                                 <feature>sentinel-telemetry</feature>
                                 <feature>sentinel-flows</feature>
+                                <feature>sentinel-coordination-api</feature>
+                                <feature>sentinel-coordination-common</feature>
+                                <feature>sentinel-coordination-zookeeper</feature>
+                                <feature>sentinel-coordination-shell</feature>
+                                <feature>sentinel-newts</feature>
+                                <feature>sentinel-telemetry-nxos</feature>
+                                <feature>sentinel-telemetry-jti</feature>
 
                                 <!-- Other features -->
                                 <feature>hawtio-offline</feature>
@@ -205,6 +214,21 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.opennms.container</groupId>
+            <artifactId>spring-extender</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.core.health</groupId>
+            <artifactId>org.opennms.core.health.impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.core.health</groupId>
+            <artifactId>org.opennms.core.health.shell</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.opennms.core.ipc.rpc</groupId>
             <artifactId>org.opennms.core.ipc.rpc.jms-impl</artifactId>
             <version>${project.version}</version>
@@ -231,7 +255,27 @@
         </dependency>
         <dependency>
             <groupId>org.opennms.core.ipc.sink.aws.sqs</groupId>
+            <artifactId>org.opennms.core.ipc.sink.aws.sqs.client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.core.ipc.sink.aws.sqs</groupId>
             <artifactId>org.opennms.core.ipc.sink.aws.sqs.server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.flows</groupId>
+            <artifactId>org.opennms.features.flows.elastic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.flows.classification.engine</groupId>
+            <artifactId>org.opennms.features.flows.classification.engine.impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features</groupId>
+            <artifactId>org.opennms.features.newts</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -241,6 +285,26 @@
         <dependency>
             <groupId>org.opennms.features.poller.monitors</groupId>
             <artifactId>org.opennms.features.poller.monitors.core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.sentinel</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.telemetry.adapters</groupId>
+            <artifactId>org.opennms.features.telemetry.adapters.jti</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.telemetry.adapters</groupId>
+            <artifactId>org.opennms.features.telemetry.adapters.netflow</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.telemetry.adapters</groupId>
+            <artifactId>org.opennms.features.telemetry.adapters.nxos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -278,6 +342,21 @@
         </dependency>
         <dependency>
             <groupId>org.opennms.features.distributed</groupId>
+            <artifactId>coordination-shell</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.distributed</groupId>
+            <artifactId>coordination-zookeeper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.distributed</groupId>
+            <artifactId>org.opennms.features.distributed.collection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.distributed</groupId>
             <artifactId>org.opennms.features.distributed.dao-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -295,6 +374,23 @@
             <groupId>org.opennms.features.distributed</groupId>
             <artifactId>org.opennms.features.distributed.datasource</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.distributed</groupId>
+            <artifactId>org.opennms.features.distributed.dao-healthcheck</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.distributed</groupId>
+            <artifactId>org.opennms.features.distributed.dao-shell</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.newts</groupId>
+            <artifactId>newts-karaf</artifactId>
+            <version>${newtsVersion}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
         </dependency>
     </dependencies>
 
@@ -340,6 +436,13 @@
             <id>coova</id>
             <name>Coova Repository</name>
             <url>http://maven.opennms.org/content/repositories/coova/</url>
+        </repository>
+        <repository>
+            <id>sonatype.org-snapshot</id>
+            <name>Sonatype OSS Snapshots Repository</name>
+            <url>http://maven.opennms.org/content/groups/sonatype.org-snapshot/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
 </project>

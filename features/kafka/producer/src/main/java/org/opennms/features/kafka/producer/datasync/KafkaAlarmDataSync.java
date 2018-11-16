@@ -60,6 +60,7 @@ import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.opennms.features.kafka.producer.AlarmEqualityChecker;
 import org.opennms.features.kafka.producer.OpennmsKafkaProducer;
 import org.opennms.features.kafka.producer.ProtobufMapper;
 import org.opennms.features.kafka.producer.model.OpennmsModelProtos;
@@ -91,6 +92,10 @@ public class KafkaAlarmDataSync implements AlarmDataStore, Runnable {
     private ScheduledExecutorService scheduler;
     private KTable<String, byte[]> alarmBytesKtable;
     private KTable<String, OpennmsModelProtos.Alarm> alarmKtable;
+
+    private final AlarmEqualityChecker alarmEqualityChecker =
+            AlarmEqualityChecker.with(AlarmEqualityChecker.Exclusions::defaultExclusions);
+    private boolean suppressIncrementalAlarms;
 
     public KafkaAlarmDataSync(ConfigurationAdmin configAdmin, OpennmsKafkaProducer kafkaProducer, ProtobufMapper protobufMapper) {
         this.configAdmin = Objects.requireNonNull(configAdmin);
@@ -221,9 +226,14 @@ public class KafkaAlarmDataSync implements AlarmDataStore, Runnable {
             final Set<String> commonReductionKeys = Sets.intersection(reductionKeysInKtable, reductionKeysInDb);
             commonReductionKeys.forEach(rkey -> {
                 final OnmsAlarm dbAlarm = alarmsInDbByReductionKey.get(rkey);
-                final OpennmsModelProtos.Alarm mappedDbAlarm = protobufMapper.toAlarm(dbAlarm).build();
+                final OpennmsModelProtos.Alarm.Builder mappedDbAlarm = protobufMapper.toAlarm(dbAlarm);
                 final OpennmsModelProtos.Alarm alarmFromKtable = alarmsInKtableByReductionKey.get(rkey);
-                if (!Objects.equals(mappedDbAlarm, alarmFromKtable)) {
+                final OpennmsModelProtos.Alarm.Builder alarmBuilderFromKtable =
+                        alarmsInKtableByReductionKey.get(rkey).toBuilder();
+
+                if ((suppressIncrementalAlarms && !alarmEqualityChecker.equalsExcludingOnBoth(mappedDbAlarm,
+                        alarmBuilderFromKtable)) || (!suppressIncrementalAlarms && !Objects.equals(mappedDbAlarm.build(),
+                        alarmFromKtable))) {
                     kafkaProducer.handleNewOrUpdatedAlarm(dbAlarm);
                     reductionKeysUpdated.add(rkey);
                 }
@@ -244,7 +254,7 @@ public class KafkaAlarmDataSync implements AlarmDataStore, Runnable {
                             + results.getReductionKeysUpdated().size());
             LOG.debug("Reduction keys added to ktable: {}", results.getReductionKeysAdded());
             LOG.debug("Reduction keys deleted from the ktable: {}", results.getReductionKeysDeleted());
-            LOG.debug("Reduction keys updated in the ktable: {}", results.getReductionKeysAdded());
+            LOG.debug("Reduction keys updated in the ktable: {}", results.getReductionKeysUpdated());
         }
 
         return results;
@@ -328,4 +338,7 @@ public class KafkaAlarmDataSync implements AlarmDataStore, Runnable {
         }
     }
 
+    public void setSuppressIncrementalAlarms(boolean suppressIncrementalAlarms) {
+        this.suppressIncrementalAlarms = suppressIncrementalAlarms;
+    }
 }

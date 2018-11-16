@@ -31,9 +31,11 @@ package org.opennms.netmgt.alarmd;
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -327,7 +329,69 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
         situation = m_alarmDao.findByReductionKey("Situation1");
         assertEquals(3, situation.getRelatedAlarms().size());
     }
-    
+
+
+    @Test
+    @Transactional
+    public void testPreventingCyclicGraphForSituations() throws SQLException {
+
+        final MockNode node = m_mockNetwork.getNode(1);
+
+        //there should be no alarms in the alarms table
+        assertEmptyAlarmTable();
+
+        //there should be no alarms in the alarm_situations table
+        assertEmptyAlarmSituationTable();
+
+        //create 2 alarms to roll up into situation
+        sendNodeDownEvent("Alarm1", node);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        assertEquals(1, m_alarmDao.findAll().size());
+
+        sendNodeDownEvent("Alarm2", node);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        assertEquals(2, m_alarmDao.findAll().size());
+
+        //create situation rolling up the first 2 alarms
+        List<String> reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2"));
+        sendSituationEvent("Situation1", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation1 = m_alarmDao.findByReductionKey("Situation1");
+        assertEquals(2, situation1.getRelatedAlarms().size());
+
+        // create Situation2 that includes 2 alarms and the previous situation.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1"));
+        sendSituationEvent("Situation2", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation2 = m_alarmDao.findByReductionKey("Situation2");
+        assertEquals(3, situation2.getRelatedAlarms().size());
+
+        // create Situation3 that includes 2 alarms and the previous two situation.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1", "Situation2"));
+        sendSituationEvent("Situation3", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation3 = m_alarmDao.findByReductionKey("Situation3");
+        assertEquals(4, situation3.getRelatedAlarms().size());
+
+        // create Situation4 that includes 2 alarms and the previous situation 1,2 but not 3.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1", "Situation2"));
+        sendSituationEvent("Situation4", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation4 = m_alarmDao.findByReductionKey("Situation4");
+        assertEquals(4, situation4.getRelatedAlarms().size());
+        
+        // Create loop ( make situation4 as related alarm for situation1 )
+        List<String> situation3ReductionKey = new ArrayList<>(Arrays.asList("Situation4"));
+        sendSituationEvent("Situation1", node, situation3ReductionKey);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        situation1 = m_alarmDao.findByReductionKey("Situation1");
+        // Verify that Situation3 can't be related to Situation1
+        assertEquals(2, situation1.getRelatedAlarms().size());
+        assertFalse(situation1.getRelatedAlarms().contains(situation4));
+
+    }
+
+
     @Test
     @Transactional
     public void testNullEvent() throws Exception {
@@ -503,6 +567,120 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
         assertNull(m_alarmDao.findByReductionKey(reductionKey).getAckTime());
     }
 
+    @Test
+    public void testArchiveAlarm() throws Exception {
+        // Enable the archiving functionality
+        AlarmPersisterImpl persisterImpl = (AlarmPersisterImpl)m_alarmd.getPersister();
+        persisterImpl.setCreateNewAlarmIfClearedAlarmExists(true);
+
+        final MockNode node = m_mockNetwork.getNode(1);
+
+        // There should be no alarms in the alarms table
+        assertEmptyAlarmTable();
+
+        //this should be the first occurrence of this alarm
+        //there should be 1 alarm now
+        sendNodeDownEvent("%nodeid%", node);
+
+        // Wait until we've create the node down alarm
+        await().atMost(10, SECONDS).until(getNumAlarmsCallable(), equalTo(1));
+
+        // Clear the existing alarm(s)
+        m_alarmDao.findAll().forEach(alarm -> {
+            alarm.setSeverity(OnmsSeverity.CLEARED);
+            m_alarmDao.update(alarm);
+            // Should not be archive
+            assertThat(alarm.isArchived(), equalTo(false));
+        });
+        m_alarmDao.flush();
+
+        // Trigger the alarm again
+        sendNodeDownEvent("%nodeid%", node);
+
+        // We should have two alarms now
+        await().atMost(10, SECONDS).until(getNumAlarmsCallable(), equalTo(2));
+
+        // One alarm should be cleared, and archived
+        assertThat(m_alarmDao.findAll().stream().filter(a -> a.isArchived()
+                && OnmsSeverity.CLEARED.equals(a.getSeverity())).count(), equalTo(1L));
+
+        // The other should not be cleared, and not be archived
+        assertThat(m_alarmDao.findAll().stream().filter(a -> !a.isArchived()
+                && !OnmsSeverity.CLEARED.equals(a.getSeverity())).count(), equalTo(1L));
+    }
+    
+    @Test
+    public void testDualAlarmState() throws Exception {
+        AlarmPersisterImpl persisterImpl = (AlarmPersisterImpl)m_alarmd.getPersister();
+        
+        // Enable the legacy two alarm state functionality
+        persisterImpl.setLegacyAlarmState(true);
+
+        final MockNode node = m_mockNetwork.getNode(1);
+
+        // There should be no alarms in the alarms table
+        assertEmptyAlarmTable();
+
+        //this should be the first occurrence of this alarm
+        //there should be 1 alarm now
+        sendNodeDownEvent(node);
+
+        // Wait until we've create the node down alarm
+        Callable<Integer> numAlarmsCallable = getNumAlarmsCallable();
+        await().atMost(10, SECONDS).until(numAlarmsCallable, equalTo(1));
+
+        // Send in the UP
+        sendNodeUpEvent(node);
+
+        // We should have two alarms now
+        numAlarmsCallable = getNumAlarmsCallable();
+        await().atMost(10, SECONDS).until(numAlarmsCallable, equalTo(2));
+
+        await().atMost(10, SECONDS).until(() -> m_alarmDao.findAll().stream().filter(a -> !a.isArchived()
+                && OnmsSeverity.CLEARED.equals(a.getSeverity())).count(), equalTo(1L));
+
+        // The other should be Normal, and not be archived
+        assertThat(m_alarmDao.findAll().stream().filter(a -> !a.isArchived()
+                && OnmsSeverity.NORMAL.equals(a.getSeverity())).count(), equalTo(1L));
+    }
+    
+    @Test
+    public void testSingleAlarmState() throws Exception {
+        AlarmPersisterImpl persisterImpl = (AlarmPersisterImpl)m_alarmd.getPersister();
+        
+        // Enable the new single alarm state functionality
+        persisterImpl.setLegacyAlarmState(false);
+
+        final MockNode node = m_mockNetwork.getNode(1);
+
+        // There should be no alarms in the alarms table
+        assertEmptyAlarmTable();
+
+        //this should be the first occurrence of this alarm
+        //there should be 1 alarm now
+        sendNodeDownEvent(node);
+
+        // Wait until we've create the node down alarm
+        Callable<Integer> numAlarmsCallable = getNumAlarmsCallable();
+        await().atMost(10, SECONDS).until(numAlarmsCallable, equalTo(1));
+
+        // Send in the UP
+        sendNodeUpEvent(node);
+
+        // We should only have one alarm now
+        numAlarmsCallable = getNumAlarmsCallable();
+        await().atMost(10, SECONDS).until(numAlarmsCallable, equalTo(1));
+
+        // One alarm should be cleared, and not archived
+        assertThat(m_alarmDao.findAll().stream().filter(a -> !a.isArchived()
+                && OnmsSeverity.CLEARED.equals(a.getSeverity())).count(), equalTo(1L));
+
+    }
+    
+    private Callable<Integer> getNumAlarmsCallable() {
+        return () -> m_alarmDao.countAll();
+    }
+
     //Supporting method for test
     private void sendNodeDownEventDontChangeLogMsg(String reductionKey, MockNode node, String logMsg) {
         
@@ -604,6 +782,35 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
             event.setAlarmData(null);
         }
 
+        event.setLogDest("logndisplay");
+        event.setLogMessage("testing");
+
+        m_eventMgr.sendNow(event.getEvent());
+    }
+
+    private void sendNodeDownEvent(MockNode node) throws SQLException {
+        EventBuilder event = MockEventUtil.createNodeDownEventBuilder("Test", node);
+        
+        AlarmData data = new AlarmData();
+        data.setAlarmType(1);
+        data.setReductionKey("uei.opennms.org/nodes/nodeDown:1");
+        event.setAlarmData(data);
+        
+        event.setLogDest("logndisplay");
+        event.setLogMessage("testing");
+
+        m_eventMgr.sendNow(event.getEvent());
+    }
+
+    private void sendNodeUpEvent(MockNode node) throws SQLException {
+        EventBuilder event = MockEventUtil.createNodeUpEventBuilder("Test", node);
+
+        AlarmData data = new AlarmData();
+        data.setAlarmType(2);
+        data.setReductionKey("uei.opennms.org/nodes/nodeUp:1");
+        data.setClearKey("uei.opennms.org/nodes/nodeDown:1");
+        event.setAlarmData(data);
+        
         event.setLogDest("logndisplay");
         event.setLogMessage("testing");
 
