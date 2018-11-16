@@ -128,8 +128,13 @@ public class DocumentEnricher {
                 // Conversation tagging
                 document.setConvoKey(ConversationKeyUtils.getConvoKeyAsJsonString(document));
 
-                // Apply Application mapping
-                document.setApplication(classificationEngine.classify(createClassificationRequest(document)));
+                final ClassificationRequest classificationRequest = createClassificationRequest(document);
+
+                // Check whether classification is possible
+                if (classificationRequest.isClassifiable()) {
+                    // Apply Application mapping
+                    document.setApplication(classificationEngine.classify(classificationRequest));
+                }
             });
             return null;
         });
@@ -204,20 +209,15 @@ public class DocumentEnricher {
 
     protected static ClassificationRequest createClassificationRequest(FlowDocument document) {
         final ClassificationRequest request = new ClassificationRequest();
-        request.setProtocol(Protocols.getProtocol(document.getProtocol()));
+        request.setProtocol(document.getProtocol() == null ? null : Protocols.getProtocol(document.getProtocol()));
         request.setLocation(document.getLocation());
         request.setExporterAddress(document.getHost());
-        if (document.getDirection() == Direction.INGRESS) {
-            request.setDstAddress(document.getDstAddr());
-            request.setDstPort(document.getDstPort());
-            request.setSrcAddress(document.getSrcAddr());
-            request.setSrcPort(document.getSrcPort());
-        } else {
-            request.setSrcAddress(document.getDstAddr());
-            request.setSrcPort(document.getDstPort());
-            request.setDstAddress(document.getSrcAddr());
-            request.setDstPort(document.getSrcPort());
-        }
+
+        request.setDstAddress(document.getDstAddr());
+        request.setDstPort(document.getDstPort());
+        request.setSrcAddress(document.getSrcAddr());
+        request.setSrcPort(document.getSrcPort());
+
         return request;
     }
 }

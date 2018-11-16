@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opennms</groupId>
   <artifactId>smoke-test</artifactId>
-  <version>23.0.0-SNAPSHOT</version>
+  <version>24.0.0-SNAPSHOT</version>
   <name>OpenNMS Smoke Test</name>
   <properties>
     <skipITs>true</skipITs>
@@ -113,6 +113,53 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependency</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/deploy-artifacts</outputDirectory>
+              <stripVersion>true</stripVersion>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.opennms.features.distributed</groupId>
+                  <artifactId>org.opennms.features.distributed.dao-test</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Copy some resources required by some system tests -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-opennms-base-assembly-resources</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/system-test-resources</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../opennms-base-assembly/src/main/filtered</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -266,6 +313,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.opennms.dependencies</groupId>
+      <artifactId>spring-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.opennms.smoke</groupId>
       <artifactId>org.opennms.smoke.test-api</artifactId>
       <version>2-SNAPSHOT</version>
@@ -307,6 +361,12 @@
     <dependency>
       <groupId>org.opennms.features.flows.rest</groupId>
       <artifactId>org.opennms.features.flows.rest.api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.features.distributed</groupId>
+      <artifactId>org.opennms.features.distributed.dao-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

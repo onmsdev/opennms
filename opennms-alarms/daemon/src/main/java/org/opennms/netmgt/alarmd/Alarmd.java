@@ -30,6 +30,7 @@ package org.opennms.netmgt.alarmd;
 
 import org.opennms.netmgt.alarmd.drools.DroolsAlarmContext;
 import org.opennms.netmgt.daemon.AbstractServiceDaemon;
+import org.opennms.netmgt.daemon.DaemonTools;
 import org.opennms.netmgt.events.api.ThreadAwareEventListener;
 import org.opennms.netmgt.events.api.annotations.EventHandler;
 import org.opennms.netmgt.events.api.annotations.EventListener;
@@ -85,8 +86,12 @@ public class Alarmd extends AbstractServiceDaemon implements ThreadAwareEventLis
     }
 
     private synchronized void handleReloadEvent(Event e) {
-        LOG.info("Received reload configuration event: {}", e);
         m_northbounderManager.handleReloadEvent(e);
+        DaemonTools.handleReloadEvent(e, Alarmd.NAME, (event) -> onAlarmReload());
+    }
+
+    private void onAlarmReload() {
+        m_droolsAlarmContext.reload();
     }
 
 	/**
