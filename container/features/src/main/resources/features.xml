@@ -17,6 +17,8 @@
     <!-- Pax JDBC features -->
     <repository>mvn:org.ops4j.pax.jdbc/pax-jdbc-features/1.0.1/xml/features</repository>
 
+    <repository>mvn:org.opennms.integration.api/karaf-features/${opennmsApiVersion}/xml</repository>
+
     <feature name="opennms-amqp-event-forwarder" description="OpenNMS :: Features :: AMQP :: Event Forwarder" version="${project.version}">
       <feature>camel-core</feature>
       <feature>camel-blueprint</feature>
@@ -201,11 +203,11 @@
       <bundle>wrap:mvn:org.apache.xmlgraphics/fop/${fopVersion}</bundle>
     </feature>
 
-    <feature name="gemini-blueprint" description="Eclipse :: Gemini Blueprint" version="2.0.0.RELEASE">
+    <feature name="gemini-blueprint" description="Eclipse :: Gemini Blueprint" version="${eclipseGeminiVersion}">
       <feature version="[4.2,4.3)">spring</feature>
-      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-core/2.0.0.RELEASE</bundle>
-      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-extender/2.0.0.RELEASE</bundle>
-      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-io/2.0.0.RELEASE</bundle>
+      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-core/${eclipseGeminiVersion}</bundle>
+      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-extender/${eclipseGeminiVersion}</bundle>
+      <bundle>mvn:org.eclipse.gemini.blueprint/gemini-blueprint-io/${eclipseGeminiVersion}</bundle>
     </feature>
 
     <feature name="guava" description="Google :: Guava" version="${guavaVersion}">
@@ -605,6 +607,13 @@
       <bundle>mvn:org.opennms.core.ipc.sink/org.opennms.core.ipc.sink.common/${project.version}</bundle>
       <bundle>mvn:org.opennms.core.ipc.sink/org.opennms.core.ipc.sink.xml/${project.version}</bundle>
     </feature>
+    
+    <feature name="opennms-core-ipc-sink-offheap" description="OpenNMS :: Core :: IPC :: Sink :: OffHeap" version="${project.version}">
+      <feature>opennms-core-ipc-sink-api</feature>
+      <bundle>mvn:org.opennms.core.ipc.sink/org.opennms.core.ipc.sink.offheap/${project.version}</bundle>
+      <bundle>mvn:com.h2database/h2/${h2databaseVersion}</bundle>
+        <feature>dropwizard-metrics</feature>
+    </feature>
 
     <!-- CAMEL -->
     <feature name="opennms-core-ipc-sink-camel-common" description="OpenNMS :: Core :: IPC :: Sink :: Camel :: Common" version="${project.version}">
@@ -633,7 +642,8 @@
         <feature>opennms-core-ipc-sink-api</feature>
         <feature>opennms-kafka</feature>
         <feature>opennms-core-camel</feature>
-        <bundle>mvn:org.opennms.core.ipc.sink.kafka/org.opennms.core.ipc.sink.kafka.common/${project.version}</bundle>
+        <bundle>mvn:org.opennms.core.health/org.opennms.core.health.api/${project.version}</bundle>
+        <bundle>mvn:org.opennms.core.ipc.common/org.opennms.core.ipc.common.kafka/${project.version}</bundle>
     </feature>
 
     <!-- For backwards compatibility we keep this name -->
@@ -688,6 +698,8 @@
     <feature name="opennms-core-ipc-rpc-kafka" description="OpenNMS :: Core :: IPC :: RPC :: Kafka Impl." version="${project.version}">
       <feature>opennms-kafka</feature>
       <feature>opennms-core-ipc-rpc-api</feature>
+      <bundle>mvn:org.opennms.core.health/org.opennms.core.health.api/${project.version}</bundle>
+      <bundle>mvn:org.opennms.core.ipc.common/org.opennms.core.ipc.common.kafka/${project.version}</bundle>
       <bundle>mvn:org.opennms.core.ipc.rpc/org.opennms.core.ipc.rpc.kafka/${project.version}</bundle>
     </feature>
 
@@ -759,7 +771,6 @@
       <feature>commons-jexl</feature>
       <feature>dropwizard-metrics</feature>
       <feature>guava</feature>
-
       <!--
       These classes are in the system classpath inside OpenNMS
       <feature>opennms-core</feature>
@@ -1025,6 +1036,10 @@
     </feature>
 
     <feature name="opennms-xml-collector" version="${project.version}" description="OpenNMS :: Protocols :: XML Collector">
+      <bundle>wrap:mvn:com.jcraft/jsch/0.1.51</bundle>
+      <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/2.0.8_6</bundle>
+      <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ezmorph/1.0.6_1</bundle>
+      <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json-lib/${jsonlibBundleVersion}</bundle>
       <feature>commons-io</feature>
       <feature>commons-jxpath</feature>
       <feature>commons-lang</feature>
@@ -1145,6 +1160,19 @@
       <bundle>mvn:org.opennms.features.poller/org.opennms.features.poller.shell/${project.version}</bundle>
     </feature>
 
+    <feature name="opennms-situation-feedback-api" description="OpenNMS :: Features :: Situation-Feedback :: API" version="${project.version}">
+        <bundle>mvn:org.opennms.features.situation-feedback/org.opennms.features.situation-feedback.api/${project.version}</bundle>
+    </feature>
+    
+    <feature name="opennms-situation-feedback" description="OpenNMS :: Features :: Situation-Feedback" version="${project.version}">
+      <feature>opennms-osgi-core-rest</feature>
+      <feature>opennms-jest</feature>
+      <feature>opennms-situation-feedback-api</feature>
+      <bundle>mvn:org.opennms.features.situation-feedback/org.opennms.features.situation-feedback.elastic/${project.version}</bundle>
+      <bundle>mvn:org.opennms.features.situation-feedback.rest/org.opennms.features.situation-feedback.rest.api/${project.version}</bundle>
+      <bundle>mvn:org.opennms.features.situation-feedback.rest/org.opennms.features.situation-feedback.rest.impl/${project.version}</bundle>
+    </feature>
+
     <feature name="kafka-streams" description="Kafka Streams" version="${kafkaStreamsVersion}">
       <!-- Wrap the kafka-streams bundle instead of using the servicemix implementation since the later doesn't include the required imports for rocksdb -->
       <bundle dependency="true">wrap:mvn:org.apache.kafka/kafka-streams/${kafkaStreamsVersion}$Bundle-Version=${kafkaStreamsVersion}&amp;Export-Package=*;-noimport:=true:version="${kafkaStreamsVersion}"</bundle>
@@ -1164,6 +1192,7 @@
       <feature version="${guavaVersion}">guava</feature>
       <feature version="${kafkaStreamsVersion}">kafka-streams</feature>
       <feature>opennms-collection-api</feature>
+      <feature>opennms-situation-feedback-api</feature>
       <bundle>mvn:com.google.protobuf/protobuf-java/${protobuf3Version}</bundle>
       <bundle>mvn:org.opennms.features.kafka/org.opennms.features.kafka.producer/${project.version}</bundle>
     </feature>
@@ -1231,7 +1260,6 @@
         <bundle>mvn:org.opennms.core.health/org.opennms.core.health.shell/${project.version}</bundle>
     </feature>
 
-    <!-- TODO MVR this is distributed only and should probably go somewhere else -->
     <feature name="opennms-persistence" description="OpenNMS :: Persistence" version="${project.version}">
         <feature>opennms-model</feature>
         <feature>opennms-dao</feature>
@@ -1256,7 +1284,6 @@
         <bundle>mvn:org.opennms.container/spring-extender/${project.version}</bundle>
     </feature>
 
-
     <feature name="opennms-flows" description="OpenNMS :: Features :: Flows :: Feature Definition" version="${project.version}">
         <details>Feature definition to start all required bundles related to *flow-support.</details>
         <feature>opennms-health</feature>
@@ -1280,4 +1307,8 @@
         <bundle>mvn:org.opennms.features.telemetry.adapters/org.opennms.features.telemetry.adapters.netflow/${project.version}</bundle>
     </feature>
 
+    <feature name="opennms-api-layer" description="OpenNMS :: Features :: API Layer" version="${project.version}">
+        <feature version="${opennmsApiVersion}">opennms-integration-api</feature>
+        <bundle>mvn:org.opennms.features/org.opennms.features.api-layer/${project.version}</bundle>
+    </feature>
 </features>

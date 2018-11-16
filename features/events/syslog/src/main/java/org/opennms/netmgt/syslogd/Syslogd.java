@@ -139,7 +139,6 @@ public class Syslogd extends AbstractServiceDaemon {
 
     @EventHandler(uei = EventConstants.RELOAD_DAEMON_CONFIG_UEI)
     public void handleReloadEvent(Event e) {
-        LOG.info("Received a reload configuration event: {}", e);
         DaemonTools.handleReloadEvent(e, Syslogd.LOG4J_CATEGORY, (event) -> handleConfigurationChanged());
     }
 }

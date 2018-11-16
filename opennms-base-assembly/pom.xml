@@ -3,7 +3,7 @@
   <parent>
     <artifactId>opennms</artifactId>
     <groupId>org.opennms</groupId>
-    <version>23.0.0-SNAPSHOT</version>
+    <version>24.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>opennms-base-assembly</artifactId>
@@ -433,6 +433,11 @@
       <artifactId>org.opennms.features.events.traps</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.opennms.features.minion</groupId>
+      <artifactId>org.opennms.features.minion.status</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.opennms.features.minion.heartbeat</groupId>
       <artifactId>org.opennms.features.minion.heartbeat.consumer</artifactId>
       <version>${project.version}</version>
@@ -784,6 +789,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.opennms.core.ipc.sink</groupId>
+      <artifactId>org.opennms.core.ipc.sink.offheap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.opennms.core.snmp</groupId>
       <artifactId>org.opennms.core.snmp.proxy.rpc-impl</artifactId>
       <version>${project.version}</version>
@@ -939,6 +949,22 @@
     <dependency>
       <groupId>org.opennms.features.telemetry</groupId>
       <artifactId>org.opennms.features.telemetry.daemon</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Enlinkd -->
+    <dependency>
+      <groupId>org.opennms.features.enlinkd</groupId>
+      <artifactId>org.opennms.features.enlinkd.persistence.impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.features.enlinkd</groupId>
+      <artifactId>org.opennms.features.enlinkd.service.impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.features.enlinkd</groupId>
+      <artifactId>org.opennms.features.enlinkd.daemon</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

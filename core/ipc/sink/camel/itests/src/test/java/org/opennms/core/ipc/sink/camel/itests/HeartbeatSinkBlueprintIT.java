@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2016 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2016 The OpenNMS Group, Inc.
+ * Copyright (C) 2016-2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Component;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.ipc.sink.api.MessageConsumer;
@@ -74,7 +73,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/META-INF/opennms/applicationContext-ipc-sink-camel-client.xml"
 })
 @JUnitConfigurationEnvironment
-@Ignore("TODO MVR enable when merging sentinel back to develop")
+@org.springframework.test.annotation.IfProfileValue(name="runFlappers", value="true")
 public class HeartbeatSinkBlueprintIT extends CamelBlueprintTest {
 
     private static final String REMOTE_LOCATION_NAME = "remote";

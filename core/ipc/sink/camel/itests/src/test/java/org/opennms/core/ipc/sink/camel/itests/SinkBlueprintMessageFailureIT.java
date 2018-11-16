@@ -28,6 +28,8 @@
 
 package org.opennms.core.ipc.sink.camel.itests;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Properties;
@@ -68,6 +70,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/META-INF/opennms/applicationContext-ipc-sink-camel-client.xml"
 })
 @JUnitConfigurationEnvironment
+@org.springframework.test.annotation.IfProfileValue(name="runFlappers", value="true")
 public class SinkBlueprintMessageFailureIT extends CamelBlueprintTest {
 
     private static final String REMOTE_LOCATION_NAME = "remote";
@@ -131,8 +134,11 @@ public class SinkBlueprintMessageFailureIT extends CamelBlueprintTest {
         };
         consumerManager.registerConsumer(consumer);
 
+        Thread.sleep(500);
+
         // Fetch the remote dispatcher from the blueprint context
         MessageDispatcherFactory remoteMessageDispatcherFactory = context.getRegistry().lookupByNameAndType("camelRemoteMessageDispatcherFactory", MessageDispatcherFactory.class);
+        assertNotNull(remoteMessageDispatcherFactory);
         SyncDispatcher<Heartbeat> dispatcher = remoteMessageDispatcherFactory.createSyncDispatcher(HeartbeatModule.INSTANCE);
 
         dispatcher.send(new Heartbeat());
