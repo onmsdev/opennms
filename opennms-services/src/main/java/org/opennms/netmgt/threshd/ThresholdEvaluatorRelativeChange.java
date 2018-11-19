@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.opennms.netmgt.config.threshd.ThresholdType;
 import org.opennms.netmgt.events.api.EventConstants;
-import org.opennms.netmgt.threshd.ThresholdEvaluatorState.Status;
 import org.opennms.netmgt.xml.event.Event;
 import org.springframework.util.Assert;
 
@@ -169,7 +168,7 @@ public class ThresholdEvaluatorRelativeChange implements ThresholdEvaluator {
         }
         
         @Override
-        public Event getTriggerSustainedEventForState(Status status, Date date, double dsValue, CollectionResourceWrapper resource) {
+        public Event getSustainedEventForState(Status status, Date date, double dsValue, CollectionResourceWrapper resource) {
         	if (status == Status.TRIGGERED) {
 	        	final String triggerSustainedUEI = getThresholdConfig().getTriggerSustainedUEI().orElse(null);
 	            if (triggerSustainedUEI != null) {
