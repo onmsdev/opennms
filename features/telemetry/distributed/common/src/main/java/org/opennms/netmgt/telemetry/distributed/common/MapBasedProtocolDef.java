@@ -40,7 +40,6 @@ import org.opennms.netmgt.telemetry.config.api.Package;
 import org.opennms.netmgt.telemetry.config.api.Protocol;
 
 import com.google.common.collect.Lists;
-
 public class MapBasedProtocolDef implements Protocol {
     private final String name;
     private final Optional<Integer> threads;

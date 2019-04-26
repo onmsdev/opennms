@@ -51,8 +51,9 @@
 <%@page language="java"
 	contentType="text/html"
 	session="true"
-	import="org.opennms.web.api.Util,org.opennms.netmgt.config.NotifdConfigFactory"
-%>
+	import="org.opennms.web.api.Util,org.opennms.netmgt.config.NotifdConfigFactory,
+	org.owasp.encoder.Encode
+"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib.tld" prefix="onms" %>
@@ -110,8 +111,7 @@ final String baseHref = Util.calculateUrlBase( request );
   <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 
   <!-- Set GWT property to get browsers locale -->
-  <meta name="gwt:property" content="locale=<%=request.getLocale()%>">
-
+  <meta name="gwt:property" content="locale=<%= Encode.forHtmlAttribute(request.getLocale().toString()) %>">
   <c:forEach var="meta" items="${paramValues.meta}">
     <c:out value="${meta}" escapeXml="false"/>
   </c:forEach>
@@ -145,6 +145,13 @@ final String baseHref = Util.calculateUrlBase( request );
     </c:when>
   </c:choose>
   <link rel="shortcut icon" href="<%= baseHref %>favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="<%= baseHref %>apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= baseHref %>favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= baseHref %>favicon-16x16.png">
+  <link rel="manifest" href="<%= baseHref %>site.webmanifest">
+  <link rel="mask-icon" href="<%= baseHref %>safari-pinned-tab.svg" color="#4c9d45">
+  <meta name="msapplication-TileColor" content="#e9e9e9">
+  <meta name="theme-color" content="#ffffff">
   <c:forEach var="link" items="${paramValues.link}">
     <c:out value="${link}" escapeXml="false" />
   </c:forEach>

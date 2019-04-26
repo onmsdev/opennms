@@ -43,101 +43,101 @@ import org.opennms.netmgt.config.syslogd.UeiMatch;
  */
 public final class SyslogConfigBean implements SyslogdConfig {
 
-	private Integer m_syslogPort;
-	private String m_listenAddress;
-	private String m_forwardingRegexp;
-	private Integer m_matchingGroupHost;
-	private Integer m_matchingGroupMessage;
-	private String m_parser;
-	private String m_discardUei;
-	private boolean m_newSuspectOnMessage;
-	private int m_numThreads;
-	private int m_queueSize;
-	private int m_batchSize;
-	private int m_batchIntervalMs;
-	private TimeZone timeZone;
+        private Integer m_syslogPort;
+        private String m_listenAddress;
+        private String m_forwardingRegexp;
+        private Integer m_matchingGroupHost;
+        private Integer m_matchingGroupMessage;
+        private String m_parser;
+        private String m_discardUei;
+        private boolean m_newSuspectOnMessage;
+        private int m_numThreads;
+        private int m_queueSize;
+        private int m_batchSize;
+        private int m_batchIntervalMs;
+        private TimeZone timeZone;
 
-	@Override
-	public int getSyslogPort() {
-		return m_syslogPort;
-	}
+        @Override
+        public int getSyslogPort() {
+                return m_syslogPort;
+        }
 
-	public void setSyslogPort(int syslogPort) {
-		m_syslogPort = syslogPort;
-	}
+        public void setSyslogPort(int syslogPort) {
+                m_syslogPort = syslogPort;
+        }
 
-	@Override
-	public String getListenAddress() {
-		return m_listenAddress;
-	}
+        @Override
+        public String getListenAddress() {
+                return m_listenAddress;
+        }
 
-	public void setListenAddress(String listenAddress) {
-		m_listenAddress = listenAddress;
-	}
+        public void setListenAddress(String listenAddress) {
+                m_listenAddress = listenAddress;
+        }
 
-	@Override
-	public boolean getNewSuspectOnMessage() {
-		return m_newSuspectOnMessage;
-	}
+        @Override
+        public boolean getNewSuspectOnMessage() {
+                return m_newSuspectOnMessage;
+        }
 
-	public void setNewSuspectOnMessage(boolean newSuspectOnMessage) {
-		m_newSuspectOnMessage = newSuspectOnMessage;
-	}
+        public void setNewSuspectOnMessage(boolean newSuspectOnMessage) {
+                m_newSuspectOnMessage = newSuspectOnMessage;
+        }
 
-	@Override
-	public String getForwardingRegexp() {
-		return m_forwardingRegexp;
-	}
+        @Override
+        public String getForwardingRegexp() {
+                return m_forwardingRegexp;
+        }
 
-	public void setForwardingRegexp(String forwardingRegexp) {
-		m_forwardingRegexp = forwardingRegexp;
-	}
+        public void setForwardingRegexp(String forwardingRegexp) {
+                m_forwardingRegexp = forwardingRegexp;
+        }
 
-	@Override
-	public Integer getMatchingGroupHost() {
-		return m_matchingGroupHost;
-	}
+        @Override
+        public Integer getMatchingGroupHost() {
+                return m_matchingGroupHost;
+        }
 
-	public void setMatchingGroupHost(int matchingGroupHost) {
-		m_matchingGroupHost = matchingGroupHost;
-	}
+        public void setMatchingGroupHost(int matchingGroupHost) {
+                m_matchingGroupHost = matchingGroupHost;
+        }
 
-	@Override
-	public Integer getMatchingGroupMessage() {
-		return m_matchingGroupMessage;
-	}
+        @Override
+        public Integer getMatchingGroupMessage() {
+                return m_matchingGroupMessage;
+        }
 
-	public void setMatchingGroupMessage(int matchingGroupMessage) {
-		m_matchingGroupMessage = matchingGroupMessage;
-	}
+        public void setMatchingGroupMessage(int matchingGroupMessage) {
+                m_matchingGroupMessage = matchingGroupMessage;
+        }
 
-	@Override
-	public String getParser() {
-		return m_parser;
-	}
+        @Override
+        public String getParser() {
+                return m_parser;
+        }
 
-	public void setParser(String parser) {
-		m_parser = parser;
-	}
+        public void setParser(String parser) {
+                m_parser = parser;
+        }
 
-	@Override
-	public List<UeiMatch> getUeiList() {
-		return Collections.emptyList();
-	}
+        @Override
+        public List<UeiMatch> getUeiList() {
+                return Collections.emptyList();
+        }
 
-	@Override
-	public List<HideMatch> getHideMessages() {
-		return Collections.emptyList();
-	}
+        @Override
+        public List<HideMatch> getHideMessages() {
+                return Collections.emptyList();
+        }
 
-	@Override
-	public String getDiscardUei() {
-		return m_discardUei;
-	}
+        @Override
+        public String getDiscardUei() {
+                return m_discardUei;
+        }
 
-	public void setDiscardUei(String discardUei) {
-		m_discardUei = discardUei;
-	}
+        public void setDiscardUei(String discardUei) {
+                m_discardUei = discardUei;
+        }
 
     @Override
     public int getNumThreads() {
@@ -174,16 +174,16 @@ public final class SyslogConfigBean implements SyslogdConfig {
         return m_batchIntervalMs;
     }
 
-	@Override
-	public TimeZone getTimeZone() {
-		return this.timeZone;
-	}
+        @Override
+        public TimeZone getTimeZone() {
+                return this.timeZone;
+        }
 
-	public void setTimeZone(TimeZone timeZone){
-		this.timeZone = timeZone;
-	}
+        public void setTimeZone(TimeZone timeZone){
+                this.timeZone = timeZone;
+        }
 
-	public void setBatchIntervalMs(int batchIntervalMs) {
+        public void setBatchIntervalMs(int batchIntervalMs) {
         m_batchIntervalMs = batchIntervalMs;
     }
 

@@ -69,8 +69,6 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
         private double m_lastSample = Double.NaN;
         
         private double m_previousTriggeringSample;
-        
-        private boolean m_currentTriggeredStatus;
 
         public ThresholdEvaluatorStateAbsoluteChange(BaseThresholdDefConfigWrapper threshold) {
             Assert.notNull(threshold, "threshold argument cannot be null");
@@ -103,9 +101,6 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
 
         @Override
         public Status evaluate(double dsValue) {
-        	//m_thresholdConfig.isDF2();
-        	m_currentTriggeredStatus = false;
-        	
             if(!Double.isNaN(getLastSample())) {
                 double threshold = getLastSample()+getChange();
 
@@ -115,7 +110,6 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
                         setPreviousTriggeringSample(getLastSample());
                         setLastSample(dsValue);
                         LOG.debug("evaluate: absolute negative change threshold triggered");
-                        m_currentTriggeredStatus = true;
                         return Status.TRIGGERED;
                     }
                 } else {
@@ -124,7 +118,6 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
                         setPreviousTriggeringSample(getLastSample());
                         setLastSample(dsValue);
                         LOG.debug("evaluate: absolute positive change threshold triggered");
-                        m_currentTriggeredStatus = true;
                         return Status.TRIGGERED;
                     }
                 }
@@ -132,16 +125,7 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
             setLastSample(dsValue);
             return Status.NO_CHANGE;
         }
-        
-		@Override
-		public Status evaluateSustained() {
-			Status status = Status.NO_CHANGE;
-			if(m_currentTriggeredStatus){
-				status = Status.TRIGGERED;
-			}
-			return status;
-		}
-		
+
         public Double getLastSample() {
             return m_lastSample;
         }
@@ -158,19 +142,6 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
             } else {
                 return null;
             }
-        }
-        
-        @Override
-        public Event getSustainedEventForState(Status status, Date date, double dsValue, CollectionResourceWrapper resource) {
-        	if (status == Status.TRIGGERED) {
-	        	final String triggerSustainedUEI = getThresholdConfig().getTriggerSustainedUEI().orElse(null);
-	            if (triggerSustainedUEI != null) {
-	                return createBasicEvent(triggerSustainedUEI, date, dsValue, resource);
-	            } else {
-	                return null;
-	            }
-        	}
-        	return null;
         }
         
         private Event createBasicEvent(String uei, Date date, double dsValue, CollectionResourceWrapper resource) {
@@ -207,12 +178,11 @@ public class ThresholdEvaluatorAbsoluteChange implements ThresholdEvaluator {
         public boolean isTriggered() {
             return false;
         }
-        
+
         // FIXME This must be implemented correctly
         @Override
         public void clearState() {
         }
-
     }
 
 }

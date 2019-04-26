@@ -30,7 +30,6 @@ package org.opennms.netmgt.flows.elastic.health;
 
 import java.io.IOException;
 import java.util.Objects;
-
 import org.opennms.core.health.api.Context;
 import org.opennms.core.health.api.HealthCheck;
 import org.opennms.core.health.api.Response;

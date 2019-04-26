@@ -212,12 +212,10 @@ public class DocumentEnricher {
         request.setProtocol(document.getProtocol() == null ? null : Protocols.getProtocol(document.getProtocol()));
         request.setLocation(document.getLocation());
         request.setExporterAddress(document.getHost());
-
         request.setDstAddress(document.getDstAddr());
         request.setDstPort(document.getDstPort());
         request.setSrcAddress(document.getSrcAddr());
         request.setSrcPort(document.getSrcPort());
-
         return request;
     }
 }

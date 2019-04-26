@@ -3,7 +3,7 @@
   <parent>
     <artifactId>opennms</artifactId>
     <groupId>org.opennms</groupId>
-    <version>24.0.0-SNAPSHOT</version>
+    <version>23.0.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>opennms-webapp</artifactId>
@@ -425,6 +425,12 @@
                   </exclusion>
                 </exclusions>
               </dependency>
+              <dependency>
+                <groupId>org.opennms.dependencies</groupId>
+                <artifactId>jstl-dependencies</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+              </dependency>
             </dependencies>
           </plugin>
         </plugins>
@@ -453,18 +459,6 @@
     <dependency>
       <groupId>org.opennms</groupId>
       <artifactId>opennms-dao</artifactId>
-      <scope>${onmsLibScope}</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.enlinkd</groupId>
-      <artifactId>org.opennms.features.enlinkd.persistence.api</artifactId>
-      <version>${project.version}</version>
-      <scope>${onmsLibScope}</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.enlinkd</groupId>
-      <artifactId>org.opennms.features.enlinkd.service.api</artifactId>
-      <version>${project.version}</version>
       <scope>${onmsLibScope}</scope>
     </dependency>
     <dependency>

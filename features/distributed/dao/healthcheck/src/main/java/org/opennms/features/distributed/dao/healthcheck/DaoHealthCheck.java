@@ -29,7 +29,6 @@
 package org.opennms.features.distributed.dao.healthcheck;
 
 import java.util.Objects;
-
 import org.opennms.core.health.api.Context;
 import org.opennms.core.health.api.HealthCheck;
 import org.opennms.core.health.api.Response;

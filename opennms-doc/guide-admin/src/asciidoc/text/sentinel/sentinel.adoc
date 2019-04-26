@@ -159,7 +159,7 @@ featuresBoot = \
       instance/4.1.5, \
       package/4.1.5, \
       log/4.1.5, \
-      scv/24.0.0-SNAPSHOT, \
+      scv/23.0.4, \
       ssh/4.1.5, \
       framework/4.1.5, \
       system/4.1.5, \
@@ -435,7 +435,7 @@ config:property-set adapters.2.parameters.script /opt/sentinel/etc/sflow-host.gr
 config:update
 ----
 
-Please note, that in both cases the file `/opt/sentinel/etc/sflow-host.groofy` must be provided manually, e.g. by manually copying it over from _{opennms-product-name}_.
+Please note, that in both cases the file `/opt/sentinel/etc/sflow-host.groovy` must be provided manually, e.g. by manually copying it over from _{opennms-product-name}_.
 
 ===== NxosGpbAdapter
 

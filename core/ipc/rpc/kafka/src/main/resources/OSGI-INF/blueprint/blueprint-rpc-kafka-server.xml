@@ -47,5 +47,4 @@
         <argument value="RPC" />
       </bean>
     </service>
-
 </blueprint>

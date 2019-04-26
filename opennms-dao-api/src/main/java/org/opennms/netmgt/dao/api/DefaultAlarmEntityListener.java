@@ -96,7 +96,6 @@ public class DefaultAlarmEntityListener implements AlarmEntityListener {
     public void onLastAutomationTimeUpdated(OnmsAlarm alarm, Date previousLastAutomationTime) {
 
     }
-
     @Override
     public void onRelatedAlarmsUpdated(OnmsAlarm alarm, Set<OnmsAlarm> previousRelatedAlarms) {
 

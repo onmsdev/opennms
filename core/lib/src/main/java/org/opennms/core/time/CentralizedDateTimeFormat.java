@@ -83,7 +83,6 @@ public class CentralizedDateTimeFormat {
         }
         return format;
     }
-
     private DateTimeFormatter getDefaultFormatter() {
 
         return new DateTimeFormatterBuilder()

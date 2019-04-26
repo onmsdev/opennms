@@ -85,22 +85,12 @@ public class KarafExtenderTest {
         // Add another file with a name that should be sorted after the previous file
         Files.write("feature-4", new File(featuresBootDotD, "features.boot"), StandardCharsets.UTF_8);
 
-        // Wait for a kar
-        Files.write("#plugins!\n" +
-                "opennms-oce-plugin wait-for-kar=opennms-oce-plugin", new File(featuresBootDotD, "kar-plugin.boot"), StandardCharsets.UTF_8);
-
         // Read and verify
-        Feature feature1 = Feature.builder().withName("feature-1").build();
-        Feature feature2 = Feature.builder().withName("feature-2").withVersion("18.0.0").build();
-        Feature feature3 = Feature.builder().withName("feature-3").build();
-        Feature feature4 = Feature.builder().withName("feature-4").build();
-        Feature ocePluginFeature = Feature.builder().withName("opennms-oce-plugin").withKarDependency("opennms-oce-plugin").build();
-
-        assertEquals(Lists.newArrayList(feature1,
-                feature2,
-                feature3,
-                feature4,
-                ocePluginFeature), karafExtender.getFeaturesBoot());
+        assertEquals(Lists.newArrayList(new Feature("feature-1"),
+                new Feature("feature-2", "18.0.0"),
+                new Feature("feature-3"),
+                new Feature("feature-4")),
+                karafExtender.getFeaturesBoot());
         
         // Now add another file that disables features-1 and feature-2 above
         Files.write("!feature-1\n" +
@@ -112,9 +102,8 @@ public class KarafExtenderTest {
 
         // Verify
         assertEquals(Lists.newArrayList(
-                feature3,
-                feature4,
-                ocePluginFeature),
+                new Feature("feature-3"),
+                new Feature("feature-4")),
                 features);
     }
 
@@ -150,10 +139,10 @@ public class KarafExtenderTest {
                 new Repository(emptyRepository.toPath(), Collections.emptyList(), Collections.emptyList()),
                 new Repository(releaseRepository.toPath(),
                         Lists.newArrayList(new URI("mvn:group.id/artifact.id/2.0.0/xml")),
-                        Lists.newArrayList(Feature.builder().withName("released-feature").build())),
+                        Lists.newArrayList(new Feature("released-feature"))),
                 new Repository(snapshotRepository.toPath(),
                         Lists.newArrayList(new URI("mvn:other.group.id/other.artifact.id/1.0-SNAPSHOT/xml")),
-                        Lists.newArrayList(Feature.builder().withName("snapshot-feature").build()))),
+                        Lists.newArrayList(new Feature("snapshot-feature")))),
                 karafExtender.getRepositories());
     }
 

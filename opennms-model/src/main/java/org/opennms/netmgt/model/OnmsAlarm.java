@@ -51,7 +51,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -91,9 +90,9 @@ public class OnmsAlarm implements Acknowledgeable, Serializable {
 
     /** Constant <code>PROBLEM_WITHOUT_RESOLUTION_TYPE=3</code> */
     public static final int PROBLEM_WITHOUT_RESOLUTION_TYPE = 3;
-
+    
     public static final String ARCHIVED = "Archived";
-
+    
     /** identifier field */
     private Integer m_id;
 
@@ -201,9 +200,7 @@ public class OnmsAlarm implements Acknowledgeable, Serializable {
     
     private OnmsReductionKeyMemo m_reductionKeyMemo;
 
-    private Set<AlarmAssociation> m_associatedAlarms = new HashSet<>();
-
-    private Set<OnmsAlarm> m_relatedSituations = new HashSet<>();
+    private Set<OnmsAlarm> m_relatedAlarms = new HashSet<>();
 
     /**
      * default constructor
@@ -1182,10 +1179,12 @@ public class OnmsAlarm implements Acknowledgeable, Serializable {
      *
      * @return a {@link java.util.Set} object.
      */
-    @Transient
     @XmlTransient
+    @ElementCollection
+    @JoinTable(name = "alarm_situations", joinColumns = @JoinColumn(name = "situation_id"), inverseJoinColumns = @JoinColumn(name = "related_alarm_id"))
+    @Column(name="alarm_id", nullable=false)
     public Set<OnmsAlarm> getRelatedAlarms() {
-        return m_associatedAlarms.stream().map(AlarmAssociation::getRelatedAlarm).collect(Collectors.toSet());
+        return m_relatedAlarms;
     }
 
     @Transient
@@ -1196,75 +1195,33 @@ public class OnmsAlarm implements Acknowledgeable, Serializable {
                 .collect(Collectors.toSet());
     }
 
-    @XmlTransient
-    @OneToMany(mappedBy = "situationAlarm", cascade = CascadeType.ALL)
-    public Set<AlarmAssociation> getAssociatedAlarms() {
-        return m_associatedAlarms;
-    }
-
-    public void setAssociatedAlarms(Set<AlarmAssociation> alarms) {
-        m_associatedAlarms = alarms;
-    }
-
     /**
      * <p>setDetails</p>
      *
      * @param alarms a {@link java.util.Set} object.
      */
     public void setRelatedAlarms(Set<OnmsAlarm> alarms) {
-        m_associatedAlarms.clear();
-        alarms.forEach(relatedAlarm -> m_associatedAlarms.add(new AlarmAssociation(this, relatedAlarm)));
+        m_relatedAlarms = alarms;
     }
 
     public void addRelatedAlarm(OnmsAlarm alarm) {
-        m_associatedAlarms.add(new AlarmAssociation(this, alarm));
+        m_relatedAlarms.add(alarm);
     }
-
-    public void removeRelatedAlarm(OnmsAlarm alarm) {
-        m_associatedAlarms.removeIf(associatedAlarm -> associatedAlarm.getRelatedAlarm().getId().equals(alarm.getId()));
-    }
-
 
     // Any alarm with related alarms is a 'Situation'
     @Transient
     @XmlTransient
     public boolean isSituation() {
-        return !m_associatedAlarms.isEmpty();
-    }
-
-    @XmlTransient
-    @ElementCollection
-    @JoinTable(name = "alarm_situations", joinColumns = @JoinColumn(name = "related_alarm_id"), inverseJoinColumns = @JoinColumn(name = "situation_id"))
-    @Column(name="alarm_id", nullable=false)
-    public Set<OnmsAlarm> getRelatedSituations() {
-        return m_relatedSituations;
-    }
-
-    @Transient
-    @XmlTransient
-    public Set<Integer> getRelatedSituationIds() {
-        return getRelatedSituations().stream()
-                .map(OnmsAlarm::getId)
-                .collect(Collectors.toSet());
-    }
-
-    @Transient
-    @XmlTransient
-    public boolean isPartOfSituation() {
-        return !m_relatedSituations.isEmpty();
-    }
-
-    public void setRelatedSituations(Set<OnmsAlarm> alarms) {
-        m_relatedSituations = alarms;
+        return ! m_relatedAlarms.isEmpty();
     }
 
     @Transient
     @XmlTransient
     public Integer getAffectedNodeCount() {
-        if (m_associatedAlarms == null || m_associatedAlarms.isEmpty()) {
+        if (m_relatedAlarms == null || m_relatedAlarms.isEmpty()) {
             return m_node == null ? 0 : 1;
         }
-        Set<Integer> nodes = getRelatedAlarms().stream().map(OnmsAlarm::getNode).filter(Objects::nonNull).map(OnmsNode::getId).collect(Collectors.toSet());
+        Set<Integer> nodes = m_relatedAlarms.stream().map(OnmsAlarm::getNode).filter(Objects::nonNull).map(OnmsNode::getId).collect(Collectors.toSet());
         // count the Situtation's node if it is different
         if (m_node != null) {
             nodes.add(m_node.getId());

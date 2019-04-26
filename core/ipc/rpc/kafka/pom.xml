@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.opennms.core.ipc</groupId>
         <artifactId>org.opennms.core.ipc.rpc</artifactId>
-        <version>24.0.0-SNAPSHOT</version>
+        <version>23.0.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opennms.core.ipc.rpc</groupId>
@@ -59,6 +59,11 @@
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.swrve</groupId>
+        <artifactId>rate-limited-logger</artifactId>
+        <version>${rateLimitedLoggerVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.opennms.core.test-api</groupId>

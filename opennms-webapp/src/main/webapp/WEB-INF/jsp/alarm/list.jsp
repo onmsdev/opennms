@@ -471,9 +471,6 @@
 			<th width="2%">
               <%=this.makeSortLink(callback, parms, SortStyle.ID,        SortStyle.REVERSE_ID,        "id",        "ID" ,       favorite )%>
             </th>
-            <th width="4%">
-              <%=this.makeSortLink(callback, parms, SortStyle.SITUATION, SortStyle.REVERSE_SITUATION, "situation", "Situation", favorite )%>
-            </th>
             <th width="6%">
               <%=this.makeSortLink(callback, parms, SortStyle.SEVERITY,  SortStyle.REVERSE_SEVERITY,  "severity",  "Severity",  favorite )%>
             </th>
@@ -509,7 +506,7 @@
               </c:if>
             </th>
             <c:if test="${param.display != 'long'}">
-			<th width="52%">Log Msg</th>
+			<th width="56%">Log Msg</th>
 			</c:if>
 		</tr>
 	</thead>
@@ -592,31 +589,6 @@
               </nobr>
             <% } %>
           </c:if>
-          </td>
-          <td class="divider" valign="middle" rowspan="<%= ("long".equals(request.getParameter("display"))? 2:1) %>">
-              <%
-                  if (alarms[i].isSituation()) {
-                      if(parms.getFilters().contains(new SituationFilter(true))) {
-              %>
-              <i class="fa fa-check-square-o"></i>
-              <%
-              } else {
-              %>
-              <a href="<%=this.makeLink(callback, parms, new SituationFilter(true), true, favorite)%>" class="filterLink" title="Show only situations"><i class="fa fa-check-square-o"></i></a>
-              <%
-                  }
-              } else {
-                  if(parms.getFilters().contains(new SituationFilter(false))) {
-              %>
-              <i class="fa fa-square-o"></i>
-              <%
-              } else {
-              %>
-              <a href="<%=this.makeLink(callback, parms, new SituationFilter(false), true, favorite)%>" class="filterLink" title="Show only alarms"><i class="fa fa-square-o"></i></a>
-              <%
-                      }
-                  }
-              %>
           </td>
           <td class="divider bright" valign="middle" rowspan="<%= ("long".equals(request.getParameter("display"))? 2:1) %>">
             <nobr>

@@ -45,99 +45,104 @@ import io.searchbox.core.Ping;
 import io.searchbox.indices.template.PutTemplate;
 
 public class DefaultTemplateInitializer implements TemplateInitializer {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultTemplateInitializer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultTemplateInitializer.class);
 
-    private static final long[] COOL_DOWN_TIMES_IN_MS = { 250, 500, 1000, 5000, 10000, 60000 };
+	private static final long[] COOL_DOWN_TIMES_IN_MS = { 250, 500, 1000, 5000, 10000, 60000 };
 
-    private final AtomicInteger retryCount = new AtomicInteger(0);
-    private final JestClient client;
-    private final TemplateLoader templateLoader;
-    private final String templateLocation;
-    private final String templateName;
+	private final AtomicInteger retryCount = new AtomicInteger(0);
+	private final JestClient client;
+	private final TemplateLoader templateLoader;
+	private final String templateLocation;
+	private final String templateName;
 
-    private boolean initialized;
+	private boolean initialized;
 
-    public DefaultTemplateInitializer(final BundleContext bundleContext, final JestClient client, final String templateLocation, final String templateName) {
-        this(client, templateLocation, templateName, new CachingTemplateLoader(new OsgiTemplateLoader(bundleContext)));
-    }
+	public DefaultTemplateInitializer(final BundleContext bundleContext, final JestClient client,
+			final String templateLocation, final String templateName) {
+		this(client, templateLocation, templateName, new CachingTemplateLoader(new OsgiTemplateLoader(bundleContext)));
+	}
 
-    public DefaultTemplateInitializer(final BundleContext bundleContext, JestClient client, String templateLocation, String templateName, IndexSettings indexSettings) {
-        this(client, templateLocation, templateName, new CachingTemplateLoader(
-                new MergingTemplateLoader(new OsgiTemplateLoader(bundleContext), indexSettings)));
-    }
+	public DefaultTemplateInitializer(final BundleContext bundleContext, JestClient client, String templateLocation,
+			String templateName, IndexSettings indexSettings) {
+		this(client, templateLocation, templateName, new CachingTemplateLoader(
+				new MergingTemplateLoader(new OsgiTemplateLoader(bundleContext), indexSettings)));
+	}
 
-    protected DefaultTemplateInitializer(final JestClient client, final String templateLocation, final String templateName, final TemplateLoader templateLoader) {
-        this.client = Objects.requireNonNull(client);
-        this.templateLocation = templateLocation;
-        this.templateName = Objects.requireNonNull(templateName);
-        this.templateLoader = Objects.requireNonNull(templateLoader);
-    }
+	protected DefaultTemplateInitializer(final JestClient client, final String templateLocation,
+			final String templateName, final TemplateLoader templateLoader) {
+		this.client = Objects.requireNonNull(client);
+		this.templateLocation = templateLocation;
+		this.templateName = Objects.requireNonNull(templateName);
+		this.templateLoader = Objects.requireNonNull(templateLoader);
+	}
 
-    @Override
-    public synchronized void initialize() {
-        while(!initialized && !Thread.interrupted()) {
-            try {
-                LOG.debug("Template {} is not initialized. Initializing...", templateName);
-                doInitialize();
-                initialized = true;
-            } catch (Exception ex) {
-                LOG.error("An error occurred while initializing template {}: {}.", templateName, ex.getMessage(), ex);
-                long coolDownTimeInMs = COOL_DOWN_TIMES_IN_MS[retryCount.get()];
-                LOG.debug("Retrying in {} ms", coolDownTimeInMs);
-                waitBeforeRetrying(coolDownTimeInMs);
-                if (retryCount.get() != COOL_DOWN_TIMES_IN_MS.length - 1) {
-                    retryCount.incrementAndGet();
-                }
-            }
-        }
-    }
+	@Override
+	public synchronized void initialize() {
+		while (!initialized && !Thread.interrupted()) {
+			try {
+				LOG.debug("Template {} is not initialized. Initializing...", templateName);
+				doInitialize();
+				initialized = true;
+			} catch (Exception ex) {
+				LOG.error("An error occurred while initializing template {}: {}.", templateName, ex.getMessage(), ex);
+				long coolDownTimeInMs = COOL_DOWN_TIMES_IN_MS[retryCount.get()];
+				LOG.debug("Retrying in {} ms", coolDownTimeInMs);
+				waitBeforeRetrying(coolDownTimeInMs);
+				if (retryCount.get() != COOL_DOWN_TIMES_IN_MS.length - 1) {
+					retryCount.incrementAndGet();
+				}
+			}
+		}
+	}
 
-    @Override
-    public synchronized boolean isInitialized() {
-        return initialized;
-    }
+	@Override
+	public synchronized boolean isInitialized() {
+		return initialized;
+	}
 
-    private void waitBeforeRetrying(long cooldown) {
-        try {
-            Thread.sleep(cooldown);
-        } catch (InterruptedException e) {
-            LOG.warn("Sleep was interrupted", e);
-        }
-    }
+	private void waitBeforeRetrying(long cooldown) {
+		try {
+			Thread.sleep(cooldown);
+		} catch (InterruptedException e) {
+			LOG.warn("Sleep was interrupted", e);
+		}
+	}
 
-    private void doInitialize() throws IOException {
-        // Retrieve the server version
-        final Version version = getServerVersion();
-        // Load the appropriate template
-        final String template = templateLoader.load(version, templateLocation);
+	private void doInitialize() throws IOException {
+		// Retrieve the server version
+		final Version version = getServerVersion();
+		// Load the appropriate template
+		final String template = templateLoader.load(version, templateLocation);
 
-        // Post it to elastic
-        final PutTemplate putTemplate = new PutTemplate.Builder(templateName, template).build();
-        final JestResult result = client.execute(putTemplate);
-        if (!result.isSucceeded()) {
-            // In case the template could not be created, we bail
-            throw new IllegalStateException("Template '" + templateName + "' could not be persisted. Reason: " + result.getErrorMessage());
-        }
-    }
+		// Post it to elastic
+		final PutTemplate putTemplate = new PutTemplate.Builder(templateName, template).build();
+		final JestResult result = client.execute(putTemplate);
+		if (!result.isSucceeded()) {
+			// In case the template could not be created, we bail
+			throw new IllegalStateException(
+					"Template '" + templateName + "' could not be persisted. Reason: " + result.getErrorMessage());
+		}
+	}
 
-    private Version getServerVersion() throws IOException {
-        final Ping ping = new Ping.Builder().build();
-        final JestResult result = client.execute(ping);
-        if (!result.isSucceeded()) {
-            throw new IllegalStateException("Ping failed. Template '" + templateName + "' will not be persisted. Reason: " + result.getErrorMessage());
-        }
+	private Version getServerVersion() throws IOException {
+		final Ping ping = new Ping.Builder().build();
+		final JestResult result = client.execute(ping);
+		if (!result.isSucceeded()) {
+			throw new IllegalStateException("Ping failed. Template '" + templateName
+					+ "' will not be persisted. Reason: " + result.getErrorMessage());
+		}
 
-        final JsonObject responseJson = result.getJsonObject();
-        final JsonObject versionDetails = responseJson.getAsJsonObject("version");
-        if (versionDetails == null) {
-            throw new IllegalStateException("Ping response does not contain version: " + responseJson);
-        }
-        final JsonElement versionEl = versionDetails.get("number");
-        if (versionEl == null) {
-            throw new IllegalStateException("Ping response does not contain version number: " + responseJson);
-        }
-        final String versionNumber = versionEl.getAsString();
-        return Version.fromVersionString(versionNumber);
-    }
+		final JsonObject responseJson = result.getJsonObject();
+		final JsonObject versionDetails = responseJson.getAsJsonObject("version");
+		if (versionDetails == null) {
+			throw new IllegalStateException("Ping response does not contain version: " + responseJson);
+		}
+		final JsonElement versionEl = versionDetails.get("number");
+		if (versionEl == null) {
+			throw new IllegalStateException("Ping response does not contain version number: " + responseJson);
+		}
+		final String versionNumber = versionEl.getAsString();
+		return Version.fromVersionString(versionNumber);
+	}
 
 }

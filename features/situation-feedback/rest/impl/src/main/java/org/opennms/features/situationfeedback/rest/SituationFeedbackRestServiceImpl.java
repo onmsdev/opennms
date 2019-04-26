@@ -27,11 +27,9 @@
  *******************************************************************************/
 package org.opennms.features.situationfeedback.rest;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -39,7 +37,6 @@ import javax.ws.rs.WebApplicationException;
 
 import org.opennms.features.situationfeedback.api.AlarmFeedback;
 import org.opennms.features.situationfeedback.api.AlarmFeedback.FeedbackType;
-import org.opennms.features.situationfeedback.api.AlarmFeedbackListener;
 import org.opennms.features.situationfeedback.api.FeedbackException;
 import org.opennms.features.situationfeedback.api.FeedbackRepository;
 import org.opennms.netmgt.dao.api.AlarmDao;
@@ -52,7 +49,7 @@ import org.springframework.transaction.support.TransactionOperations;
 
 public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SituationFeedbackRestServiceImpl.class);
+    private static final Logger Log = LoggerFactory.getLogger(SituationFeedbackRestServiceImpl.class);
 
     private final AlarmDao alarmDao;
 
@@ -62,11 +59,6 @@ public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestSe
 
     private final TransactionOperations transactionTemplate;
 
-    /**
-     * The collection of listeners interested in alarm feedback, populated via runtime binding.
-     */
-    private static final Collection<AlarmFeedbackListener> alarmFeedbackListeners = new ArrayList<>();
-
     public SituationFeedbackRestServiceImpl(AlarmDao alarmDao, AlarmEntityNotifier alarmEntityNotifier, FeedbackRepository feedbackRepository, TransactionOperations transactionOperations) {
         this.alarmDao = Objects.requireNonNull(alarmDao);
         this.alarmEntityNotifier = Objects.requireNonNull(alarmEntityNotifier);
@@ -74,28 +66,12 @@ public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestSe
         this.transactionTemplate = Objects.requireNonNull(transactionOperations);
     }
 
-    public synchronized void onBind(AlarmFeedbackListener alarmFeedbackListener, Map properties) {
-        LOG.debug("bind called with {}: {}", alarmFeedbackListener, properties);
-
-        if (alarmFeedbackListener != null) {
-            alarmFeedbackListeners.add(alarmFeedbackListener);
-        }
-    }
-
-    public synchronized void onUnbind(AlarmFeedbackListener alarmFeedbackListener, Map properties) {
-        LOG.debug("Unbind called with {}: {}", alarmFeedbackListener, properties);
-
-        if (alarmFeedbackListener != null) {
-            alarmFeedbackListeners.remove(alarmFeedbackListener);
-        }
-    }    
-
     @Override
     public Collection<AlarmFeedback> getFeedback(int situationId) {
         try {
             return repository.getFeedback(getReductionKey(situationId));
         } catch (FeedbackException e) {
-            LOG.error("Error retrieving alarm correlation feedback for [{}]: {}", situationId, e.getMessage());
+            Log.error("Error retrieving alarm correlation feedback for [{}]: {}", situationId, e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -119,15 +95,6 @@ public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestSe
             } catch (Exception e) {
                 throw new WebApplicationException("Failed to execute query: " + e.getMessage(), e);
             }
-
-            alarmFeedbackListeners.forEach(listener -> {
-                try {
-                    listener.handleAlarmFeedback(feedback);
-                } catch (Exception e) {
-                    LOG.warn("Failed to notify listener of alarm feedback", e);
-                }
-            });
-            
             return null;
         });
     }
@@ -139,10 +106,10 @@ public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestSe
             return;
         }
         Set<OnmsAlarm> previousRelatedAlarms = situation.getRelatedAlarms();
-        LOG.debug("removing alarm {} from situation {}.", alarm, situation);
-        situation.removeRelatedAlarm(alarm);
+        Log.debug("removing alarm {} from situation {}.", alarm, situation);
+        situation.getRelatedAlarms().remove(alarm);
         alarmDao.saveOrUpdate(situation);
-        LOG.debug("removed alarm {} from situation {}.", alarm, situation);
+        Log.debug("removed alarm {} from situation {}.", alarm, situation);
         // Update AlarmEntityNotifier
         alarmEntityNotifier.didUpdateRelatedAlarms(situation, previousRelatedAlarms);
     }
@@ -154,10 +121,10 @@ public class SituationFeedbackRestServiceImpl implements SituationFeedbackRestSe
             return;
         }
         Set<OnmsAlarm> previousRelatedAlarms = situation.getRelatedAlarms();
-        LOG.debug("adding alarm {} to situation {}.", alarm, situation);
-        situation.addRelatedAlarm(alarm);
+        Log.debug("adding alarm {} to situation {}.", alarm, situation);
+        situation.getRelatedAlarms().add(alarm);
         alarmDao.saveOrUpdate(situation);
-        LOG.debug("added alarm {} to situation {}.", alarm, situation);
+        Log.debug("added alarm {} to situation {}.", alarm, situation);
         // Update AlarmChangeNotifier
         alarmEntityNotifier.didUpdateRelatedAlarms(situation, previousRelatedAlarms);
     }

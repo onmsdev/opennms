@@ -90,8 +90,6 @@ public class ThresholdEvaluatorHighLow implements ThresholdEvaluator {
         private boolean m_armed;
         
         private CollectionResourceWrapper m_lastCollectionResourceUsed;
-        
-        private boolean m_currentTriggeredStatus;
 
         public ThresholdEvaluatorStateHighLow(BaseThresholdDefConfigWrapper threshold) {
             Assert.notNull(threshold, "threshold argument cannot be null");
@@ -139,9 +137,7 @@ public class ThresholdEvaluatorHighLow implements ThresholdEvaluator {
         
         @Override
         public Status evaluate(double dsValue) {
-        	m_currentTriggeredStatus = false;
             if (isThresholdExceeded(dsValue)) {
-            	m_currentTriggeredStatus = true;
                 if (isArmed()) {
                     setExceededCount(getExceededCount() + 1);
 
@@ -172,19 +168,6 @@ public class ThresholdEvaluatorHighLow implements ThresholdEvaluator {
 
             return Status.NO_CHANGE;
         }
-        
-		@Override
-		public Status evaluateSustained() {
-			Status changeStatus;
-			if(m_currentTriggeredStatus){
-				changeStatus = Status.TRIGGERED;
-			}
-			else{
-				changeStatus = Status.NO_CHANGE;
-			}
-			return changeStatus;
-		}
-
 
         protected boolean isThresholdExceeded(double dsValue) {
             if (ThresholdType.HIGH.equals(getThresholdConfig().getType())) {
@@ -261,19 +244,6 @@ public class ThresholdEvaluatorHighLow implements ThresholdEvaluator {
             default:
                 throw new IllegalArgumentException("Status " + status + " is not supported for converting to an event.");
             }
-        }
-        
-        @Override
-        public Event getSustainedEventForState(Status status, Date date, double dsValue, CollectionResourceWrapper resource) {
-        	if (status == Status.TRIGGERED) {
-	        	final String triggerSustainedUEI = getThresholdConfig().getTriggerSustainedUEI().orElse(null);
-	            if (triggerSustainedUEI != null) {
-	                return createBasicEvent(triggerSustainedUEI, date, dsValue, resource);
-	            } else {
-	                return null;
-	            }
-        	}
-        	return null;
         }
         
         private Event createBasicEvent(String uei, Date date, double dsValue, CollectionResourceWrapper resource) {

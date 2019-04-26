@@ -27,12 +27,10 @@
  *******************************************************************************/
 
 package org.opennms.netmgt.telemetry.ipc;
-
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Objects;
-
 import org.opennms.core.ipc.sink.api.AggregationPolicy;
 import org.opennms.core.ipc.sink.api.AsyncPolicy;
 import org.opennms.core.ipc.sink.api.SinkModule;

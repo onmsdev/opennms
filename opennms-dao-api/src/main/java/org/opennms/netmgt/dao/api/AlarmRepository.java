@@ -35,7 +35,6 @@ import org.opennms.netmgt.model.OnmsAcknowledgment;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.alarm.AlarmSummary;
-import org.opennms.netmgt.model.alarm.SituationSummary;
 
 /**
  * WebAlarmRepository @author brozow
@@ -188,10 +187,4 @@ public interface AlarmRepository {
      */
     public abstract List<AlarmSummary> getCurrentNodeAlarmSummaries();
 
-    /**
-     * Gets the current node alarm summaries.
-     *
-     * @return the current node alarm summaries
-     */
-    List<SituationSummary> getCurrentSituationSummaries();
 }

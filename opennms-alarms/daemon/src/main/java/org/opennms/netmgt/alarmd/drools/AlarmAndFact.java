@@ -43,16 +43,14 @@ public class AlarmAndFact {
     public OnmsAlarm getAlarm() {
         return alarm;
     }
-
-    public void setAlarm(OnmsAlarm alarm) {
-        this.alarm = alarm;
-    }
-
     public FactHandle getFact() {
         return fact;
     }
-
-    public void setFact(FactHandle fact) {
-        this.fact = fact;
+    @Override
+    public String toString() {
+        return "AlarmAndFact{" +
+                "alarm=" + alarm +
+                ", fact=" + fact +
+                '}';
     }
 }

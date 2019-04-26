@@ -52,10 +52,10 @@ public enum IndexStrategy {
     private final String pattern; // remember pattern since DateFormat doesn't provide access to it
 
     IndexStrategy(String pattern) {
-        this.pattern = pattern;
-        final ZoneId UTC = TimeZone.getTimeZone("UTC").toZoneId();
-        dateFormat = DateTimeFormatter.ofPattern(pattern)
-                .withZone(UTC);
+		this.pattern = pattern;
+		// final ZoneId UTC = TimeZone.getTimeZone("UTC").toZoneId();
+		final ZoneId zoneId = ZoneId.systemDefault();
+		dateFormat = DateTimeFormatter.ofPattern(pattern).withZone(zoneId);
     }
 
     public String getIndex(String indexPrefix, TemporalAccessor temporal) {

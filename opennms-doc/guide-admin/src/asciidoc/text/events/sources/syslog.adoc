@@ -37,6 +37,7 @@ The patterns should be arranged in the file from most specific to least specific
 
 [options="header, autowidth"]
 |===
+
 | Pattern       | Description
 | `HOSTNAME`    | String containing only valid hostname characters (alphanumeric plus '.', '-' and '_').
 | `HOSTNAMEORIP | String containing only valid hostname characters or IP address characters (IPv4 or IPv6).

@@ -730,14 +730,12 @@ public final class EventExpander implements org.opennms.netmgt.dao.api.EventExpa
                     }
                     alarmData.setUpdateField(updateFields);
                 }
-
                 final org.opennms.netmgt.xml.eventconf.ManagedObject econfMo = econfAlarmData.getManagedObject();
                 if (econfMo != null) {
-                    final ManagedObject mo = new ManagedObject();
-                    mo.setType(econfMo.getType());
-                    alarmData.setManagedObject(mo);
+                    final ManagedObject managedObject = new ManagedObject();
+                    managedObject.setType(econfMo.getType());
+                    alarmData.setManagedObject(managedObject);
                 }
-
                 e.setAlarmData(alarmData);
             }
 

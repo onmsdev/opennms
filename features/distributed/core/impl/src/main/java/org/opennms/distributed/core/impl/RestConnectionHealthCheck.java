@@ -27,7 +27,6 @@
  *******************************************************************************/
 
 package org.opennms.distributed.core.impl;
-
 import org.opennms.core.health.api.Context;
 import org.opennms.distributed.core.api.RestClient;
 import org.opennms.core.health.api.HealthCheck;

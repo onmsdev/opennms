@@ -28,7 +28,6 @@
 
 package org.opennms.netmgt.trapd;
 
-import java.net.InetAddress;
 import java.util.Objects;
 
 import org.opennms.core.ipc.sink.api.Message;
@@ -44,39 +43,12 @@ public class TrapInformationWrapper implements Message {
 
     private final TrapInformation trapInformation;
 
-    private final TrapDTO trapDTO;
-
-    private InetAddress trapAddress;
-
     public TrapInformationWrapper(TrapInformation trapInformation) throws SnmpException {
         this.trapInformation = Objects.requireNonNull(trapInformation);
-        this.trapDTO = null;
         trapInformation.validate(); // Before this was at ProcessQueueProcessor which does not exist anymore
-    }
-
-    public TrapInformationWrapper(TrapDTO trapDTO) {
-        this.trapDTO = trapDTO;
-        this.trapInformation = null;
     }
 
     public TrapInformation getTrapInformation() {
         return trapInformation;
     }
-
-    public TrapDTO getTrapDTO() {
-        return trapDTO;
-    }
-
-
-    public InetAddress getTrapAddress() {
-        if (trapInformation != null) {
-            return getTrapInformation().getTrapAddress();
-        }
-        return trapAddress;
-    }
-
-    public void setTrapAddress(InetAddress trapAddress) {
-        this.trapAddress = trapAddress;
-    }
-
 }

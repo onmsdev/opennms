@@ -139,14 +139,7 @@ public class FeedbackDocument {
     }
 
     public static AlarmFeedback toAlarmFeedback(FeedbackDocument doc) {
-        return AlarmFeedback.newBuilder()
-                .withSituationKey(doc.situationKey)
-                .withSituationFingerprint(doc.situationFingerprint)
-                .withAlarmKey(doc.alarmKey)
-                .withFeedbackType(FeedbackType.valueOfOrUnknown(doc.feedbackType))
-                .withReason(doc.reason)
-                .withUser(doc.user)
-                .withTimestamp(doc.timestamp)
-                .build();
+        return new AlarmFeedback(doc.situationKey, doc.situationFingerprint, doc.alarmKey, FeedbackType.getType(doc.feedbackType), doc.reason, doc.user,
+                                 doc.timestamp);
     }
 }

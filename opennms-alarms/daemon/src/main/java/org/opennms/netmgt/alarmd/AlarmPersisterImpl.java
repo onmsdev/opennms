@@ -138,11 +138,18 @@ public class AlarmPersisterImpl implements AlarmPersister {
         String key = reductionKey;
         String clearKey = event.getAlarmData().getClearKey();
         
+        boolean didSwapReductionKeyWithClearKey = false;
         if (!m_legacyAlarmState && clearKey != null && isResolutionEvent(event)) {
             key = clearKey;
+            didSwapReductionKeyWithClearKey = true;
         }
 
         OnmsAlarm alarm = m_alarmDao.findByReductionKey(key);
+
+        if (alarm == null && didSwapReductionKeyWithClearKey) {
+            // if the clearKey returns null, still need to check the reductionKey
+            alarm = m_alarmDao.findByReductionKey(reductionKey);
+        }
 
         if (alarm == null || (m_createNewAlarmIfClearedAlarmExists && OnmsSeverity.CLEARED.equals(alarm.getSeverity()))) {
             if (LOG.isDebugEnabled()) {
@@ -292,11 +299,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
         if (relatedAlarms != null && !relatedAlarms.isEmpty()) {
             // alarm.relatedAlarms becomes the union of any existing alarms and any in the event.
             for (OnmsAlarm related : relatedAlarms) {
-                if (!formingCyclicGraph(alarm, related)) {
-                    alarm.addRelatedAlarm(related);
-                } else {
-                    LOG.warn("Alarm with id '{}' , reductionKey '{}' is not added as related alarm for id '{}' as it is forming cyclic graph ", related.getId(), related.getReductionKey(), alarm.getId());
-                }
+                alarm.addRelatedAlarm(related);
             }
         }
 
@@ -335,7 +338,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
         alarm.setLastEvent(e);
         alarm.setLogMsg(e.getEventLogMsg());
         alarm.setMouseOverText(e.getEventMouseOverText());
-        alarm.setNode(e.getNode());
+        alarm.setNode(e.getNode()); 
         alarm.setOperInstruct(e.getEventOperInstruct());
         alarm.setReductionKey(event.getAlarmData().getReductionKey());
         alarm.setServiceType(e.getServiceType());
@@ -348,12 +351,6 @@ public class AlarmPersisterImpl implements AlarmPersister {
         }
         e.setAlarm(alarm);
         return alarm;
-    }
-
-    private boolean formingCyclicGraph(OnmsAlarm situation, OnmsAlarm relatedAlarm) {
-
-        return situation.getReductionKey().equals(relatedAlarm.getReductionKey()) ||
-                relatedAlarm.getRelatedAlarms().stream().anyMatch(ra -> formingCyclicGraph(situation, ra));
     }
     
     private Set<OnmsAlarm> getRelatedAlarms(List<Parm> list) {

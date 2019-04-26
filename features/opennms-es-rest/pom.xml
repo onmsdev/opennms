@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.opennms</groupId>
     <artifactId>org.opennms.features</artifactId>
-    <version>24.0.0-SNAPSHOT</version>
+    <version>23.0.4</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -88,13 +88,13 @@
           <httpPort>9200</httpPort>
           <skip>${skipTests}</skip>
         </configuration>
-        <executions>
-          <!-- The elasticsearch plugin is by default bound to the -->
-          <!-- pre-integration-test and post-integration-test phases -->
-          <!-- here we are binding into the normal unit test phases -->
+<!--         <executions>
+          The elasticsearch plugin is by default bound to the
+          pre-integration-test and post-integration-test phases
+          here we are binding into the normal unit test phases
           <execution>
             <id>start-elasticsearch</id>
-            <!-- <phase>pre-integration-test</phase> -->
+            <phase>pre-integration-test</phase>
             <phase>test-compile</phase>
             <goals>
               <goal>runforked</goal>
@@ -102,13 +102,13 @@
           </execution>
           <execution>
             <id>stop-elasticsearch</id>
-            <!-- <phase>post-integration-test</phase> -->
+            <phase>post-integration-test</phase>
             <phase>prepare-package</phase>
             <goals>
               <goal>stop</goal>
             </goals>
           </execution>
-        </executions>
+        </executions> -->
         <dependencies>
           <dependency>
             <groupId>org.elasticsearch</groupId>
@@ -144,6 +144,10 @@
       <groupId>org.opennms.core</groupId>
       <artifactId>org.opennms.core.cache</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.core</groupId>
+      <artifactId>org.opennms.core.lib</artifactId>
     </dependency>
 
     <!-- Provided Scope -->

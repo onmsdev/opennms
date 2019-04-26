@@ -89,12 +89,11 @@ public class StressCommand implements Action {
 
         // Build and issue the requests
         System.out.printf("Executing %d requests.\n", count);
-        final String message = Strings.repeat("*", messageSize);
         final CountDownLatch doneSignal = new CountDownLatch(count);
         
         long beforeExec = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
-            client.execute(buildRequest(message)).whenComplete((r,e) -> {
+            client.execute(buildRequest(messageSize)).whenComplete((r,e) -> {
                 if (e != null) {
                     failures.inc();
                 } else {
@@ -138,10 +137,11 @@ public class StressCommand implements Action {
         return null;
     }
 
-    private EchoRequest buildRequest(String message) {
+    private EchoRequest buildRequest(Integer messageSize) {
         final EchoRequest request = new EchoRequest();
         request.setId(System.currentTimeMillis());
-        request.setMessage(message);
+        String message = Strings.repeat("*", messageSize);
+        request.setBody(message);
         request.setLocation(location);
         request.setSystemId(systemId);
         request.setTimeToLiveMs(ttlInMs);

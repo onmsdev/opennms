@@ -111,7 +111,6 @@ public class AlarmData implements Serializable {
     @XmlElement(name="managed-object", required=false)
     private ManagedObject m_managedObject;
 
-
     public AlarmData() {
         super();
     }
@@ -335,7 +334,6 @@ public class AlarmData implements Serializable {
         m_updateFieldList.clear();
         m_updateFieldList.addAll(fields);
     }
-
 
     public ManagedObject getManagedObject() {
         return m_managedObject;
