@@ -27,6 +27,7 @@
  *******************************************************************************/
 
 package org.opennms.netmgt.newts.support;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 

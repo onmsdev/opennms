@@ -2,8 +2,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2002-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2002-2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -72,7 +72,15 @@
 <%-- This </div> tag is unmatched in this file (its matching tag is in the
      header), so we hide it in a JSP code fragment so the Eclipse HTML
      validator doesn't complain.  See bug #1728. --%>
-<%= "</div>" %><!-- id="content" -->
+
+<c:choose>
+    <c:when test="${param.superQuiet == 'true'}">
+        <%-- nothing to do --%>
+    </c:when>
+    <c:otherwise>
+        <%= "</div>" %><!-- id="content" -->
+    </c:otherwise>
+</c:choose>
 
 <c:choose>
     <c:when test="${param.quiet == 'true'}">

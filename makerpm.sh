@@ -45,7 +45,7 @@ function tell()
 
 function usage()
 {
-    tell "makerpm [-h] [-a] [-s <password>] [-g <gpg-id>] [-M <major>] [-m <minor>] [-u <micro>] [-v <snapshotversion>]"
+    tell "makerpm [-h] [-a] [-s <password>] [-g <gpg-id>] [-M <major>] [-m <minor>] [-u <micro>]"
     tell "\t-h : print this help"
     tell "\t-a : assembly-only (skip the compile step)"
     tell "\t-d : disable downloading snapshots when doing an assembly-only build"
@@ -58,7 +58,6 @@ function usage()
     tell "\t-M <major> : default 0 (0 means a snapshot release)"
     tell "\t-m <minor> : default <datestamp> (ignored unless major is 0)"
     tell "\t-u <micro> : default 1 (ignore unless major is 0)"
-    tell "\t-u <snapshotversion> : release version to be created leaving SNAPSHOT"
     exit 1
 }
 
@@ -158,7 +157,7 @@ function main()
     local RELEASE_MICRO=1
 
 
-    while getopts adhrs:g:n:x:M:m:u:b:c:R:v: OPT; do
+    while getopts adhrs:g:n:x:M:m:u:b:c: OPT; do
         case $OPT in
             a)  ASSEMBLY_ONLY=true
                 ;;
@@ -185,47 +184,19 @@ function main()
                 ;;
             c)  COMMIT="$OPTARG"
                 ;;
-            R)  RELEASE="$OPTARG"
-                ;;
-            v)  CUSTOM_VERSION="$OPTARG"
-                ;;
             *)  usage
                 ;;
         esac
     done
 
-    if [ -z "$RELEASE" ]; then
-   		 RELEASE=${RELEASE_MINOR}.${RELEASE_MAJOR}.${RELEASE_MICRO}
-	else
-   		 RELEASE=${RELEASE}.${RELEASE_MAJOR}.${RELEASE_MICRO}
-	fi
+    RELEASE=$RELEASE_MAJOR
+    if [ "$RELEASE_MAJOR" = 0 ] ; then
+        RELEASE=${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_MICRO}
+    fi
 
     EXTRA_INFO=$(extraInfo)
     EXTRA_INFO2=$(extraInfo2)
     VERSION=$(version)
-    
-    if [ -n "$CUSTOM_VERSION" ]; then
-    VERSION="$CUSTOM_VERSION"
-    fileRecurssion(){
-        for file in "$1"/* 
-        do 
-        if [ -d "$file" ]
-            then     
-            fileRecurssion "$file"
-
-        else
-            filename="${file}"
-            pomfile=pom.xml 
-            if [ "${filename/$pomfile}" = "$filename" ] ; then
-                :
-            else
-                sed -i.pombak -e 's/<version>[0-9.]*-SNAPSHOT<\/version>/<version>'$CUSTOM_VERSION'<\/version>/' "${filename}"
-            fi
-        fi
-    	done
-	}
-	fileRecurssion "${PWD}"
-	fi
 
     if $BUILD_RPM; then
         echo "==== Building OpenNMS RPMs ===="
@@ -245,10 +216,6 @@ function main()
         run tar zcf "$WORKDIR/SOURCES/${PACKAGE_NAME}-source-$VERSION-$RELEASE.tar.gz" -C "$WORKDIR/tmp" "${PACKAGE_NAME}-$VERSION-$RELEASE"
 
         SPECS="tools/packages/opennms/opennms.spec tools/packages/minion/minion.spec tools/packages/sentinel/sentinel.spec"
-        if [ "$PACKAGE_NAME" = "opennms" ]; then
-                run tar zcf "$WORKDIR/SOURCES/centric-troubleticketer.tar.gz" -C "$WORKDIR/tmp/$PACKAGE_NAME-$VERSION-$RELEASE/opennms-tools" "centric-troubleticketer"
-                SPECS="$SPECS opennms-tools/centric-troubleticketer/src/main/rpm/opennms-plugin-ticketer-centric.spec"
-        fi
 
         #SPECS="tools/packages/sentinel/sentinel.spec"
         echo "=== Building RPMs ==="
@@ -277,12 +244,6 @@ function main()
         run expect -c "set timeout -1; spawn rpmsign --define \"_signature gpg\" --define \"_gpg_name $SIGN_ID\" --resign $RPMS; match_max 100000; expect \"Enter pass phrase: \"; send -- \"${SIGN_PASSWORD}\r\"; expect eof" || \
             die "RPM signing failed for $(branch)"
 
-    fi
-    
-    if [ -n "$CUSTOM_VERSION" ]; then
-       find . -name "*.pombak" -exec sh -c 'mv -f $0 ${0%.pombak}' {} \;
-       git reset --hard
-       git clean -f
     fi
 
     echo "==== OpenNMS RPM Build Finished ===="

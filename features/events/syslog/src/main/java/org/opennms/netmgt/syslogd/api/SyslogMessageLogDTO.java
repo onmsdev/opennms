@@ -59,27 +59,6 @@ public class SyslogMessageLogDTO implements Message {
     private String location;
     @XmlElement(name = "messages")
     private List<SyslogMessageDTO> messages;
-    
-	private int maxSyslogDropThresholdMin;
-	
-	private int maxSyslogIngestThresholdMin;
-	
-	
-	public int getMaxSyslogDropThresholdMin() {
-		return maxSyslogDropThresholdMin;
-	}
-
-	public void setMaxSyslogDropThresholdMin(int maxSyslogDropThresholdMin) {
-		this.maxSyslogDropThresholdMin = maxSyslogDropThresholdMin;
-	}
-
-	public int getMaxSyslogIngestThresholdMin() {
-		return maxSyslogIngestThresholdMin;
-	}
-	
-	public void setMaxSyslogIngestThresholdMin(int maxSyslogIngestThresholdMin) {
-		this.maxSyslogIngestThresholdMin = maxSyslogIngestThresholdMin;
-	}
 
     public SyslogMessageLogDTO() {
         messages = new ArrayList<>(0);

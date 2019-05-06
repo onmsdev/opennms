@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2002-2014 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
+ * Copyright (C) 2002-2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -40,8 +40,8 @@ import java.io.IOException;
  * This class holds all OpenNMS related config filenames
  */
 public abstract class ConfigFileConstants {
-        
-        private static final Logger LOG = LoggerFactory.getLogger(ConfigFileConstants.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigFileConstants.class);
 
     private static final String[] FILE_ID_TO_NAME;
 
@@ -83,11 +83,6 @@ public abstract class ConfigFileConstants {
      * The Availability Reports HTML converter xsl file.
      */
     public static final int REPORT_HTML_XSL;
-
-    /**
-     * The opennms dhcpd config file
-     */
-    public static final int DHCPD_CONFIG_FILE_NAME;
 
     /**
      * The opennms notifd config file
@@ -416,6 +411,10 @@ public abstract class ConfigFileConstants {
      */
     public static final int SNMP_ASSET_ADAPTER_CONFIG_FILE_NAME;
 
+    /**
+     * The SNMP Asset Provisioning Adapter configuration file
+     */
+    public static final int WSMAN_ASSET_ADAPTER_CONFIG_FILE_NAME;
 
     /**
      * The WMI collection configuration file
@@ -441,17 +440,6 @@ public abstract class ConfigFileConstants {
      * The config file for the JDBC Data Collector.
      */
     public static final int JDBC_COLLECTION_CONFIG_FILE_NAME;
-    
-    /**
-     * The config file for reading grok patterns to parse syslog message.
-     */
-    public static final int SYSLOGD_CONFIGURATION_PROPERTIES;
-    
-    public static final int ELASTICSEARCH_EVENTINDICES_PROPERTIES;
-    
-    public static final int ELASTICSEARCH_ROOTINDEX_PROPERTIES;
-    
-    public static final int SYSLOGD_TIME_PROPERITES;
 
     //
     // Initialize the class data. This section is used to initialize the
@@ -517,8 +505,6 @@ public abstract class ConfigFileConstants {
         KSC_REPORT_FILE_NAME = 46;
         SCRIPTD_CONFIG_FILE_NAME = 47;
 
-        DHCPD_CONFIG_FILE_NAME = 50;
-
         RRD_CONFIG_FILE_NAME = 51;
 
         JAVA_MAIL_CONFIG_FILE_NAME = 52;
@@ -575,17 +561,11 @@ public abstract class ConfigFileConstants {
         JDBC_COLLECTION_CONFIG_FILE_NAME = 80;
         
         ENLINKD_CONFIG_FILE_NAME = 81;
-        
-        SYSLOGD_CONFIGURATION_PROPERTIES=82;
-        
-        ELASTICSEARCH_EVENTINDICES_PROPERTIES=83;
-        
-        ELASTICSEARCH_ROOTINDEX_PROPERTIES=84;
-        
-        SYSLOGD_TIME_PROPERITES=85;
+
+        WSMAN_ASSET_ADAPTER_CONFIG_FILE_NAME = 82;
         // Allocate and build the mapping of identifiers to names
         //
-        FILE_ID_TO_NAME = new String[86];
+        FILE_ID_TO_NAME = new String[83];
 
         FILE_ID_TO_NAME[DB_CONFIG_FILE_NAME] = "opennms-database.xml";
         FILE_ID_TO_NAME[JMS_CONFIG_FILE_NAME] = "opennms-jms.xml";
@@ -645,7 +625,6 @@ public abstract class ConfigFileConstants {
 
         FILE_ID_TO_NAME[SCRIPTD_CONFIG_FILE_NAME] = "scriptd-configuration.xml";
 
-        FILE_ID_TO_NAME[DHCPD_CONFIG_FILE_NAME] = "dhcpd-configuration.xml";
         FILE_ID_TO_NAME[RRD_CONFIG_FILE_NAME] = "rrd-configuration.properties";
         FILE_ID_TO_NAME[JAVA_MAIL_CONFIG_FILE_NAME] = "javamail-configuration.properties";
         FILE_ID_TO_NAME[VACUUMD_CONFIG_FILE_NAME] = "vacuumd-configuration.xml";
@@ -674,11 +653,8 @@ public abstract class ConfigFileConstants {
         FILE_ID_TO_NAME[MAPS_ADAPTER_CONFIG_FILE_NAME] = "mapsadapter-configuration.xml";
         FILE_ID_TO_NAME[MICROBLOG_CONFIG_FILE_NAME] = "microblog-configuration.xml";
         FILE_ID_TO_NAME[SNMP_ASSET_ADAPTER_CONFIG_FILE_NAME] = "snmp-asset-adapter-configuration.xml";
+        FILE_ID_TO_NAME[WSMAN_ASSET_ADAPTER_CONFIG_FILE_NAME] = "wsman-asset-adapter-configuration.xml";
         FILE_ID_TO_NAME[JDBC_COLLECTION_CONFIG_FILE_NAME] = "jdbc-datacollection-config.xml";
-        FILE_ID_TO_NAME[SYSLOGD_CONFIGURATION_PROPERTIES]="syslogd-configuration.properties";
-        FILE_ID_TO_NAME[ELASTICSEARCH_EVENTINDICES_PROPERTIES]="elasticSearchEventIndices.properties";
-        FILE_ID_TO_NAME[ELASTICSEARCH_ROOTINDEX_PROPERTIES]="elasticSearchRootIndex.properties";
-        FILE_ID_TO_NAME[SYSLOGD_TIME_PROPERITES]="syslogd-time.properties";
     }
 
     /**
@@ -729,7 +705,7 @@ public abstract class ConfigFileConstants {
         // Check to make sure that the home directory exists
         File fhome = new File(home);
         if (!fhome.exists()) {
-                LOG.debug("The specified home directory does not exist.");
+        	LOG.debug("The specified home directory does not exist.");
             throw new FileNotFoundException("The OpenNMS home directory \"" + home + "\" does not exist");
         }
 
@@ -783,7 +759,7 @@ public abstract class ConfigFileConstants {
         //
         File fhome = new File(home);
         if (!fhome.exists()) {
-                LOG.debug("The specified home directory does not exist.");
+        	LOG.debug("The specified home directory does not exist.");
             throw new FileNotFoundException("The OpenNMS home directory \"" + home + "\" does not exist.");
         }
 
@@ -806,7 +782,7 @@ public abstract class ConfigFileConstants {
     public static String getHome() {
         String home = System.getProperty("opennms.home");
         if (home == null) {
-                LOG.debug("The 'opennms.home' property was not set, falling back to /opt/opennms.  This should really only happen in unit tests.");
+        	LOG.debug("The 'opennms.home' property was not set, falling back to /opt/opennms.  This should really only happen in unit tests.");
             home = File.separator + "opt" + File.separator + "opennms";
         }
         // Remove the trailing slash if necessary

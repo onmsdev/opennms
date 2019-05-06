@@ -33,8 +33,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
-import static org.opennms.netmgt.alarmd.driver.AlarmMatchers.hasCounter;
-import static org.opennms.netmgt.alarmd.driver.AlarmMatchers.hasSeverity;
+import static org.opennms.netmgt.alarmd.AlarmMatchers.hasCounter;
+import static org.opennms.netmgt.alarmd.AlarmMatchers.hasSeverity;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -151,7 +151,7 @@ public class AlarmLifecycleListenerManagerIT implements TemporaryDatabaseAware<M
 
         // Register!
         m_alarmLifecycleListenerManager.onListenerRegistered(this, Collections.emptyMap());
-
+        
         m_alarmPersisterImpl.setLegacyAlarmState(true);
 
         // Fire it up

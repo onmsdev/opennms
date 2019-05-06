@@ -2,8 +2,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2002-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2002-2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -67,11 +67,11 @@
   <jsp:param name="breadcrumb" value="About" />
 </jsp:include>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Version Details</h3>
+  <div class="card">
+    <div class="card-header">
+      <span>Version Details</span>
     </div>
-<table class="table table-condensed">
+<table class="table table-sm">
   <tr>
     <th>Version:</th>
     <td><a href="http://docs.opennms.org/opennms/releases/<%=Vault.getProperty("version.display")%>/releasenotes/releasenotes.html" target="_blank" title="Release Notes"><%=Vault.getProperty("version.display")%></a></td>
@@ -138,17 +138,17 @@
 </table>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">License and Copyright</h3>
+<div class="card">
+  <div class="card-header">
+    <span>License and Copyright</span>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
   <p>
     <a href="http://www.opennms.org/">OpenNMS&reg;</a> is a registered
     trademark, and Horizon&trade;, Meridian&trade;, and Compass&trade; are
     trademarks, of <a href="http://www.opennms.com">The OpenNMS Group, Inc.</a>
     Horizon&trade; software by OpenNMS&reg; and Meridian&trade; software by OpenNMS&reg;, as
-    distributed here, are copyright &copy; 2002-2019
+    distributed here, are copyright &copy; 2002-2018
     <a href="http://www.opennms.com/">The OpenNMS Group, Inc.</a>
   </p>
   <p>
@@ -190,11 +190,11 @@
   </div>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">OSI Certified Open Source Software</h3>
+<div class="card">
+  <div class="card-header">
+    <span>OSI Certified Open Source Software</span>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
 
 <a target="_new" href="http://www.opensource.org/"><img src="images/osi-certified.png" style="float: left;" alt="OSI Certified"/></a>
 <p>This software is OSI Certified Open Source Software.<br/>
@@ -205,11 +205,12 @@
 </div>
 </div>
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Supporting Applications and Frameworks</h3>
+<div class="card">
+	<div class="card-header">
+		<span>Supporting Applications and Frameworks</span>
 	</div>
-	<div class="panel-body">
+	<div class="card-body">
+        <div class="row">
 		<div class="col-md-3">
 			<p align="center">
 				Powered By Jetty<br />
@@ -243,6 +244,7 @@
 				</a>
 			</p>
 		</div>
+        </div>
 	</div>
 </div>
 

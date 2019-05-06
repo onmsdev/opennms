@@ -100,6 +100,7 @@ public class HibernateEventWriterIT {
         builder.addParam("param3", true);
         builder.addParam("param4", 23.42);
         builder.addParam("param4", 42.23); // Test for duplicated values - last should win
+
         // Test for long parameter name - see NMS-10525
         final String longParamName = "param5 - with a really long name - " + IntStream.range(1, 1024)
                 .mapToObj(i ->"x")

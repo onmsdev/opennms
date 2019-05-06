@@ -81,10 +81,10 @@ import org.opennms.netmgt.mock.OutageAnticipator;
 import org.opennms.netmgt.poller.LocationAwarePollerClient;
 import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.mock.MockPollContext;
-import org.opennms.netmgt.poller.mock.MockScheduler;
-import org.opennms.netmgt.poller.mock.MockTimer;
 import org.opennms.netmgt.scheduler.Schedule;
 import org.opennms.netmgt.scheduler.ScheduleTimer;
+import org.opennms.netmgt.scheduler.mock.MockScheduler;
+import org.opennms.netmgt.scheduler.mock.MockTimer;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.test.DaoTestConfigBean;
 import org.opennms.test.JUnitConfigurationEnvironment;
@@ -102,6 +102,7 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
         "classpath:/META-INF/opennms/applicationContext-pinger.xml",
         "classpath:/META-INF/opennms/applicationContext-rpc-client-mock.xml",
         "classpath:/META-INF/opennms/applicationContext-serviceMonitorRegistry.xml",

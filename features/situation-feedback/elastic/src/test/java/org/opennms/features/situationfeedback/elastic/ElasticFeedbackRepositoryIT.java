@@ -28,12 +28,15 @@
 package org.opennms.features.situationfeedback.elastic;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,17 +89,53 @@ public class ElasticFeedbackRepositoryIT {
     }
 
     @Test
-    public void canPersistFeedback() throws FeedbackException {
-        AlarmFeedback feedback1 = new AlarmFeedback("situationKey1", "fingerprint1", "alarmKey1", FeedbackType.FALSE_POSITIVE, "reason", "user",
-                                                    System.currentTimeMillis());
-        AlarmFeedback feedback2 = new AlarmFeedback("situationKey2", "fingerprint2", "alarmKey2", FeedbackType.FALSE_POSITIVE, "reason", "user",
-                                                    System.currentTimeMillis());
-        AlarmFeedback feedback3 = new AlarmFeedback("situationKey3", "fingerprint3", "alarmKey3", FeedbackType.FALSE_POSITIVE, "reason", "user",
-                                                    System.currentTimeMillis());
-        final Collection<AlarmFeedback> feedback = Arrays.asList(feedback1, feedback2, feedback3);
+    public void canPersistAndRetrieveFeedback() throws FeedbackException {
+        long now = System.currentTimeMillis();
+
+        AlarmFeedback feedback1 = AlarmFeedback.newBuilder()
+                .withSituationKey("situationKey1")
+                .withSituationFingerprint("fingerprint1")
+                .withAlarmKey("alarmKey1")
+                .withFeedbackType(FeedbackType.FALSE_POSITIVE)
+                .withReason("reason")
+                .withRootCause(true)
+                .withTags(Arrays.asList("red", "white", "blue"))
+                .withUser("user")
+                .withTimestamp(now)
+                .build();
+        AlarmFeedback feedback2 = AlarmFeedback.newBuilder()
+                .withSituationKey("situationKey2")
+                .withSituationFingerprint("fingerprint2")
+                .withAlarmKey("alarmKey2")
+                .withFeedbackType(FeedbackType.FALSE_POSITIVE)
+                .withReason("reason")
+                .withRootCause(false)
+                .withTags(Arrays.asList("red", "blue", "blue"))
+                .withUser("user")
+                .withTimestamp(now + 1)
+                .build();
+        AlarmFeedback feedback3 = AlarmFeedback.newBuilder()
+                .withSituationKey("situationKey3")
+                .withSituationFingerprint("fingerprint3")
+                .withAlarmKey("alarmKey3")
+                .withFeedbackType(FeedbackType.FALSE_POSITIVE)
+                .withReason("reason")
+                .withRootCause(null)
+                .withTags(Arrays.asList("red", "green", "blue"))
+                .withUser("user")
+                .withTimestamp(now + 2)
+                .build();
+        final List<AlarmFeedback> feedback = Arrays.asList(feedback1, feedback2, feedback3);
         feedbackRepository.persist(feedback);
 
-        await().until(() -> feedbackRepository.getFeedback("situationKey1"), hasSize(1));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> feedbackRepository.getFeedback("situationKey1"), hasSize(1));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> feedbackRepository.getFeedback("situationKey1").stream().map(AlarmFeedback::getRootCause).collect(Collectors.toList()),
+                                                  equalTo(Arrays.asList(true)));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> feedbackRepository.getFeedback("situationKey3").stream().map(AlarmFeedback::getRootCause).collect(Collectors.toList()),
+                                                  equalTo(Arrays.asList(false)));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> feedbackRepository.getFeedback("situationKey3").stream().map(AlarmFeedback::getTags).collect(Collectors.toList()),
+                                                  equalTo(Arrays.asList(Arrays.asList("red", "green", "blue"))));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> feedbackRepository.getAllFeedback(), equalTo(feedback));
     }
 
 }

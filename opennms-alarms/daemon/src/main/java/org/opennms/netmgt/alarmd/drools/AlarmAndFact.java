@@ -43,9 +43,11 @@ public class AlarmAndFact {
     public OnmsAlarm getAlarm() {
         return alarm;
     }
+
     public FactHandle getFact() {
         return fact;
     }
+
     @Override
     public String toString() {
         return "AlarmAndFact{" +

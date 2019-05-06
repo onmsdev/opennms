@@ -26,6 +26,7 @@
             <cm:property name="nodeDiscoveryFrequency" value="0" />
             <cm:property name="proxy" value=""/>
             <cm:property name="retryCooldown" value="500" />
+            <cm:property name="httpCompression" value="false"/>
             <cm:property name="connTimeout" value="5000" /> <!-- 5 second timeout for Elasticsearch operations -->
             <cm:property name="readTimeout" value="30000" /> <!-- 30 second timeout for Elasticsearch socket reads -->
             <cm:property name="retries" value="0" /> <!-- Disable retries by default -->
@@ -33,8 +34,7 @@
             <cm:property name="nodeCache.maximumSize" value="1000"/> <!-- Set value for unlimited size -->
             <cm:property name="nodeCache.expireAfterWrite" value="300"/> <!-- in seconds. Set to 0 to never evict elements -->
             <cm:property name="nodeCache.recordStats" value="true"/> <!-- Set to false to not expose cache statistics via jmx -->
-            <cm:property name="eventIndexName" value="cerniosscert101" /> <!-- Set value of OpenNMS instance forwarding flow data to elastic -->
-
+			<cm:property name="eventIndexName" value="cert-opennms" /> <!-- Set value of OpenNMS instance forwarding flow data to elastic -->
             <!-- Bulk Action Retry settings -->
             <cm:property name="bulkRetryCount" value="5" /> <!-- Number of retries until a bulk operation is considered failed -->
 
@@ -75,6 +75,7 @@
         <property name="discovery" value="${nodeDiscovery}" />
         <property name="discoveryFrequency" value="${nodeDiscoveryFrequency}" />
         <property name="proxy" value="${proxy}" />
+        <property name="httpCompression" value="${httpCompression}" />
         <property name="credentials" ref="credentialsProvider" />
         <property name="requestExecutorFactory" ref="requestExecutorFactory" />
         <property name="connTimeout" value="${connTimeout}" />
@@ -150,8 +151,9 @@
 
     <!-- Health Check -->
     <service interface="org.opennms.core.health.api.HealthCheck">
-        <bean class="org.opennms.netmgt.flows.elastic.health.ElasticHealthCheck" >
+        <bean class="org.opennms.plugins.elasticsearch.rest.ElasticHealthCheck" >
             <argument ref="jestClient"/>
+            <argument value="Flows"/>
         </bean>
     </service>
 

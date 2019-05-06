@@ -39,6 +39,7 @@ import org.opennms.netmgt.model.OnmsAlarm;
  * @author jwhite
  */
 public interface AlarmLifecycleListener {
+
     /**
      * Called periodically with a complete set of alarms as present in the database
      * at the given timestamp.

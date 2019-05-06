@@ -31,6 +31,7 @@ package org.opennms.features.kafka.producer.datasync;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import org.opennms.features.kafka.producer.model.OpennmsModelProtos;
 import org.opennms.netmgt.model.OnmsAlarm;
 

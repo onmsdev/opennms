@@ -30,12 +30,15 @@ package org.opennms.netmgt.alarmd;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isIn;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -65,6 +68,7 @@ import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.netmgt.alarmd.api.NorthboundAlarm;
 import org.opennms.netmgt.alarmd.api.Northbounder;
 import org.opennms.netmgt.alarmd.api.NorthbounderException;
+import org.opennms.netmgt.dao.api.AlarmAssociationDao;
 import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.dao.api.MonitoringLocationDao;
 import org.opennms.netmgt.dao.api.NodeDao;
@@ -72,6 +76,7 @@ import org.opennms.netmgt.dao.mock.MockEventIpcManager;
 import org.opennms.netmgt.mock.MockEventUtil;
 import org.opennms.netmgt.mock.MockNetwork;
 import org.opennms.netmgt.mock.MockNode;
+import org.opennms.netmgt.model.AlarmAssociation;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsSeverity;
@@ -153,6 +158,9 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
 
     @Autowired
     private AlarmDao m_alarmDao;
+
+    @Autowired
+    private AlarmAssociationDao m_alarmAssociationDao;
 
     @Autowired
     private MonitoringLocationDao m_locationDao;
@@ -352,14 +360,99 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
         OnmsAlarm situation = m_alarmDao.findByReductionKey("Situation1");
         assertEquals(2, situation.getRelatedAlarms().size());
 
-        //send situation in with 3rd alarm, should result in 1 situation with 3 alarms
+        //capture the current association time of the related alarms
+        Map<Integer, Date> associationTimesByRelatedAlarmId = situation.getAssociatedAlarms().stream()
+                .collect(Collectors.toMap(assoc -> assoc.getRelatedAlarm().getId(), AlarmAssociation::getMappedTime));
+
+        //now trigger the same situation again
+        sendSituationEvent("Situation1", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        situation = m_alarmDao.findByReductionKey("Situation1");
+        assertEquals(2, situation.getRelatedAlarms().size());
+
+        // We have two related alarms, so we should have a two associations
+        assertThat(m_alarmAssociationDao.getAssociationsForSituation(situation.getId()), hasSize(2));
+
+        //the association times should not have changed - gather them again and compare
+        Map<Integer, Date> afterReduceAssociationTimesByRelatedAlarmId = situation.getAssociatedAlarms().stream()
+                .collect(Collectors.toMap(assoc -> assoc.getRelatedAlarm().getId(), AlarmAssociation::getMappedTime));
+        //make sure the two maps match
+        assertThat(associationTimesByRelatedAlarmId.entrySet(), everyItem(isIn(afterReduceAssociationTimesByRelatedAlarmId.entrySet())));
+        assertThat(afterReduceAssociationTimesByRelatedAlarmId.entrySet(), everyItem(isIn(associationTimesByRelatedAlarmId.entrySet())));
+
+        //send situation in with 3rd alarm, should result in 1 situation with 1 alarm since the situation's related
+        //alarms will be overwritten with this new related alarm
         List<String> newReductionKeys = new ArrayList<>(Arrays.asList("Alarm3"));
         sendSituationEvent("Situation1", node, newReductionKeys);
         await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
         situation = m_alarmDao.findByReductionKey("Situation1");
-        assertEquals(3, situation.getRelatedAlarms().size());
+        assertEquals(1, situation.getRelatedAlarms().size());
+
+        // We have one related alarm, so we should have a single association
+        assertThat(m_alarmAssociationDao.getAssociationsForSituation(situation.getId()), hasSize(1));
     }
-    
+
+    @Test
+    @Transactional
+    public void testPreventingCyclicGraphForSituations() throws SQLException {
+
+        final MockNode node = m_mockNetwork.getNode(1);
+
+        //there should be no alarms in the alarms table
+        assertEmptyAlarmTable();
+
+        //there should be no alarms in the alarm_situations table
+        assertEmptyAlarmSituationTable();
+
+        //create 2 alarms to roll up into situation
+        sendNodeDownEvent("Alarm1", node);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        assertEquals(1, m_alarmDao.findAll().size());
+
+        sendNodeDownEvent("Alarm2", node);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        assertEquals(2, m_alarmDao.findAll().size());
+
+        //create situation rolling up the first 2 alarms
+        List<String> reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2"));
+        sendSituationEvent("Situation1", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation1 = m_alarmDao.findByReductionKey("Situation1");
+        assertEquals(2, situation1.getRelatedAlarms().size());
+
+        // create Situation2 that includes 2 alarms and the previous situation.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1"));
+        sendSituationEvent("Situation2", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation2 = m_alarmDao.findByReductionKey("Situation2");
+        assertEquals(3, situation2.getRelatedAlarms().size());
+
+        // create Situation3 that includes 2 alarms and the previous two situation.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1", "Situation2"));
+        sendSituationEvent("Situation3", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation3 = m_alarmDao.findByReductionKey("Situation3");
+        assertEquals(4, situation3.getRelatedAlarms().size());
+
+        // create Situation4 that includes 2 alarms and the previous situation 1,2 but not 3.
+        reductionKeys = new ArrayList<>(Arrays.asList("Alarm1", "Alarm2", "Situation1", "Situation2"));
+        sendSituationEvent("Situation4", node, reductionKeys);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        OnmsAlarm situation4 = m_alarmDao.findByReductionKey("Situation4");
+        assertEquals(4, situation4.getRelatedAlarms().size());
+        
+        // Create loop ( make situation4 as related alarm for situation1 )
+        List<String> situation3ReductionKey = new ArrayList<>(Arrays.asList("Situation4"));
+        sendSituationEvent("Situation1", node, situation3ReductionKey);
+        await().atMost(1, SECONDS).until(allAnticipatedEventsWereReceived());
+        situation1 = m_alarmDao.findByReductionKey("Situation1");
+        // Verify that Situation3 can't be related to Situation1
+        assertEquals(0, situation1.getRelatedAlarms().size());
+        assertFalse(situation1.getRelatedAlarms().contains(situation4));
+
+    }
+
+
     @Test
     @Transactional
     public void testNullEvent() throws Exception {
@@ -795,6 +888,7 @@ public class AlarmdIT implements TemporaryDatabaseAware<MockDatabase>, Initializ
 
         m_eventMgr.sendNow(event.getEvent());
     }
+
     private void sendSituationEvent(String reductionKey, MockNode node, List<String> alarmReductionKeys) throws SQLException {
         EventBuilder event = MockEventUtil.createNodeEventBuilder("Test", "uei.opennms.org/nodes/situation", node);
         AlarmData data = new AlarmData();

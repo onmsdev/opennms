@@ -32,9 +32,12 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.opennms.features.situationfeedback.api.AlarmFeedback;
+import org.opennms.features.situationfeedback.api.AlarmFeedbackListener;
 import org.opennms.features.situationfeedback.api.FeedbackException;
 import org.opennms.features.situationfeedback.api.FeedbackRepository;
 import org.opennms.plugins.elasticsearch.rest.bulk.BulkRequest;
@@ -51,6 +54,8 @@ import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import io.searchbox.core.SearchResult.Hit;
+import io.searchbox.core.search.aggregation.MetricAggregation;
+import io.searchbox.core.search.aggregation.TermsAggregation;
 
 public class ElasticFeedbackRepository implements FeedbackRepository {
 
@@ -68,7 +73,12 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
 
     private IndexStrategy indexStrategy;
     
-    private static String eventIndexName = "cerniosscert101";
+    private static String eventIndexName = "cert-opennms";
+
+    /**
+     * The collection of listeners interested in alarm feedback, populated via runtime binding.
+     */
+    private final Collection<AlarmFeedbackListener> alarmFeedbackListeners = new CopyOnWriteArrayList<>();
 
     public ElasticFeedbackRepository(JestClient jestClient, IndexStrategy indexStrategy, int bulkRetryCount, ElasticFeedbackRepositoryInitializer initializer) {
         this.client = jestClient;
@@ -78,11 +88,11 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
     }
 
     @Override
-    public void persist(Collection<AlarmFeedback> feedback) throws FeedbackException {
+    public void persist(List<AlarmFeedback> feedback) throws FeedbackException {
         ensureInitialized();
         if (LOG.isDebugEnabled()) {
             for (AlarmFeedback fb : feedback) {
-                LOG.debug("Persiting {} feedback.", fb);
+                LOG.debug("Persisting {} feedback.", fb);
             }
         }
 
@@ -103,6 +113,8 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
             LOG.error("Failed to persist feedback [{}]: {}", feedback, e.getMessage());
             throw new FeedbackException("Failed to persist feedback", e);
         }
+
+        notifyListeners(feedback);
     }
 
     @Override
@@ -110,8 +122,84 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
         String query = "{\n" + "  \"query\": { \"match\": { \"situation_key\": " + gson.toJson(situationKey) + " } }\n" + "}";
         return search(query);
     }
+    
+    @Override
+    public List<AlarmFeedback> getAllFeedback() throws FeedbackException {
+        String query = "{\n" + "\t\"query\": {\"match_all\": {}},\n\t\"sort\": [{\"@timestamp\": {\"order\" : \"asc\"}}]\n" + "}";
+        return search(query);
+    }
 
-    private Collection<AlarmFeedback> search(String query) throws FeedbackException {
+    @Override
+    public List<String> getTags(String prefix) throws FeedbackException {
+        String query = "{\n" + 
+                "  \"size\": 0,\n" + 
+                "  \"aggs\": {\n" + 
+                "    \"terms\": {\n" + 
+                "      \"terms\": {\n" + 
+                "        \"field\": \"tags\",\n" + 
+                "        \"include\": \"" + gson.toJson(prefix) + ".*\"\n" + 
+                "      }\n" + 
+                "    }\n" + 
+                "  }\n" + 
+                "}";
+
+        Search.Builder builder = new Search.Builder(query).addType(TYPE);
+        Search search = builder.build();
+        SearchResult result;
+        try {
+            result = client.execute(search);
+        } catch (IOException e) {
+            throw new FeedbackException("Failed to execute Tags search", e);
+        }
+        if (result == null) {
+            return Collections.emptyList();
+        }
+        final MetricAggregation aggregations = result.getAggregations();
+        if (aggregations == null) {
+            return Collections.emptyList();
+        }
+        final TermsAggregation terms = aggregations.getTermsAggregation("terms");
+        if (terms == null) {
+            return Collections.emptyList();
+        }
+        return terms.getBuckets().stream().map(TermsAggregation.Entry::getKey).collect(Collectors.toList());
+    }
+
+    /**
+     * Add listeners to {@link #alarmFeedbackListeners} during runtime as they become available.
+     */
+    public synchronized void onBind(AlarmFeedbackListener alarmFeedbackListener, Map properties) {
+        LOG.debug("bind called with {}: {}", alarmFeedbackListener, properties);
+
+        if (alarmFeedbackListener != null) {
+            alarmFeedbackListeners.add(alarmFeedbackListener);
+        }
+    }
+
+    /**
+     * Remove listeners from {@link #alarmFeedbackListeners} during runtime as they become unavailable.
+     */
+    public synchronized void onUnbind(AlarmFeedbackListener alarmFeedbackListener, Map properties) {
+        LOG.debug("Unbind called with {}: {}", alarmFeedbackListener, properties);
+
+        if (alarmFeedbackListener != null) {
+            alarmFeedbackListeners.remove(alarmFeedbackListener);
+        }
+    }
+
+    private void notifyListeners(List<AlarmFeedback> feedback) {
+        LOG.debug("Notifying listeners {} of feedback {}", alarmFeedbackListeners, feedback);
+        alarmFeedbackListeners.forEach(listener -> {
+            try {
+                LOG.trace("Notifying listener {}", listener);
+                listener.handleAlarmFeedback(feedback);
+            } catch (Exception e) {
+                LOG.warn("Failed to notify listener of alarm feedback", e);
+            }
+        });
+    }
+
+    private List<AlarmFeedback> search(String query) throws FeedbackException {
         Search.Builder builder = new Search.Builder(query).addType(TYPE);
         try {
             return execute(builder.build());
@@ -120,7 +208,7 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
         }
     }
 
-    private Collection<AlarmFeedback> execute(Search search) throws IOException, FeedbackException {
+    private List<AlarmFeedback> execute(Search search) throws IOException, FeedbackException {
         SearchResult result = client.execute(search);
         if (result == null) {
             throw new FeedbackException("Failed to get result");
@@ -138,4 +226,5 @@ public class ElasticFeedbackRepository implements FeedbackRepository {
             initializer.initialize();
         }
     }
+
 }

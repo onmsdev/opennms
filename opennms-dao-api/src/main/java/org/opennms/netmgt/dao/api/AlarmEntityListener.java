@@ -54,6 +54,7 @@ public interface AlarmEntityListener {
     void onAlarmSeverityUpdated(OnmsAlarm alarm, OnmsSeverity previousSeverity);
 
     void onAlarmArchived(OnmsAlarm alarm, String previousReductionKey);
+
     void onAlarmDeleted(OnmsAlarm alarm);
 
     void onStickyMemoUpdated(OnmsAlarm alarm, String previousBody, String previousAuthor, Date previousUpdated);

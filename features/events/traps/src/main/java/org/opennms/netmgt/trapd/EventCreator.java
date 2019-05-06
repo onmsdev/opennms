@@ -31,12 +31,9 @@ package org.opennms.netmgt.trapd;
 import static org.opennms.core.utils.InetAddressUtils.str;
 
 import java.net.InetAddress;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.config.api.EventConfDao;
@@ -76,13 +73,7 @@ class EventCreator {
         eventBuilder.setSnmpHost(str(trapAddress));
         eventBuilder.setInterface(trapAddress);
         eventBuilder.setHost(InetAddressUtils.toIpAddrString(trapDTO.getAgentAddress()));
-        // Adding messagetimestamp and miniontimestamp
-        eventBuilder.addParam("messagetimestamp",
-                             getISOTimeStamp(new java.util.Date(trapDTO.getCreationTime())));
-        eventBuilder.addParam("miniontimestamp",
-        					 getISOTimeStamp(new java.util.Date(trapDTO.getCreationTime())));
 
-        
         // Handle trap identity
         final TrapIdentityDTO trapIdentity = trapDTO.getTrapIdentity();
         if (trapIdentity != null) {
@@ -132,10 +123,4 @@ class EventCreator {
         }
         return cache.getFirstNodeId(location, trapAddress);
     }
-    
-    public static String getISOTimeStamp(Date timeStamp) {
-		Calendar currentCalender = Calendar.getInstance();
-		currentCalender.setTime(timeStamp);
-		return DatatypeConverter.printDateTime(currentCalender);
-	}
 }

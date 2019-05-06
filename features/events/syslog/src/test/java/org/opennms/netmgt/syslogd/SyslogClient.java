@@ -36,6 +36,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.slf4j.Logger;
@@ -85,6 +87,7 @@ public class SyslogClient {
     public static final int LOG_NOWAIT = 0x10; // don't wait for console forks
 
     public static final int PORT = 10514;
+    public int syslogPort = 10514;
 
     private String ident;
     private int facility;
@@ -121,8 +124,8 @@ public class SyslogClient {
     // actually logged.
     // @exception SyslogException if there was a problem
     public void syslog(int priority, String msg) {
-        System.err.println("Sending message: " + msg);
         final DatagramPacket packet = getPacket(priority, msg);
+        System.err.println("Sending message: " + StandardCharsets.US_ASCII.decode(ByteBuffer.wrap(packet.getData())).toString());
         try {
             socket.send(packet);
         }
@@ -137,18 +140,26 @@ public class SyslogClient {
 
     public DatagramPacket getPacket(final int priority, final String msg) {
         byte[] bytes = getPacketPayload(facility, ident, priority, msg);
-        return new DatagramPacket(bytes, bytes.length, address, PORT);
+        return new DatagramPacket(bytes, bytes.length, address, getSyslogPort());
     }
 
     public static byte[] getPacketPayload(final int facility, final String ident, final int priority, final String msg) {
         int pricode = makePriorityCode(facility, priority);
         Integer priObj = Integer.valueOf(pricode);
 
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append("<").append(Integer.toString(priObj.intValue())).append(">");
         sb.append(ident).append(": ").append(msg).append("\0");
 
         return sb.toString().getBytes();
+    }
+
+    public int getSyslogPort() {
+        return syslogPort;
+    }
+
+    public void setSyslogPort(int syslogPort) {
+        this.syslogPort = syslogPort;
     }
 }
