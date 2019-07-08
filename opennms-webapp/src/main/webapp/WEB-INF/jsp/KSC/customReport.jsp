@@ -89,62 +89,62 @@
   }
 </script>
 
-<div class="card">
-  <div class="card-header">
-    <span>Customized Report Configuration</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Customized Report Configuration</h3>
   </div>
-  <div class="card-body">
-    <form class="" name="customize_form" method="get" action="<%= baseHref %>KSC/formProcReport.htm">
+  <div class="panel-body">
+    <form class="form-horizontal" name="customize_form" method="get" action="<%= baseHref %>KSC/formProcReport.htm">
       <input type="hidden" name="<%=FormProcReportController.Parameters.action%>" value="none"/>
       <input type="hidden" name="<%=FormProcReportController.Parameters.graph_index%>" value="-1"/>
       <div class="form-group">
-        <label class="label-control">Title</label>
-        <input class="form-control" type="text" name="<%=FormProcReportController.Parameters.report_title%>" value="${title}" size="80" maxlength="80"/>
+        <div class="col-md-6 col-md-offset-3">
+          <label class="label-control">Title:</label>
+          <input class="form-control" type="text" name="<%=FormProcReportController.Parameters.report_title%>" value="${title}" size="80" maxlength="80"/>
+        </div>
       </div>
-      <table class="table table-sm">
+      <table class="table table-condensed">
         <c:if test="${fn:length(resultSets) > 0}">
           <c:forEach var="graphNum" begin="0" end="${fn:length(resultSets) - 1}">
             <c:set var="resultSet" value="${resultSets[graphNum]}"/>
             <tr>
-              <td align="right" class="w-25">
-                <div class="btn-toolbar" role="toolbar">
-                  <div class="btn-group" role="group">
-                    <button class="btn btn-secondary" onclick="modifyGraph(${graphNum})">Modify</button>
-                    <button class="btn btn-secondary" onclick="deleteGraph(${graphNum})">Delete</button>
-                  </div>
-                </div>
-                <div>
-                  ${resultSet.title}
-                  <br/>
-                  <c:if test="${!empty resultSet.resource.parent}">
-                    ${resultSet.resource.parent.resourceType.label}:
-                    <c:choose>
-                      <c:when test="${!empty resultSet.resource.parent.link}">
-                        <a href="<c:url value='${resultSet.resource.parent.link}'/>">${resultSet.resource.parent.label}</a>
-                      </c:when>
-                      <c:otherwise>
-                        ${resultSet.resource.parent.label}
-                      </c:otherwise>
-                    </c:choose>
-                    <br />
-                  </c:if>
-                  ${resultSet.resource.resourceType.label}:
-                  <c:choose>
-                    <c:when test="${!empty resultSet.resource.link}">
-                      <a href="<c:url value='${resultSet.resource.link}'/>">${resultSet.resource.label}</a>
-                    </c:when>
-                    <c:otherwise>
-                      ${resultSet.resource.label}
-                    </c:otherwise>
-                  </c:choose>
-                  <br/>
-                  <br/>
-                  From: ${resultSet.start}
-                  <br/>
-                  To: ${resultSet.end}
+              <td class="col-md-1">
+                <div class="btn-group-vertical" role="group">
+                  <button class="btn btn-default" onclick="modifyGraph(${graphNum})">Modify</button>
+                  <button class="btn btn-default" onclick="deleteGraph(${graphNum})">Delete</button>
                 </div>
               </td>
-              <td align="left" class="w-75">
+              <td align="right" class="col-md-3">
+                ${resultSet.title}
+                <br/>
+                <c:if test="${!empty resultSet.resource.parent}">
+                  ${resultSet.resource.parent.resourceType.label}:
+                  <c:choose>
+                    <c:when test="${!empty resultSet.resource.parent.link}">
+                      <a href="<c:url value='${resultSet.resource.parent.link}'/>">${resultSet.resource.parent.label}</a>
+                    </c:when>
+                    <c:otherwise>
+                      ${resultSet.resource.parent.label}
+                    </c:otherwise>
+                  </c:choose>
+                  <br />
+                </c:if>
+                ${resultSet.resource.resourceType.label}:
+                <c:choose>
+                  <c:when test="${!empty resultSet.resource.link}">
+                    <a href="<c:url value='${resultSet.resource.link}'/>">${resultSet.resource.label}</a>
+                  </c:when>
+                  <c:otherwise>
+                    ${resultSet.resource.label}
+                  </c:otherwise>
+                </c:choose>
+                <br/>
+                <br/>
+                From: ${resultSet.start}
+                <br/>
+                To: ${resultSet.end}
+              </td>
+              <td align="left" style="col-md-8">
                 <div class="graph-container" data-graph-zoomable="false" data-resource-id="${resultSet.resource.id}" data-graph-name="${resultSet.prefabGraph.name}" data-graph-title="${resultSet.prefabGraph.title}" data-graph-start="${resultSet.start.time}" data-graph-end="${resultSet.end.time}"></div>
               </td>
             </tr>
@@ -183,7 +183,7 @@
             <div class="form-group">
               <div class="col-md-2">
               <label>Number of graphs to show per line in the report.</label>
-              <select class="form-control custom-select" name="<%=FormProcReportController.Parameters.graphs_per_line%>">
+              <select class="form-control" name="<%=FormProcReportController.Parameters.graphs_per_line%>">
                 <c:choose>
                   <c:when test="${graphsPerLine == 0}">
                     <option selected value="0">default</option>
@@ -244,9 +244,9 @@
               </div>
             </div>
             <div class="btn-group">
-              <button type="button" class="btn btn-secondary" onclick="addNewGraph()" alt="Add a new graph to the report">Add New Graph</button>
-              <button type="button" class="btn btn-secondary" onclick="saveReport()" alt="Save the Report to File">Save Report</button>
-              <button type="button" class="btn btn-secondary" onclick="cancelReport()" alt="Cancel the report configuration">Cancel</button>
+              <button type="button" class="btn btn-default" onclick="addNewGraph()" alt="Add a new graph to the report">Add New Graph</button>
+              <button type="button" class="btn btn-default" onclick="saveReport()" alt="Save the Report to File">Save Report</button>
+              <button type="button" class="btn btn-default" onclick="cancelReport()" alt="Cancel the report configuration">Cancel</button>
             </div>
           </td>
         </tr>

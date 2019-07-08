@@ -28,12 +28,13 @@
 
 package org.opennms.smoketest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AboutPageIT extends OpenNMSSeleniumTestCase {
 
@@ -44,12 +45,12 @@ public class AboutPageIT extends OpenNMSSeleniumTestCase {
 
     @Test
     public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
+        assertEquals(4, countElementsMatchingCss("h3.panel-title"));
     }
 
     @Test
     public void hasContent() throws Exception {
-        assertNotNull(m_driver.findElement(By.xpath("//span[text()='License and Copyright']")));
+        assertNotNull(m_driver.findElement(By.xpath("//h3[text()='License and Copyright']")));
         assertNotNull(m_driver.findElement(By.xpath("//th[text()='Version:']")));
     }
 }

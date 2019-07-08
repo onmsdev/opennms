@@ -43,7 +43,7 @@ public interface CollectdMBean extends BaseOnmsMBean {
     public long getActiveThreads();
 
     /**
-     * @return The current number of threads in the pool
+     * @return The active number of collection threads
      */
     public long getNumPoolThreads();
 
@@ -51,11 +51,6 @@ public interface CollectdMBean extends BaseOnmsMBean {
      * @return The maximum number of collection threads
      */
     public long getMaxPoolThreads();
-
-    /**
-     * @return The core number of threads
-     */
-    public long getCorePoolThreads();
 
     /**
      * @return The peak number of collection threads in use.

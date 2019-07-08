@@ -3,9 +3,6 @@
 * @copyright 2014 The OpenNMS Group, Inc.
 */
 
-const RequisitionService = require('./RequisitionService');
-const RequisitionMetaData = require('./RequisitionMetaData');
-
 /**
 * @ngdoc object
 * @name RequisitionInterface
@@ -68,21 +65,25 @@ const RequisitionInterface = function RequisitionInterface(intf) {
   self.services = [];
 
   angular.forEach(intf['monitored-service'], function(svc) {
-    self.services.push(new RequisitionService(svc));
+    self.services.push({ name: svc['service-name'] });
   });
 
   /**
-   * @description The meta-data entries
-   * @ngdoc property
-   * @name RequisitionInterface#metaData
-   * @propertyOf RequisitionInterface
-   * @returns {object} The meta-data entries
-   */
-  self.metaData = new RequisitionMetaData(intf['meta-data']);
+  * @description Adds a new monitored service to the interface
+  *
+  * @name RequisitionInterface:addNewService
+  * @ngdoc method
+  * @methodOf RequisitionInterface
+  * @returns {object} the new service Object
+  */
+  self.addNewService = function() {
+    self.services.push({ name: '' });
+    return self.services.length - 1;
+  };
 
   self.className = 'RequisitionInterface';
 
   return self;
-};
+}
 
 module.exports = RequisitionInterface;

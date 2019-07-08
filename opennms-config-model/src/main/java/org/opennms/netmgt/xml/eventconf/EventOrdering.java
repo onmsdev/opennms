@@ -30,8 +30,6 @@ package org.opennms.netmgt.xml.eventconf;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.base.MoreObjects;
-
 /**
  * @author brozow
  *
@@ -59,10 +57,6 @@ public class EventOrdering implements Comparable<EventOrdering>{
             return m_index - orderIndex.m_index;
         }
         
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("parent", m_ordering).add("idx", m_index).toString();
-        }
     }
     
     private final EventOrdering m_parent;
@@ -117,12 +111,6 @@ public class EventOrdering implements Comparable<EventOrdering>{
         return parent1.compareTo(parent2);
     }
     
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("parent", m_parent)
-                .add("idx", m_sequenceIndex)
-                .toString();
-    }
+    
 
 }

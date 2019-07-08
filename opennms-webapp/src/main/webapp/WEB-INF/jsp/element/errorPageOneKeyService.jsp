@@ -40,7 +40,7 @@
   <jsp:param name="breadcrumb" value="Error" />
 </jsp:include>
 
-<h3>Service  Not Found</h3>
+<h1>Service  Not Found</h1>
 
 <p>
   The service is invalid. No such service in database with service ID ${ifServiceId}

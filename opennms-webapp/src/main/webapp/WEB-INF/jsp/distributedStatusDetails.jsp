@@ -43,11 +43,11 @@
 
 <c:choose>
   <c:when test="${webTable.errors.errorCount > 0}">
-    <div class="card">
-      <div class="card-header">
-        <span><spring:message code="error"/></span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><spring:message code="error"/></h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <ul class="error">
           <c:forEach var="err" items="${webTable.errors.allErrors}">
             <li><spring:message code="${err.code}" arguments="${err.arguments}"/></li>
@@ -58,11 +58,11 @@
   </c:when>
   
   <c:otherwise>
-    <div class="card">
-      <div class="card-header">
-        <span>${webTable.title}</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">${webTable.title}</h3>
       </div>
-      <table class="table table-sm table-bordered severity">
+      <table class="table table-condensed table-bordered severity">
         <tr>
           <c:forEach items="${webTable.columnHeaders}" var="headerCell">
             <th class="${headerCell.styleClass}">

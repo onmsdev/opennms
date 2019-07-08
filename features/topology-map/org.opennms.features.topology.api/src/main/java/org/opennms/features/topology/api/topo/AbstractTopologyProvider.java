@@ -211,13 +211,21 @@ public abstract class AbstractTopologyProvider extends DelegatingVertexEdgeProvi
     }
     
     public List<Vertex> getVerticesWithoutGroups() {
-        return new ArrayList<>(
-                Collections2.filter(getVertices(), input -> input != null && !input.isGroup()));
+        return new ArrayList<Vertex>(
+                Collections2.filter(getVertices(), new Predicate<Vertex>() {
+                    public boolean apply(Vertex input) {
+                        return input != null && !input.isGroup();
+                    };
+                }));
     }
     
     public List<Vertex> getGroups() {
-        return new ArrayList<>(
-                Collections2.filter(getVertices(), input -> input != null && input.isGroup()));
+        return new ArrayList<Vertex>(
+                Collections2.filter(getVertices(), new Predicate<Vertex>() {
+                    public boolean apply(Vertex input) {
+                        return input != null && input.isGroup();
+                    };
+                }));
     }
 
     @Override

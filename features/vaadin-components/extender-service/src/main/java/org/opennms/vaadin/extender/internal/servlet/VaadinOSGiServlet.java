@@ -1,7 +1,12 @@
 package org.opennms.vaadin.extender.internal.servlet;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.servlet.ServletException;
+
+import org.opennms.vaadin.extender.ApplicationFactory;
 import org.opennms.vaadin.extender.SessionListenerRepository;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
@@ -15,18 +20,18 @@ import com.vaadin.server.SessionDestroyEvent;
 import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
-import com.vaadin.server.UIProvider;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletService;
 import com.vaadin.server.VaadinSession;
 
 public class VaadinOSGiServlet extends VaadinServlet {
-    private final UIProvider m_provider;
+    private final OSGiUIProvider m_provider;
+    private final Set<VaadinSession> m_sessions = Collections.synchronizedSet(new HashSet<VaadinSession>());
     private final org.slf4j.Logger LOG = LoggerFactory.getLogger(getClass());
     private final BundleContext m_context;
 
-    public VaadinOSGiServlet(final UIProvider uiProvider, BundleContext bundleContext) {
-        m_provider = Objects.requireNonNull(uiProvider);
+    public VaadinOSGiServlet(final ApplicationFactory factory, BundleContext bundleContext) {
+        m_provider = new OSGiUIProvider(factory);
         m_context = bundleContext;
     }
 
@@ -38,6 +43,7 @@ public class VaadinOSGiServlet extends VaadinServlet {
             @Override
             public void sessionInit(SessionInitEvent event) throws ServiceException {
                 final VaadinSession session = event.getSession();
+                m_sessions.add(session);
                 if(session.getUIProviders().isEmpty() || !session.getUIProviders().contains(m_provider)) {
                     session.addUIProvider(m_provider);
                 }
@@ -48,6 +54,7 @@ public class VaadinOSGiServlet extends VaadinServlet {
             @Override
             public void sessionDestroy(SessionDestroyEvent event) {
                 final VaadinSession session = event.getSession();
+                m_sessions.remove(session);
                 if (session.getUIProviders().contains(m_provider)) {
                     session.removeUIProvider(m_provider);
                 }
@@ -87,4 +94,18 @@ public class VaadinOSGiServlet extends VaadinServlet {
         });
         return service;
     }
+
+    @Override
+    protected void servletInitialized() throws ServletException {
+        LOG.info("Servlet Initialized");
+    }
+    
+    @Override
+    public void destroy() {
+        for (final VaadinSession vaadinSession : m_sessions) {
+            vaadinSession.removeFromSession(vaadinSession.getService());
+        }
+        super.destroy();
+    }
+
 }

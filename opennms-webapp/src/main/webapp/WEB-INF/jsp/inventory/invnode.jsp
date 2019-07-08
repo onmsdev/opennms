@@ -52,11 +52,11 @@
 <div class="row">
     <div class="col-md-6">
         <!-- general info box -->
-        <div class="card">
-            <div class="card-header">
-                <span>General (Status: ${model.status_general})</span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">General (Status: ${model.status_general})</h3>
             </div>
-            <table class="table table-sm mb-0">
+            <table class="table table-condensed table-bordered">
                 <tr>
                     <th>Node</th>
                     <td><a href="element/node.jsp?node=${model.db_id}">${model.id}</a></td>
@@ -72,12 +72,12 @@
             </table>
 	    </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span>Rancid info</span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Rancid info</h3>
             </div>
 
-            <table class="table table-sm mb-0">
+            <table class="table table-condensed table-bordered">
                 <tr>
                     <th>Group Name</th>
                     <td>${model.groupname}</td>
@@ -101,13 +101,13 @@
             </table>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span>Configuration info</span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Configuration info</h3>
             </div>
 
 
-            <table class="table table-sm mb-0">
+            <table class="table table-condensed table-bordered">
                 <tr>
                     <th>Host(version)</th>
                 </tr>
@@ -122,14 +122,14 @@
     </div>
     <div class="col-md-6">
         <!-- general info box -->
-        <div class="card">
-            <div class="card-header">
-                <span>Inventory Items</span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Inventory Items</h3>
             </div>
-            <div class="card-body">
+            <div class="panel-body">
                 <c:forEach items="${model.inventory}" var="invel" varStatus="status">
                     <h3>Item ${status.count}</h3>
-                    <table class="table table-sm mb-0">
+                    <table class="table table-condensed table-bordered">
                         <c:forEach items="${invel.tupleList}" var="tup">
                             <tr>
                                 <th width="50%">${tup.name}</th>

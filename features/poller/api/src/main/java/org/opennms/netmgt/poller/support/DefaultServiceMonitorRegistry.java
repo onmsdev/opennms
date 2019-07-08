@@ -28,6 +28,7 @@
 
 package org.opennms.netmgt.poller.support;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -37,8 +38,6 @@ import org.opennms.netmgt.poller.ServiceMonitor;
 import org.opennms.netmgt.poller.ServiceMonitorRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * <p>
@@ -111,7 +110,7 @@ public class DefaultServiceMonitorRegistry implements ServiceMonitorRegistry {
 
     @Override
     public Set<String> getMonitorClassNames() {
-        return ImmutableSet.copyOf(m_monitorsByClassName.keySet());
+        return Collections.unmodifiableSet(m_monitorsByClassName.keySet());
     }
 
     private static String getClassName(Map<?, ?> properties) {

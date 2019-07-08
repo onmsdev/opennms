@@ -41,8 +41,8 @@
 
     <service id="surveillanceViewsService" interface="org.opennms.vaadin.extender.ApplicationFactory" ref="surveillanceViewsUIFactory">
         <service-properties>
-            <entry key="osgi.http.whiteboard.servlet.pattern" value="/vaadin-surveillance-views/*"/>
-            <entry key="servlet.init.widgetset" value="org.opennms.vaadin.DefaultWidgetset"/>
+            <entry key="alias" value="/vaadin-surveillance-views"/>
+            <entry key="init.widgetset" value="org.opennms.features.vaadin.surveillanceviews.SurveillanceViewsWidgetSet"/>
         </service-properties>
     </service>
 
@@ -64,8 +64,7 @@
 
     <service interface="org.opennms.vaadin.extender.ApplicationFactory" ref="surveillanceViewsConfigUIFactory">
         <service-properties>
-            <entry key="osgi.http.whiteboard.servlet.pattern" value="/admin/vaadin-surveillance-views-config/*"/>
-            <entry key="servlet.init.widgetset" value="org.opennms.vaadin.DefaultWidgetset"/>
+            <entry key="alias" value="/admin/vaadin-surveillance-views-config"/>
         </service-properties>
     </service>
 

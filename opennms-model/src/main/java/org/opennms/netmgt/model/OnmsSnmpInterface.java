@@ -58,8 +58,7 @@ import org.opennms.core.utils.AlphaNumeric;
 import org.opennms.core.utils.RrdLabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * <p>OnmsSnmpInterface class.</p>
@@ -523,22 +522,22 @@ public class OnmsSnmpInterface extends OnmsEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("snmpphysaddr", getPhysAddr())
-            .add("snmpifindex", getIfIndex())
-            .add("snmpifdescr", getIfDescr())
-            .add("snmpiftype", getIfType())
-            .add("snmpifname", getIfName())
-            .add("snmpifspeed", getIfSpeed())
-            .add("snmpifadminstatus", getIfAdminStatus())
-            .add("snmpifoperstatus", getIfOperStatus())
-            .add("snmpifalias", getIfAlias())
-            .add("snmpCollect", getCollect())
-            .add("snmpPoll", getPoll())
-            .add("nodeId", getNode() == null ? null : getNode().getId())
-            .add("lastCapsdPoll", getLastCapsdPoll())
-            .add("lastSnmpPoll", getLastSnmpPoll())
-            .add("hasFlows", getHasFlows())
+        return new ToStringCreator(this)
+            .append("snmpphysaddr", getPhysAddr())
+            .append("snmpifindex", getIfIndex())
+            .append("snmpifdescr", getIfDescr())
+            .append("snmpiftype", getIfType())
+            .append("snmpifname", getIfName())
+            .append("snmpifspeed", getIfSpeed())
+            .append("snmpifadminstatus", getIfAdminStatus())
+            .append("snmpifoperstatus", getIfOperStatus())
+            .append("snmpifalias", getIfAlias())
+            .append("snmpCollect", getCollect())
+            .append("snmpPoll", getPoll())
+            .append("nodeId", getNode() == null ? null : getNode().getId())
+            .append("lastCapsdPoll", getLastCapsdPoll())
+            .append("lastSnmpPoll", getLastSnmpPoll())
+            .append("hasFlows", getHasFlows())
             .toString();
     }
 

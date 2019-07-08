@@ -56,8 +56,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 
 import org.hibernate.annotations.DiscriminatorOptions;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * <p>Represents an OpenNMS monitoring system that can poll status of nodes
@@ -285,12 +284,12 @@ public class OnmsMonitoringSystem implements Serializable {
      */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("id", getId())
-            .add("label", getLabel())
-            .add("location", getLocation())
-            .add("type", getType())
-            //.add("ipAddress", str(getIpAddress()))
+        return new ToStringCreator(this)
+            .append("id", getId())
+            .append("label", getLabel())
+            .append("location", getLocation())
+            .append("type", getType())
+            //.append("ipAddress", str(getIpAddress()))
             .toString();
     }
 }

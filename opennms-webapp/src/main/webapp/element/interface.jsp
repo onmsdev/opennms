@@ -151,22 +151,22 @@ if (request.isUserInRole( Authentication.ROLE_ADMIN )) {
 
 <ul class="list-inline">
   <% if (! ipAddr.equals("0.0.0.0")) { %>
-    <li class="list-inline-item">
+    <li>
       <a href="<c:out value="${eventUrl1}"/>">View Events by IP Address</a>
     </li>
   <% } %>
   <% if (ifIndex > 0 ) { %>
-    <li class="list-inline-item">
+    <li>
       <a href="<c:out value="${eventUrl2}"/>">View Events by ifIndex</a>
     </li>
   <% } %>
   <% if( telnetIp != null ) { %>
-    <li class="list-inline-item">
+    <li>
       <a href="telnet://<%=telnetIp%>">Telnet</a>
     </li>
   <% } %>
   <% if( httpIp != null ) { %>
-    <li class="list-inline-item">
+    <li>
       <a href="http://<%=httpIp%>">HTTP</a>
     </li>
   <% } %>
@@ -186,32 +186,23 @@ if (request.isUserInRole( Authentication.ROLE_ADMIN )) {
       <c:param name="reports" value="all"/>
       <c:param name="resourceId" value="<%=ipaddrResourceId.toString()%>"/>
     </c:url>
-    <li class="list-inline-item">
+    <li>
       <a href="<c:out value="${ipaddrGraphLink}"/>">Response Time Graphs</a>
     </li>
     <c:url var="snmpintfGraphLink" value="graph/results.htm">
       <c:param name="reports" value="all"/>
       <c:param name="resourceId" value="<%=snmpintfResourceId.toString()%>"/>
     </c:url>
-    <li class="list-inline-item">
+    <li>
       <a href="<c:out value="${snmpintfGraphLink}"/>">SNMP Interface Data Graphs</a>
     </li>
-
-    <c:url var="metaDataLink" value="element/interface-metadata.jsp">
-      <c:param name="node" value="<%=String.valueOf(nodeId)%>"/>
-      <c:param name="ipAddr" value="<%=ipAddr%>"/>
-    </c:url>
-    <li class="list-inline-item">
-      <a href="<c:out value="${metaDataLink}"/>">Meta-Data</a>
-    </li>
-
   <% if (request.isUserInRole( Authentication.ROLE_ADMIN )) { %>
-    <li class="list-inline-item">
+    <li>
       <a href="admin/deleteInterface" onClick="return doDelete()">Delete</a>
     </li>
   <% } %>
   <% if (request.isUserInRole( Authentication.ROLE_ADMIN )) { %>
-    <li class="list-inline-item">
+    <li>
       <c:url var="rescanUrl" value="element/rescan.jsp">
         <c:param name="node" value="<%=String.valueOf(nodeId)%>"/>
         <c:param name="ipaddr" value="<%=ipAddr%>"/>
@@ -220,7 +211,7 @@ if (request.isUserInRole( Authentication.ROLE_ADMIN )) {
     </li>
   <% } %>
   <% if (request.isUserInRole( Authentication.ROLE_ADMIN )) { %>
-    <li class="list-inline-item">
+    <li>
       <c:url var="schedOutageUrl" value="admin/sched-outages/editoutage.jsp">
         <c:param name="newName" value="<%=ipAddr%>"/>
         <c:param name="addNew" value="true"/>
@@ -239,12 +230,12 @@ if (request.isUserInRole( Authentication.ROLE_ADMIN )) {
 
   <div class="col-md-6"> <!-- content-right -->
 
-    <div class="card">
-      <div class="card-header">
-        <span>General</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">General</h3>
       </div>
       <!-- general info box -->
-      <table class="table table-sm">
+      <table class="table table-condensed">
         <tr>
           <th>Node</th>
           <td><a href="element/node.jsp?node=<%=intf_db.getNodeId()%>"><%=node.getLabel()%></a></td>

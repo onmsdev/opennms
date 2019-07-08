@@ -29,16 +29,16 @@
 package org.opennms.netmgt.telemetry.config.dao;
 
 import org.opennms.core.xml.AbstractJaxbConfigDao;
-import org.opennms.netmgt.telemetry.config.model.TelemetrydConfig;
+import org.opennms.netmgt.telemetry.config.model.TelemetrydConfiguration;
 
-public class TelemetrydConfigDao extends AbstractJaxbConfigDao<TelemetrydConfig, TelemetrydConfig> {
+public class TelemetrydConfigDao extends AbstractJaxbConfigDao<TelemetrydConfiguration, TelemetrydConfiguration> {
 
     public TelemetrydConfigDao() {
-        super(TelemetrydConfig.class, "Telemetryd configuration");
+        super(TelemetrydConfiguration.class, "Telemetryd configuration");
     }
 
     @Override
-    protected TelemetrydConfig translateConfig(TelemetrydConfig config) {
+    protected TelemetrydConfiguration translateConfig(TelemetrydConfiguration config) {
         return config;
     }
 }

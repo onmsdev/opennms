@@ -164,28 +164,34 @@ action="admin/notification/destinationWizard" >
 <input type="hidden" name="sourcePage" value="chooseTargets.jsp"/>
 <input type="hidden" name="nextPage"/>
 
-<div class="card">
-  <div class="card-header">
-    <span>Choose the users and groups to send the notice to.</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Choose the users and groups to send the notice to.</h3>
   </div>
-  <table class="table table-sm table-borderless">
+  <table class="table table-condensed table-borderless">
         <tr>
-          <td><h3>Send to Selected Users:</h3></td>
-          <td><h3>Send to Selected Groups:</h3></td>
-          <td><h3>Send to Selected Roles:</h3></td>
-          <td><h3>Send to Email Addresses:</h3></td>
+          <td valign="top"><h3>Send to Selected Users:</h3></td>
+          <td>&nbsp;</td>
+          <td valign="top"><h3>Send to Selected Groups:</h3></td>
+          <td>&nbsp;</td>
+          <td valign="top"><h3>Send to Selected Roles:</h3></td>
+          <td>&nbsp;</td>
+          <td valign="top"><h3>Send to Email Addresses:</h3></td>
         </tr>
         <tr>
-          <td>Highlight each user that needs to receive the notice.</td>
-          <td>Highlight each group that needs to receive the notice. Each user in the group
+          <td valign="top">Highlight each user that needs to receive the notice.</td>
+          <td>&nbsp;</td>
+          <td valign="top">Highlight each group that needs to receive the notice. Each user in the group
               will receive the notice.</td>
-          <td>Highlight each role that needs to receive the notice. The users scheduled for the time that the notification comes in
+          <td>&nbsp;</td>
+          <td valign="top">Highlight each role that needs to receive the notice. The users scheduled for the time that the notification comes in
               will receive the notice.</td>
-          <td>Add any email addresses you want the notice to be sent to.</td>
+          <td>&nbsp;</td>
+          <td valign="top">Add any email addresses you want the notice to be sent to.</td>
         </tr>
         <tr>
-          <td width="25%">
-            <select class="form-control custom-select" name="users" multiple>
+          <td width="25%" valign="top" align="left">
+            <select class="form-control" name="users" size="10" multiple>
              <%
                          for (Map.Entry<String,Boolean> entry : getUsers(targets).entrySet()) {
                              String key = entry.getKey();
@@ -202,8 +208,9 @@ action="admin/notification/destinationWizard" >
             %>
             </select>
           </td>
-          <td width="25%">
-            <select class="form-control custom-select" name="groups" multiple>
+          <td>&nbsp;</td>
+          <td width="25%" valign="top" align="left">
+            <select class="form-control" name="groups" size="10" multiple>
              <%
                          for (Map.Entry<String,Boolean> entry : getGroups(targets).entrySet()) {
                              String key = entry.getKey();
@@ -220,8 +227,9 @@ action="admin/notification/destinationWizard" >
             %>
             </select>
            </td>
-          <td width="25%">
-            <select class="form-control custom-select" name="roles" multiple>
+           <td>&nbsp;</td>
+          <td width="25%" valign="top" align="left">
+            <select class="form-control" name="roles" size="10" multiple>
              <%
                      for (Map.Entry<String,Boolean> entry : getRoles(targets).entrySet()) {
                          String key = entry.getKey();
@@ -238,8 +246,11 @@ action="admin/notification/destinationWizard" >
             %>
             </select>
            </td>
-           <td width="25%">
-            <select class="form-control custom-select mb-3" name="emails" multiple>
+           <td>&nbsp;</td>
+           <td width="25%" valign="top" align="left">
+            <input type="button" class="btn btn-default" value="Add Address" onclick="javascript:addAddress()"/>
+            <br/>&nbsp;<br/>
+            <select class="form-control" name="emails" size="7" multiple>
              <%
                  for (String key : getEmails(targets).keySet()) {
              %>
@@ -248,15 +259,19 @@ action="admin/notification/destinationWizard" >
             }
             %>
             </select>
-            <input type="button" class="btn btn-secondary" value="Add Address" onclick="javascript:addAddress()"/>
-            <input type="button" class="btn btn-secondary" value="Remove Selected Addresses" onclick="javascript:removeAddress()"/>
+            <br/>
+            <input type="button" class="btn btn-default" value="Remove Address" onclick="javascript:removeAddress()"/>
             </td>
             
         </tr>
+        <tr>
+          <td colspan="2">
+            <input type="reset" class="btn btn-default"/>
+          </td>
+        </tr>
   </table>
-  <div class="card-footer">
-      <input type="reset" class="btn btn-secondary"/>
-      <a class="btn btn-secondary" href="javascript:next()">Next Step <i class="fa fa-arrow-right"></i></a>
+  <div class="panel-footer">
+    <a href="javascript:next()">Next &#155;&#155;&#155;</a>
   </div>
 </div> <!-- panel -->
 

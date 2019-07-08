@@ -95,17 +95,17 @@
   <jsp:param name="breadcrumb" value="Interface Deleted" />
 </jsp:include>
 
-<div class="card">
-  <div class="card-header">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <% if (ifIndex == -1) { %>
-    <span>Finished Deleting Interface <%= ipAddr %></span>
+    <h3 class="panel-title">Finished Deleting Interface <%= ipAddr %></h3>
     <% } else if (!"0.0.0.0".equals(ipAddr) && ipAddr != null && ipAddr.length() !=0){ %>
-    <span>Finished Deleting Interface <%= ipAddr %> with ifIndex <%= ifIndex %></span>
+    <h3 class="panel-title">Finished Deleting Interface <%= ipAddr %> with ifIndex <%= ifIndex %></h3>
     <% } else { %>
-    <span>Finished Deleting Interface with ifIndex <%= ifIndex %></span>
+    <h3 class="panel-title">Finished Deleting Interface with ifIndex <%= ifIndex %></h3>
     <% } %>
   </div>
-  <div class="card-body">
+  <div class="panel-body">
     <p>
       OpenNMS should not need to be restarted, but it may take a moment for
       the Categories to be updated.

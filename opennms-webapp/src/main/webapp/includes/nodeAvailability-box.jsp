@@ -95,11 +95,11 @@
     Outage[] outages = OutageModel.getCurrentOutagesForNode(nodeId);
 %>
 
-<div id="availability-box" class="card">
-  <div class="card-header">
-    <span>Availability</span>
+<div id="availability-box" class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Availability</h3>
   </div>
-  <table class="table table-sm severity">
+  <table class="table table-condensed severity">
     <tr>
 <%
   if (overallRtcValue < 0) {

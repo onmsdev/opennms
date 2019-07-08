@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2007-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2007-2014 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -189,8 +189,7 @@ public class RrdStatisticAttributeVisitorTest extends TestCase {
         FetchResults results = new FetchResults(new long[] {m_startTime},
                                                 Collections.singletonMap("result", new double[] {1.0}),
                                                 m_endTime - m_startTime,
-                                                Collections.emptyMap(),
-                                                null);
+                                                Collections.emptyMap());
 
         expect(m_fetchStrategy.fetch(m_startTime,
                                      m_endTime,
@@ -248,8 +247,7 @@ public class RrdStatisticAttributeVisitorTest extends TestCase {
         FetchResults results = new FetchResults(new long[] {},
                                                 Collections.singletonMap("result", new double[] {}),
                                                 m_endTime - m_startTime,
-                                                Collections.emptyMap(),
-                                                null);
+                                                Collections.emptyMap());
         expect(m_fetchStrategy.fetch(m_startTime,
                                      m_endTime,
                                      1,
@@ -305,8 +303,7 @@ public class RrdStatisticAttributeVisitorTest extends TestCase {
                 .andReturn(new FetchResults(new long[]{m_startTime},
                                             Collections.singletonMap("result", new double[]{1.0}),
                                             m_endTime - m_startTime,
-                                            Collections.emptyMap(),
-                                            null));
+                                            Collections.emptyMap()));
         m_statisticVisitor.visit(attribute, 1.0);
 
         expect(m_fetchStrategy.fetch(m_startTime,
@@ -320,8 +317,7 @@ public class RrdStatisticAttributeVisitorTest extends TestCase {
                 .andReturn(new FetchResults(new long[]{m_startTime},
                                             Collections.singletonMap("result", new double[]{2.0}),
                                             m_endTime - m_startTime,
-                                            Collections.emptyMap(),
-                                            null));
+                                            Collections.emptyMap()));
         m_statisticVisitor.visit(attribute, 2.0);
 
         m_mocks.replayAll();

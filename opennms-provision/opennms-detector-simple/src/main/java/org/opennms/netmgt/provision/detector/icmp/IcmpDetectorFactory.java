@@ -28,8 +28,6 @@
 
 package org.opennms.netmgt.provision.detector.icmp;
 
-import java.util.Map;
-
 import org.opennms.netmgt.icmp.PingerFactory;
 import org.opennms.netmgt.provision.support.GenericServiceDetectorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +44,8 @@ public class IcmpDetectorFactory extends GenericServiceDetectorFactory<IcmpDetec
     }
 
     @Override
-    public IcmpDetector createDetector(Map<String, String> properties) {
+    public IcmpDetector createDetector() {
         final IcmpDetector detector = new IcmpDetector();
-        setBeanProperties(detector, properties);
         detector.setPingerFactory(pingerFactory);
         return detector;
     }

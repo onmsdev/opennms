@@ -5,20 +5,20 @@
 
 <div id="onms-search">
 
-  <div class="card">
-    <div class="card-header">
-      <span><a href="graph/index.jsp">Resource Graphs</a></span>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><a href="graph/index.jsp">Resource Graphs</a></h3>
     </div>
-    <div class="card-body">
+    <div class="panel-body">
       <onms-search-nodes />
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <span><a href="KSC/index.jsp">KSC Reports</a></span>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><a href="KSC/index.jsp">KSC Reports</a></h3>
     </div>
-    <div class="card-body">
+    <div class="panel-body">
       <onms-search-ksc />
     </div>
   </div>

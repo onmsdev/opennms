@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.opennms.core.xml.ValidateUsing;
 import org.opennms.netmgt.config.utils.ConfigUtils;
 
-import com.google.common.base.MoreObjects;
-
 /**
  * The mask element
  */
@@ -212,14 +210,6 @@ public class Maskelement implements Serializable {
             return EventMatchers.or(matchers);
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("name", m_name)
-                .add("values", m_values)
-                .toString();
-    }
+    }	
 
 }

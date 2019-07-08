@@ -41,10 +41,7 @@ import java.util.stream.IntStream;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.junit.Rule;
 import org.junit.Test;
-import org.opennms.core.test.elastic.ElasticSearchRule;
-import org.opennms.core.test.elastic.ElasticSearchServerConfig;
 import org.opennms.netmgt.dao.api.DistPollerDao;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.model.OnmsSeverity;
@@ -222,7 +219,7 @@ public class AlarmEventToIndexTest extends AbstractEventToIndexTest {
 
 		final String query = buildSearchQuery(eventId);
 		final Search search = new Search.Builder(query)
-				.addIndex("opennms-opennms-events-raw-*")
+				.addIndex("opennms-events-raw-*")
 				.build();
 		final SearchResult result = jestClient.execute(search);
 		assertEquals(200, result.getResponseCode());
@@ -243,7 +240,7 @@ public class AlarmEventToIndexTest extends AbstractEventToIndexTest {
 
 		final String query = buildSearchQuery(eventId);
 		final Search search = new Search.Builder(query)
-				.addIndex("opennms-opennms-events-raw-*")
+				.addIndex("opennms-events-raw-*")
 				.build();
 		final SearchResult result = jestClient.execute(search);
 		assertEquals(200, result.getResponseCode());
@@ -291,7 +288,7 @@ public class AlarmEventToIndexTest extends AbstractEventToIndexTest {
 		// ... and verify that the json was actually persisted as json and not as string
 		final String query = buildSearchQuery(eventId);
 		final Search search = new Search.Builder(query)
-				.addIndex("opennms-opennms-events-raw-*")
+				.addIndex("opennms-events-raw-*")
 				.build();
 		final SearchResult result = jestClient.execute(search);
 		assertEquals(200, result.getResponseCode());

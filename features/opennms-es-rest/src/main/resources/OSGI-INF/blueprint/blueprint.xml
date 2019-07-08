@@ -25,7 +25,6 @@
       <cm:property name="nodeDiscoveryFrequency" value="0" />
       <cm:property name="proxy" value=""/>
       <cm:property name="retryCooldown" value="500" />
-      <cm:property name="httpCompression" value="false"/>
       <cm:property name="connTimeout" value="5000" /> <!-- 5 second timeout for Elasticsearch operations -->
       <cm:property name="readTimeout" value="30000" /> <!-- 30 second timeout for Elasticsearch socket reads -->
       <cm:property name="retries" value="0" /> <!-- Disable retries by default -->
@@ -45,7 +44,6 @@
       <cm:property name="archiveNewAlarmValues" value="true" />
       <cm:property name="archiveAssetData" value="true" />
       <cm:property name="groupOidParameters" value="false" />
-      <cm:property name="eventIndexName" value="opennms" />
 
       <!-- Bulk Action Retry settings -->
       <cm:property name="bulkRetryCount" value="5" /> <!-- Number of retries until a bulk operation is considered failed -->
@@ -105,7 +103,6 @@
     <property name="discovery" value="${nodeDiscovery}" />
     <property name="discoveryFrequency" value="${nodeDiscoveryFrequency}" />
     <property name="proxy" value="${proxy}" />
-    <property name="httpCompression" value="${httpCompression}" />
     <property name="credentials" ref="credentialsProvider" />
     <property name="requestExecutorFactory" ref="requestExecutorFactory" />
     <property name="connTimeout" value="${connTimeout}" />
@@ -139,7 +136,6 @@
     <property name="archiveOldAlarmValues" value="${archiveOldAlarmValues}" />
     <property name="archiveNewAlarmValues" value="${archiveNewAlarmValues}" />
     <property name="groupOidParameters" value="${groupOidParameters}" />
-    <property name="eventIndexName" value="${eventIndexName}" />
   </bean>
 
   <bean id="elasticSearchInitializer" class="org.opennms.plugins.elasticsearch.rest.template.DefaultTemplateInitializer">

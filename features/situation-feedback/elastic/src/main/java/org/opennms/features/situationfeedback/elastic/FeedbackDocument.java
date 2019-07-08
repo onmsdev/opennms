@@ -27,9 +27,6 @@
  *******************************************************************************/
 package org.opennms.features.situationfeedback.elastic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opennms.features.situationfeedback.api.AlarmFeedback;
 import org.opennms.features.situationfeedback.api.AlarmFeedback.FeedbackType;
 
@@ -65,12 +62,6 @@ public class FeedbackDocument {
 
     @SerializedName("reason")
     private String reason;
-
-    @SerializedName("root_cause")
-    private Boolean isRootCause;
-
-    @SerializedName("tags")
-    private List<String> tags = new ArrayList<>();
 
     @SerializedName("user")
     private String user;
@@ -127,22 +118,6 @@ public class FeedbackDocument {
         this.reason = reason;
     }
 
-    public Boolean getIsRootCause() {
-        return isRootCause;
-    }
-
-    public void setIsRootCause(Boolean isRootCause) {
-        this.isRootCause = isRootCause;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    private void setTags(List<String> tags) {
-        this.tags.addAll(tags);
-    }
-
     public String getUser() {
         return user;
     }
@@ -153,29 +128,18 @@ public class FeedbackDocument {
 
     public static FeedbackDocument from(AlarmFeedback feedback) {
         FeedbackDocument doc = new FeedbackDocument();
-        doc.setTimestamp(feedback.getTimestamp());
+        doc.setTimestamp(System.currentTimeMillis());
         doc.setAlarmKey(feedback.getAlarmKey());
         doc.setFeedbackType(feedback.getFeedbackType().toString());
         doc.setReason(feedback.getReason());
         doc.setSituationFingerprint(feedback.getSituationFingerprint());
         doc.setSituationKey(feedback.getSituationKey());
-        doc.setIsRootCause(feedback.getRootCause());
-        doc.setTags(feedback.getTags());
         doc.setUser(feedback.getUser());
         return doc;
     }
 
     public static AlarmFeedback toAlarmFeedback(FeedbackDocument doc) {
-        return AlarmFeedback.newBuilder()
-                .withSituationKey(doc.situationKey)
-                .withSituationFingerprint(doc.situationFingerprint)
-                .withAlarmKey(doc.alarmKey)
-                .withFeedbackType(FeedbackType.valueOfOrUnknown(doc.feedbackType))
-                .withReason(doc.reason)
-                .withRootCause(doc.isRootCause)
-                .withUser(doc.user)
-                .withTags(doc.tags)
-                .withTimestamp(doc.timestamp)
-                .build();
+        return new AlarmFeedback(doc.situationKey, doc.situationFingerprint, doc.alarmKey, FeedbackType.getType(doc.feedbackType), doc.reason, doc.user,
+                                 doc.timestamp);
     }
 }

@@ -33,10 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import org.opennms.core.rpc.api.RpcRequest;
-import org.opennms.core.rpc.utils.mate.FallbackScope;
-import org.opennms.core.rpc.utils.mate.Interpolator;
-import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.provision.DetectRequest;
 import org.opennms.netmgt.provision.DetectorRequestBuilder;
 import org.opennms.netmgt.provision.ServiceDetector;
@@ -92,7 +88,7 @@ public class DetectorRequestBuilderImpl implements DetectorRequestBuilder {
         if (detector == null) {
             throw new IllegalArgumentException("No detector found with service name '" + serviceName + "'.");
         }
-        this.className = client.getRegistry().getDetectorClassNameFromServiceName(serviceName);
+        this.className = detector.getClass().getCanonicalName();
         return this;
     }
 
@@ -132,11 +128,6 @@ public class DetectorRequestBuilderImpl implements DetectorRequestBuilder {
             throw new IllegalArgumentException("Detector class name is required.");
         }
 
-        final Map<String, String> interpolatedAttributes = Interpolator.interpolateStrings(attributes, new FallbackScope(
-                this.client.getEntityScopeProvider().getScopeForNode(nodeId),
-                this.client.getEntityScopeProvider().getScopeForInterface(nodeId, InetAddressUtils.toIpAddrString(address))
-        ));
-
         // Retrieve the factory associated with the requested detector
         final ServiceDetectorFactory<?> factory = client.getRegistry().getDetectorFactoryByClassName(className);
         if (factory == null) {
@@ -150,13 +141,11 @@ public class DetectorRequestBuilderImpl implements DetectorRequestBuilder {
         detectorRequestDTO.setSystemId(systemId);
         detectorRequestDTO.setClassName(className);
         detectorRequestDTO.setAddress(address);
-        detectorRequestDTO.addDetectorAttributes(interpolatedAttributes);
-        detectorRequestDTO.addTracingInfo(RpcRequest.TAG_CLASS_NAME, className);
-        detectorRequestDTO.addTracingInfo(RpcRequest.TAG_IP_ADDRESS, InetAddressUtils.toIpAddrString(address));
+        detectorRequestDTO.addDetectorAttributes(attributes);
 
         // Attempt to extract the port from the list of attributes
         Integer port = null;
-        final String portString = interpolatedAttributes.get(PORT);
+        final String portString = attributes.get(PORT);
         if (portString != null) {
             try {
                 port = Integer.parseInt(portString);
@@ -166,7 +155,7 @@ public class DetectorRequestBuilderImpl implements DetectorRequestBuilder {
         }
 
         // Build the DetectRequest and store the runtime attributes in the DTO
-        final DetectRequest request = factory.buildRequest(location, address, port, interpolatedAttributes);
+        final DetectRequest request = factory.buildRequest(location, address, port, attributes);
         detectorRequestDTO.addRuntimeAttributes(request.getRuntimeAttributes());
 
         // Execute the request

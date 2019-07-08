@@ -54,21 +54,17 @@
 
 <div class="row">
   <div class="col-md-6">
-      <div class="card">
-      <div class="card-header">
-      	<span>Event Queries</span>
+      <div class="panel panel-default">
+      <div class="panel-heading">
+      	<h3 class="panel-title">Event Queries</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <%--<jsp:include page="/includes/event-querypanel.jsp" flush="false" />--%>
-        <form action="event/detail.jsp" method="get" role="form" class="form pull-right">
+        <form action="event/detail.jsp" method="get" role="form" class="form-inline pull-right">
           <div class="form-group">
-            <label for="byeventid_id">Event ID</label>
-              <div class="input-group">
-                  <input type="text" class="form-control" name="id" id="byeventid_id"/>
-                  <div class="input-group-append">
-                      <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
-                  </div>
-              </div>
+            <label for="byeventid_id">Event ID:</label>
+            <input type="text" class="form-control" name="id" id="byeventid_id"/>
+            <button type="submit" class="btn btn-default">Get details</button>
           </div>                
         </form>
 
@@ -79,16 +75,16 @@
       </div>
     </div>
 
-    <div class="card">
-    <div class="card-header">
-    	<span>Event Filter Favorites</span>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+    	<h3 class="panel-title">Event Filter Favorites</h3>
     </div>
-    <div class="card-body">
+    <div class="panel-body">
     <onms:alert/>
         <c:choose>
             <c:when test="${!empty favorites}">
                 <!-- Filters -->
-                <ul class="list-unstyled mb-0">
+                <ul class="list-unstyled">
                     <c:forEach var="eachFavorite" items="${favorites}">
                       	<%
                       		OnmsFilterFavorite current = (OnmsFilterFavorite) pageContext.getAttribute("eachFavorite");
@@ -108,7 +104,7 @@
     					%>
                       
                           <li>
-                              <a href="event/list.htm?favoriteId=${eachFavorite.id}&${eachFavorite.filter}" title='<c:out value='${favTitle}'/>' data-html="true" data-toggle="tooltip" data-placement="right">${eachFavorite.name}</a> <a href="event/deleteFavorite?favoriteId=${eachFavorite.id}&redirect=/event/index" title='Delete favorite' data-toggle="tooltip" data-placement="right"><span class="fa fa-remove text-danger"></span></a>
+                              <a href="event/list.htm?favoriteId=${eachFavorite.id}&${eachFavorite.filter}" title='<c:out value='${favTitle}'/>' data-html="true" data-toggle="tooltip" data-placement="right">${eachFavorite.name}</a> <a href="event/deleteFavorite?favoriteId=${eachFavorite.id}&redirect=/event/index" title='Delete favorite' data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-remove text-danger"></span></a>
                           </li>
                     </c:forEach>
                 </ul>
@@ -122,11 +118,11 @@
   </div>
 
   <div class="col-md-6">
-	<div class="card">
-	<div class="card-header">
-      <span>Outstanding and acknowledged events</span>
+	<div class="panel panel-default">
+	<div class="panel-heading">
+      <h3 class="panel-title">Outstanding and acknowledged events</h3>
  	</div>
- 	<div class="card-body">
+ 	<div class="panel-body">
       <p>Events can be <em>acknowledged</em>, or removed from the view of other users, by
         selecting the event in the <em>Ack</em> check box and clicking the <em>Acknowledge
         Selected Events</em> at the bottom of the page.  Acknowledging an event gives

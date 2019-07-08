@@ -71,33 +71,45 @@
   }
 </script>
 
-<div class="card">
-  <div class="card-header">
+<div class="panel panel-default">
+  <div class="panel-heading">
     <%if ("redo".equals(request.getParameter("action"))) { %>
-      <span>The user <%=request.getParameter("userID")%> already exists.
-        Please type in a different user ID.</span>
+      <h3 class="panel-title">The user <%=request.getParameter("userID")%> already exists.
+        Please type in a different user ID.</h3>
     <%} else { %>
-      <span>Please enter a user ID and password below</span>
+      <h3 class="panel-title">Please enter a user ID and password below</h3>
     <%}%>
   </div>
-  <div class="card-body">
-    <form class="form" role="form" id="newUserForm" method="post" name="newUserForm" onsubmit="return validateFormInput();">
+  <div class="panel-body">
+    <form class="form-horizontal" role="form" id="newUserForm" method="post" name="newUserForm" onsubmit="return validateFormInput();">
       <div class="form-group">
-        <label for="userID" class="">User ID</label>
-        <input id="userID" type="text" name="userID" class="form-control">
+        <label for="userID" class="col-sm-2 control-label">User ID:</label>
+        <div class="col-sm-10">
+          <input id="userID" type="text" name="userID" class="form-control">
+        </div>
       </div>
       <div class="form-group">
-        <label for="pass1" class="">Password</label>
-        <input id="pass1" type="password" name="pass1" class="form-control">
+        <label for="pass1" class="col-sm-2 control-label">Password:</label>
+        <div class="col-sm-10">
+          <input id="pass1" type="password" name="pass1" class="form-control">
+        </div>
       </div>
       <div class="form-group">
-        <label for="pass2" class="">Confirm Password</label>
-        <input id="pass2" type="password" name="pass2" class="form-control">
+        <label for="pass2" class="col-sm-2 control-label">Confirm Password:</label>
+        <div class="col-sm-10">
+          <input id="pass2" type="password" name="pass2" class="form-control">
+        </div>
       </div>
-      <button type="submit" class="btn btn-secondary">OK</button>
-      <button type="button" class="btn btn-secondary" onclick="cancelUser()">Cancel</button>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="btn-group" role="group">
+            <button type="submit" class="btn btn-default">OK</button>
+            <button type="button" class="btn btn-default" onclick="cancelUser()">Cancel</button>
+          </div>
+        </div>
+      </div>
     </form>
-  </div> <!-- card-body -->
+  </div> <!-- panel-body -->
 </div> <!-- panel -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="false" />

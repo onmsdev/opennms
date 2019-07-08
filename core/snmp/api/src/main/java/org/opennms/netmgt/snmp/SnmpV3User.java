@@ -34,7 +34,6 @@ public class SnmpV3User {
 
     private String engineId;
     private String securityName;
-    private Integer securityLevel;
     private String authPassPhrase;
     private String privPassPhrase;
     private String authProtocol;
@@ -77,14 +76,6 @@ public class SnmpV3User {
         this.securityName = securityName;
     }
 
-    public Integer getSecurityLevel() {
-        return securityLevel;
-    }
-
-    public void setSecurityLevel(Integer securityLevel) {
-        this.securityLevel = securityLevel;
-    }
-
     public String getAuthPassPhrase() {
         return authPassPhrase;
     }
@@ -119,21 +110,27 @@ public class SnmpV3User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(engineId, securityName, securityLevel, authPassPhrase, privPassPhrase, authProtocol, privProtocol);
+        return Objects.hash(authPassPhrase, authProtocol, engineId, privPassPhrase, privProtocol);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SnmpV3User that = (SnmpV3User) o;
-        return Objects.equals(engineId, that.engineId) &&
-                Objects.equals(securityName, that.securityName) &&
-                Objects.equals(securityLevel, that.securityLevel) &&
-                Objects.equals(authPassPhrase, that.authPassPhrase) &&
-                Objects.equals(privPassPhrase, that.privPassPhrase) &&
-                Objects.equals(authProtocol, that.authProtocol) &&
-                Objects.equals(privProtocol, that.privProtocol);
+    public boolean equals(final Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof SnmpV3User) {
+            final SnmpV3User that = (SnmpV3User)o;
+            return Objects.equals(getAuthPassPhrase(), that.getAuthPassPhrase()) &&
+                Objects.equals(getAuthProtocol(), that.getAuthProtocol()) &&
+                Objects.equals(getEngineId(), that.getEngineId()) &&
+                Objects.equals(getPrivPassPhrase(), that.getPrivPassPhrase()) &&
+                Objects.equals(getPrivProtocol(), that.getPrivProtocol());
+        } else {
+            return false;
+        }
     }
 
     @Override

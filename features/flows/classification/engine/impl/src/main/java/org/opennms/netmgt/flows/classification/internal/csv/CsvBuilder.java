@@ -82,8 +82,7 @@ public class CsvBuilder {
                                         rule.getSrcPort() == null ? "" : rule.getSrcPort(),
                                         rule.getDstAddress() == null ? "" : rule.getDstAddress(),
                                         rule.getDstPort() == null ? "" : rule.getDstPort(),
-                                        rule.getExporterFilter() == null ? "" : rule.getExporterFilter(),
-                                        rule.isOmnidirectional() ? "true" : "false"
+                                        rule.getExporterFilter() == null ? "" : rule.getExporterFilter()
                                 )
                         )
                         .collect(Collectors.joining("\n")));

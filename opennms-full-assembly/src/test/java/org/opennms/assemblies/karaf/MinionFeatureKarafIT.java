@@ -34,7 +34,6 @@ import java.util.EnumSet;
 
 import org.apache.karaf.features.FeaturesService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.karaf.KarafTestCase;
@@ -53,7 +52,6 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
-@Ignore("Does not work with Karaf 4.2.3 anymore")
 public class MinionFeatureKarafIT extends KarafTestCase {
 
 	@Before

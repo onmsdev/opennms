@@ -32,7 +32,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -71,7 +70,7 @@ public class SmtpDetectorTest {
         m_server.init();
         m_server.startServer();
 
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
         m_detector.setTimeout(500);
         m_detector.init();
         m_detector.setPort(m_server.getLocalPort());

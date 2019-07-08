@@ -61,30 +61,30 @@
 
 <div class="row">
   <div class="col-md-4">
-    <div class="card">
-       <div class="card-header">
-        <span>Please enter the old and new passwords and confirm.</span>
+    <div class="panel panel-default">
+       <div class="panel-heading">
+        <h3 class="panel-title">Please enter the old and new passwords and confirm.</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <form role="form" method="post" name="goForm" onSubmit="verifyGoForm()">
           <input type="hidden" name="currentPassword" value="">
           <input type="hidden" name="newPassword" value="">
-          <div class="form-group">
-            <label class="col-form-label" for="input_oldpass">Current Password</label>
-            <input type="password" class="form-control <% if ("redo".equals(request.getParameter("action"))) { %>is-invalid<% } %>" id="input_oldpass" name="oldpass">
+          <div class="form-group <% if ("redo".equals(request.getParameter("action"))) { %>has-error<% } %>">
+            <label class="control-label" for="input_oldpass">Current Password:</label>
+            <input type="password" class="form-control" id="input_oldpass" name="oldpass">
           </div>
           <div class="form-group">
-            <label class="col-form-label" for="input_pass1">New Password</label>
-            <input type="password" class="form-control" name="pass1" id="input_pass1">
+            <label class="control-label" for="input_pass1">New Password:</label>
+            <input type="password" class="form-control" name="pass1">
           </div>
           <div class="form-group">
-            <label class="col-form-label" for="input_pass2">Confirm New Password</label>
-            <input type="password" class="form-control" name="pass2" id="input_pass2">
+            <label class="control-label" for="input_pass2">Confirm New Password:</label>
+            <input type="password" class="form-control" name="pass2">
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <a href="account/selfService/index.jsp" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-default">Submit</button>
+          <a href="account/selfService/index.jsp" class="btn btn-default">Cancel</a>
         </form>
-      </div> <!-- card-body -->
+      </div> <!-- panel-body -->
     </div> <!-- panel -->
   </div> <!-- column -->
 </div> <!-- row -->

@@ -36,8 +36,6 @@ import org.opennms.netmgt.provision.DetectRequest;
 import org.opennms.netmgt.provision.DetectResults;
 import org.opennms.netmgt.provision.ServiceDetector;
 import org.opennms.netmgt.provision.ServiceDetectorFactory;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.PropertyAccessorFactory;
 
 public class GenericServiceDetectorFactory<T extends ServiceDetector> implements ServiceDetectorFactory<T> {
 
@@ -48,11 +46,9 @@ public class GenericServiceDetectorFactory<T extends ServiceDetector> implements
     }
 
     @Override
-    public T createDetector(Map<String, String> properties) {
+    public T createDetector() {
         try {
-            T detector = clazz.newInstance();
-            setBeanProperties(detector, properties);
-            return detector;
+            return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -70,17 +66,6 @@ public class GenericServiceDetectorFactory<T extends ServiceDetector> implements
 
     @Override
     public void afterDetect(DetectRequest request, DetectResults results, Integer nodeId) {
-        //pass
+        // pass
     }
-
-    /**
-     * Set detector attributes as bean properties.
-     * @param detector  {@link ServiceDetector}
-     * @param properties detector attributes from foreign source configuration
-     */
-    public void setBeanProperties(ServiceDetector detector, Map<String, String> properties) {
-        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(detector);
-        wrapper.setPropertyValues(properties);
-    }
-
 }

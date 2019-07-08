@@ -45,11 +45,11 @@
 
 <div class="row">
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <span>Surveillance Category: ${fn:escapeXml(model.category.name)}</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Surveillance Category: ${fn:escapeXml(model.category.name)}</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <p>
         Category '${fn:escapeXml(model.category.name)}' has ${fn:length(model.memberNodes)} nodes.
         </p>
@@ -58,7 +58,7 @@
         <a href="admin/categories.htm?edit&categoryid=${model.category.id}">Edit category</a>
         </p>
 
-        <table class="table table-sm">
+        <table class="table table-condensed">
           <tr>
             <th>Node</th>
           </tr>
@@ -68,7 +68,7 @@
             </tr>
           </c:forEach>
         </table>
-      </div> <!-- card-body -->
+      </div> <!-- panel-body -->
     </div> <!-- panel -->
   </div> <!-- column -->
 </div> <!-- row -->

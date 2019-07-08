@@ -78,17 +78,17 @@ public class AcknowledgmentRestService extends OnmsRestService {
     /**
      * <p>getAcknowledgment</p>
      *
-     * @param acknowledgmentId a {@link java.lang.Integer} object.
+     * @param alarmId a {@link java.lang.Integer} object.
      * @return a {@link org.opennms.netmgt.model.OnmsAcknowledgment} object.
      */
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML})
     @Path("{id}")
     @Transactional
-    public OnmsAcknowledgment getAcknowledgment(@PathParam("id") Integer acknowledgmentId) {
-        final OnmsAcknowledgment ack = m_ackDao.get(acknowledgmentId);
+    public OnmsAcknowledgment getAcknowledgment(@PathParam("id") Integer alarmId) {
+        final OnmsAcknowledgment ack = m_ackDao.get(alarmId);
         if (ack == null) {
-            throw getException(Status.NOT_FOUND, "Acknowledgement object {} was not found.", Integer.toString(acknowledgmentId));
+            throw getException(Status.NOT_FOUND, "Acknowledgement object {} was not found.", Integer.toString(alarmId));
         }
         return ack;
     }

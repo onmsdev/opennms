@@ -117,10 +117,4 @@ public interface RequisitionVisitor {
      */
     public void completeAsset(OnmsAssetRequisition assetReq);
 
-    public void visitNodeMetaData(OnmsNodeMetaDataRequisition metaDataReq);
-    public void completeNodeMetaData(OnmsNodeMetaDataRequisition metaDataReq);
-    public void visitInterfaceMetaData(OnmsInterfaceMetaDataRequisition metaDataReq);
-    public void completeInterfaceMetaData(OnmsInterfaceMetaDataRequisition metaDataReq);
-    public void visitServiceMetaData(OnmsServiceMetaDataRequisition metaDataReq);
-    public void completeServiceMetaData(OnmsServiceMetaDataRequisition metaDataReq);
 }

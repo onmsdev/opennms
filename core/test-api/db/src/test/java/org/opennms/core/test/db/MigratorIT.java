@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2009-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2009-2014 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -49,6 +49,7 @@ import javax.sql.DataSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opennms.core.schema.ExistingResourceAccessor;
 import org.opennms.core.schema.Migration;
 import org.opennms.core.schema.MigrationException;
 import org.opennms.core.schema.Migrator;
@@ -88,17 +89,7 @@ public class MigratorIT {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("org.apache.logging.log4j.simplelog.StatusLogger.level", "INFO");
         MockLogAppender.setupLogging();
-    }
-
-    @Test
-    public void testClasspathResources() throws Exception {
-        List<Resource> resources = getTestResources();
-        assertEquals(2, resources.size());
-
-        resources = getRealChangelog();
-        assertEquals(1, resources.size());
     }
 
     @Test
@@ -127,7 +118,8 @@ public class MigratorIT {
         migration.setAdminPassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
         migration.setDatabaseUser(System.getProperty(TemporaryDatabase.ADMIN_USER_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_USER));
         migration.setDatabasePassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
-        migration.setChangeLog(aResource);
+        migration.setChangeLog("changelog.xml");
+        migration.setAccessor(new ExistingResourceAccessor(aResource));
 
         LOG.info("Running migration on database: {}", migration);
 
@@ -157,6 +149,7 @@ public class MigratorIT {
         migration.setAdminPassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
         migration.setDatabaseUser(System.getProperty(TemporaryDatabase.ADMIN_USER_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_USER));
         migration.setDatabasePassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
+        migration.setChangeLog("changelog.xml");
 
         final Migrator m = new Migrator();
         m.setDataSource(m_dataSource);
@@ -165,12 +158,14 @@ public class MigratorIT {
         m.setCreateUser(false);
         m.setCreateDatabase(false);
 
+        // Add a resource accessor to the migration so that it will load multiple changelog.xml files
+        // from the classpath
         for (final Resource resource : getTestResources()) {
             URI uri = resource.getURI();
             if (uri.getScheme().equals("jar") && !uri.toString().contains("test-api.schema")) continue;
             if (uri.getScheme().equals("file") && !uri.toString().contains("test-api/schema")) continue;
             LOG.info("=== found resource: {} ===", resource);
-            migration.setChangeLog(resource);
+            migration.setAccessor(new ExistingResourceAccessor(resource));
             m.migrate(migration);
         }
 
@@ -183,7 +178,7 @@ public class MigratorIT {
 
     @Test
     @JUnitTemporaryDatabase(createSchema=false)
-    public void testRealChangelogs() throws Exception {
+    public void testRealChangelog() throws Exception {
 
         assertFalse(changelogExists());
 
@@ -192,6 +187,7 @@ public class MigratorIT {
         migration.setAdminPassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
         migration.setDatabaseUser(System.getProperty(TemporaryDatabase.ADMIN_USER_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_USER));
         migration.setDatabasePassword(System.getProperty(TemporaryDatabase.ADMIN_PASSWORD_PROPERTY, TemporaryDatabase.DEFAULT_ADMIN_PASSWORD));
+        migration.setChangeLog("changelog.xml");
 
         final Migrator m = new Migrator();
         m.setDataSource(m_dataSource);
@@ -200,9 +196,11 @@ public class MigratorIT {
         m.setCreateUser(false);
         m.setCreateDatabase(false);
 
+        // Add a resource accessor to the migration so that it will load multiple changelog.xml files
+        // from the classpath
         for (final Resource resource : getRealChangelog()) {
             LOG.info("=== found resource: {} ===", resource);
-            migration.setChangeLog(resource);
+            migration.setAccessor(new ExistingResourceAccessor(resource));
             m.migrate(migration);
         }
 
@@ -219,9 +217,7 @@ public class MigratorIT {
         assertFalse(changelogExists());
 
         doMigration();
-        assertTrue(changelogExists());
         doMigration();
-        assertTrue(changelogExists());
     }
 
     private void doMigration() throws MigrationException, IOException {
@@ -236,7 +232,7 @@ public class MigratorIT {
         m.setDataSource(m_dataSource);
 
         for (final Resource resource : getTestResources()) {
-            migration.setChangeLog(resource);
+            migration.setAccessor(new ExistingResourceAccessor(resource));
             m.migrate(migration);
         }
     }
@@ -366,8 +362,9 @@ public class MigratorIT {
         final List<Resource> resources = new ArrayList<>();
         for (final Resource resource : m_context.getResources("classpath*:/changelog.xml")) {
             URI uri = resource.getURI();
-            if (uri.getScheme().equals("file") && !uri.toString().contains("core/schema")) continue;
-            if (uri.getScheme().equals("jar") && !uri.toString().contains("core.schema")) continue;
+            System.err.println(uri.toString());
+            if (uri.getScheme().equals("file") && !uri.toString().contains("opennms/core/schema")) continue;
+            if (uri.getScheme().equals("jar") && !uri.toString().contains("opennms.core.schema")) continue;
             resources.add(resource);
         }
         return resources;

@@ -39,7 +39,6 @@ public abstract class AbstractBusinessServiceVertex extends AbstractVertex imple
         BusinessService,
         IpService,
         ReductionKey,
-        Application
     }
 
     private final int level;

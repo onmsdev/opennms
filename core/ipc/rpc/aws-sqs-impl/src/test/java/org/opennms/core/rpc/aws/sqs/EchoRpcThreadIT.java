@@ -28,10 +28,6 @@
 
 package org.opennms.core.rpc.aws.sqs;
 
-import java.util.Dictionary;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -46,6 +42,10 @@ import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.Dictionary;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Used to verify and validate the thread profiles of the RPC
  * server via the EchoRpcModule.
@@ -58,8 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
         "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
-        "classpath:/META-INF/opennms/applicationContext-rpc-client-sqs.xml",
-        "classpath:/META-INF/opennms/applicationContext-tracer-registry.xml"
+        "classpath:/META-INF/opennms/applicationContext-rpc-client-sqs.xml"
 })
 @JUnitConfigurationEnvironment(systemProperties={
         "org.opennms.ipc.rpc.threads=1",

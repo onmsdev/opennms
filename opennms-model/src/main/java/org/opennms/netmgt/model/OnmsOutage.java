@@ -55,8 +55,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Type;
 import org.opennms.core.network.InetAddressXmlAdapter;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -476,14 +475,14 @@ public class OnmsOutage implements Serializable {
      */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("outageId", m_id)
-            .add("ifLostService", m_ifLostService)
-            .add("ifRegainedService", m_ifRegainedService)
-            .add("ifRegainedServiceEvent", m_serviceRegainedEvent)
-            .add("service", m_monitoredService)
-            .add("suppressedBy", m_suppressedBy)
-            .add("suppressTime", m_suppressTime)
+        return new ToStringCreator(this)
+            .append("outageId", m_id)
+            .append("ifLostService", m_ifLostService)
+            .append("ifRegainedService", m_ifRegainedService)
+            .append("ifRegainedServiceEvent", m_serviceRegainedEvent)
+            .append("service", m_monitoredService)
+            .append("suppressedBy", m_suppressedBy)
+            .append("suppressTime", m_suppressTime)
             .toString();
     }
 

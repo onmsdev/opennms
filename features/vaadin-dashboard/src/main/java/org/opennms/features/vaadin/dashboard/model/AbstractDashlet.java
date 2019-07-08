@@ -29,8 +29,7 @@
 package org.opennms.features.vaadin.dashboard.model;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.UI;
-import com.vaadin.v7.ui.Label;
+import com.vaadin.ui.Label;
 
 public class AbstractDashlet implements Dashlet {
     private String m_name;
@@ -74,7 +73,7 @@ public class AbstractDashlet implements Dashlet {
     }
 
     @Override
-    public DashletComponent getWallboardComponent(final UI ui) {
+    public DashletComponent getWallboardComponent() {
         return new AbstractDashletComponent() {
             private Label label = new Label(m_name + " wallboard view");
 
@@ -88,7 +87,7 @@ public class AbstractDashlet implements Dashlet {
     }
 
     @Override
-    public DashletComponent getDashboardComponent(final UI ui) {
+    public DashletComponent getDashboardComponent() {
         return new AbstractDashletComponent() {
             private Label label = new Label(m_name + " dashboard view");
 

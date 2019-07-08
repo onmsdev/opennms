@@ -37,8 +37,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opennms.netmgt.snmp.TrapIdentity;
 
-import com.google.common.base.MoreObjects;
-
 @XmlRootElement(name="trap-identity")
 @XmlAccessorType(value= XmlAccessType.NONE)
 public class TrapIdentityDTO {
@@ -86,14 +84,6 @@ public class TrapIdentityDTO {
 
     public void setEnterpriseId(String enterpriseId) {
         this.enterpriseId = enterpriseId;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("Generic", getGeneric())
-                .add("Specific", getSpecific())
-                .add("EnterpriseId", getEnterpriseId())
-                .toString();
     }
 
     @Override

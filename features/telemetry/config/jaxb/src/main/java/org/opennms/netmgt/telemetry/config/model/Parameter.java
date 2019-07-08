@@ -37,13 +37,14 @@ import java.util.Objects;
 @XmlRootElement(name="parameter")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Parameter {
-    @XmlAttribute(name="key", required=true)
+    @XmlAttribute(name="key")
     private String key;
 
-    @XmlAttribute(name="value", required=true)
+    @XmlAttribute(name="value")
     private String value;
 
     public Parameter() {
+        // pass
     }
 
     public Parameter(String key, String value) {

@@ -36,14 +36,14 @@
     <jsp:param name="asset" value="opennms-trendline" />
 </jsp:include>
 
-<div class="alert bg-light" role="alert">
+<div class="alert alert-trend" role="alert">
     <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td width="1%">
-                <h1 style="margin:0;" class="mr-2"><span class="fa ${trendDefinition.icon}" aria-hidden="true"></span></h1>
+                <h1 style="margin:0;"><span class="glyphicon ${trendDefinition.icon}" aria-hidden="true"></span></h1>
             </td>
             <td style="white-space: nowrap;">
-                <h4 style="margin:0;">${trendDefinition.title}</h4><h6 style="margin:0;">${trendDefinition.subtitle}</h6>
+                <h3 style="margin:0;">${trendDefinition.title}</h3><h4 style="margin:0;">${trendDefinition.subtitle}</h4>
             </td>
             <td width="50%" align="right">
                 <jsp:text><![CDATA[<span "]]></jsp:text>

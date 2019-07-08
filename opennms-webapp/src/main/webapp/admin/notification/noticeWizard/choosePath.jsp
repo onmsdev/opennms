@@ -125,11 +125,11 @@
 
 <div class="row">
   <div class="col-md-7">
-    <div class="card">
-      <div class="card-header">
-        <span>Choose the destination path and enter the information to send via the notification</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Choose the destination path and enter the information to send via the notification</h3>
       </div>
-      <table class="table table-sm">
+      <table class="table table-condensed">
         <tr>
           <td width="10%" valign="top" align="left">
             <label>Name:</label>
@@ -198,7 +198,7 @@
             <label>Special Values:</label>
           </td>
           <td valign="top" align="left">
-            <table class="table table-sm">
+            <table class="table table-condensed">
               <tr>
                 <td colspan="3">Can be used in both the text message and email subject:</td>
               </tr>
@@ -225,10 +225,13 @@
             </table>
           </td>
          </tr>
+         
+        <tr>
+          <td colspan="2">
+            <a HREF="javascript:finish()">Finish</a>
+          </td>
+        </tr>
       </table>
-        <div class="card-footer">
-              <a class="btn btn-secondary" href="javascript:finish()">Finish</a>
-        </div>
     </div> <!-- panel -->
   </div> <!-- column -->
 </div> <!-- row -->
@@ -241,7 +244,7 @@
     public String buildPathSelect(String currentPath)
       throws ServletException
     {
-         StringBuffer buffer = new StringBuffer("<select class=\"form-control custom-select\" NAME=\"path\">");
+         StringBuffer buffer = new StringBuffer("<select class=\"form-control\" NAME=\"path\">");
          
          Map<String, Path> pathsMap = null;
          

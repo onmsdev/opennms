@@ -35,7 +35,7 @@ import java.io.OutputStream;
 
 import org.opennms.features.vaadin.api.Logger;
 
-import com.vaadin.v7.ui.Upload;
+import com.vaadin.ui.Upload;
 
 /**
  * The Class MIB Upload Button.

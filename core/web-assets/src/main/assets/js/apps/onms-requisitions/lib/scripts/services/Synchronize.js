@@ -69,21 +69,21 @@ require('./Requisitions');
             },
             dbOnlySync: {
               label: 'DB Only',
-              className: 'btn-secondary',
+              className: 'btn-default',
               callback: function() {
                 doSynchronize(requisition, 'dbonly');
               }
             },
             ignoreExistingSync: {
               label: 'No',
-              className: 'btn-secondary',
+              className: 'btn-default',
               callback: function() {
                 doSynchronize(requisition, 'false');
               }
             },
             main: {
               label: 'Cancel',
-              className: 'btn-secondary'
+              className: 'btn-default'
             }
           }
         });

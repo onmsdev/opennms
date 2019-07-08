@@ -3,7 +3,7 @@
   <parent>
     <artifactId>opennms</artifactId>
     <groupId>org.opennms</groupId>
-    <version>25.0.0-SNAPSHOT</version>
+    <version>23.0.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>opennms-base-assembly</artifactId>
@@ -160,34 +160,6 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <activation>
-        <os><family>!windows</family></os>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.6.0</version>
-            <executions>
-              <execution>
-                <id>shell script tests</id>
-                <phase>test</phase>
-                <goals><goal>exec</goal></goals>
-                <configuration>
-                  <executable>${project.basedir}/src/test/shell/run-tests.sh</executable>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <dependencies>
     <!-- Dependencies to put into the endorsed classpath -->
 
@@ -333,10 +305,6 @@
     <dependency>
       <groupId>org.opennms</groupId>
       <artifactId>opennms-detector-datagram</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms</groupId>
-      <artifactId>opennms-detector-dhcp</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opennms</groupId>
@@ -638,6 +606,11 @@
     </dependency>
     <dependency>
       <groupId>org.opennms.dependencies</groupId>
+      <artifactId>gwt-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.dependencies</groupId>
       <artifactId>jaxb-dependencies</artifactId>
       <type>pom</type>
     </dependency>
@@ -821,16 +794,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opennms.core.tracing</groupId>
-      <artifactId>org.opennms.core.tracing.registry</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.core.tracing</groupId>
-      <artifactId>org.opennms.core.tracing.jaeger-tracer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.opennms.core.snmp</groupId>
       <artifactId>org.opennms.core.snmp.proxy.rpc-impl</artifactId>
       <version>${project.version}</version>
@@ -969,71 +932,23 @@
       </dependency>
     <!-- Telemetryd -->
     <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.netflow</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.netflow.adapter</artifactId>
+      <groupId>org.opennms.features.telemetry.listeners</groupId>
+      <artifactId>org.opennms.features.telemetry.listeners.flow</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.netflow</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.netflow.parser</artifactId>
+      <groupId>org.opennms.features.telemetry.listeners</groupId>
+      <artifactId>org.opennms.features.telemetry.listeners.sflow</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.sflow</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.sflow.parser</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.sflow</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.sflow.parser</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.nxos</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.nxos.adapter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.telemetry.protocols.jti</groupId>
-      <artifactId>org.opennms.features.telemetry.protocols.jti.adapter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.telemetry</groupId>
-      <artifactId>org.opennms.features.telemetry.listeners</artifactId>
+      <groupId>org.opennms.features.telemetry.listeners</groupId>
+      <artifactId>org.opennms.features.telemetry.listeners.udp</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opennms.features.telemetry</groupId>
       <artifactId>org.opennms.features.telemetry.daemon</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <!-- Topologies -->
-    <dependency>
-      <groupId>org.opennms.features.topologies</groupId>
-      <artifactId>org.opennms.features.topologies.service.impl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <!-- Enlinkd -->
-    <dependency>
-      <groupId>org.opennms.features.enlinkd</groupId>
-      <artifactId>org.opennms.features.enlinkd.persistence.impl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.enlinkd</groupId>
-      <artifactId>org.opennms.features.enlinkd.service.impl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.enlinkd</groupId>
-      <artifactId>org.opennms.features.enlinkd.daemon</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <!-- HTTP Rest-Bridge -->
-    <dependency>
-      <groupId>org.opennms.container.bridge</groupId>
-      <artifactId>org.opennms.container.bridge.api</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

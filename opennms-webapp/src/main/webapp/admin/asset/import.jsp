@@ -42,11 +42,11 @@
   <jsp:param name="breadcrumb" value="Import" />
 </jsp:include>
 
-<div class="card">
-  <div class="card-header">
-    <span>Assets</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Assets</h3>
   </div>
-  <div class="card-body">
+  <div class="panel-body">
 <p>
   Paste your comma-separated values into this text field to import
   them into the assets database.  There is one line per record, and 
@@ -65,7 +65,7 @@
  <% } %>
 
  <div class="form-group">
-  <input type="submit" class="btn btn-secondary" value="Import"/>
+  <input type="submit" class="btn btn-default" value="Import"/>
  </div>
 </form>
 
@@ -155,7 +155,7 @@
               </ol>
 	</div> <!-- column -->
     </div> <!-- row -->
-  </div> <!-- card-body -->
+  </div> <!-- panel-body -->
 </div> <!-- panel -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="false" />

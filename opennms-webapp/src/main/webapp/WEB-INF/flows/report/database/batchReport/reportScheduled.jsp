@@ -46,17 +46,17 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <span>Report Scheduled</span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Report Scheduled</h3>
             </div>
-            <div class="card-body">
+            <div class="boxWrapper">
                 <form:form cssClass="stdform">
                     <p><span class="indent">
                         Your report has been scheduled.
                     </span></p>
                     <span class="indent">
-                        <input class="btn btn-secondary" type="submit" id="proceed" name="_eventId_proceed" value="Finished" />&#160;
+                        <input class="btn btn-default" type="submit" id="proceed" name="_eventId_proceed" value="Finished" />&#160;
                     </span>
                             </form:form>
             </div>

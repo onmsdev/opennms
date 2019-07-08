@@ -56,7 +56,6 @@ public final class SyslogConfigBean implements SyslogdConfig {
 	private int m_batchSize;
 	private int m_batchIntervalMs;
 	private TimeZone timeZone;
-	private boolean includeRawSyslogmessage;
 
 	@Override
 	public int getSyslogPort() {
@@ -182,15 +181,6 @@ public final class SyslogConfigBean implements SyslogdConfig {
 
 	public void setTimeZone(TimeZone timeZone){
 		this.timeZone = timeZone;
-	}
-
-	@Override
-	public boolean shouldIncludeRawSyslogmessage() {
-		return includeRawSyslogmessage;
-	}
-
-	public void setIncludeRawSyslogmessage(boolean includeRawSyslogmessage) {
-		this.includeRawSyslogmessage = includeRawSyslogmessage;
 	}
 
 	public void setBatchIntervalMs(int batchIntervalMs) {

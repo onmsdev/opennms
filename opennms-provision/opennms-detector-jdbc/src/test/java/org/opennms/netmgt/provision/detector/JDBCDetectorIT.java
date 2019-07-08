@@ -35,7 +35,6 @@ import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 import javax.sql.DataSource;
 
@@ -81,7 +80,7 @@ public class JDBCDetectorIT implements InitializingBean {
     @Before
     public void setUp() throws UnknownHostException, SQLException {
         MockLogAppender.setupLogging();
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
         String url = null;
         String username = null;
         Connection conn = null;

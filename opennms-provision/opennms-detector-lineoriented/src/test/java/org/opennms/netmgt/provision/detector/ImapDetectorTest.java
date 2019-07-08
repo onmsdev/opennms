@@ -32,8 +32,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +58,7 @@ public class ImapDetectorTest {
     public void setUp() throws Exception{
         MockLogAppender.setupLogging();
 
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
         m_detector.setServiceName("Imap");
         m_detector.setPort(143);
         m_detector.setTimeout(500);

@@ -51,6 +51,11 @@ public class WallboardConfigUI extends UI implements DashletSelectorAccess {
     private DashletSelector m_dashletSelector;
 
     /**
+     * A {@link Notification} instance for displaying messages
+     */
+    private static Notification m_notification = new Notification("Message", Notification.Type.TRAY_NOTIFICATION);
+
+    /**
      * Default constructor for instantiating a new instance
      */
     public WallboardConfigUI() {
@@ -91,13 +96,12 @@ public class WallboardConfigUI extends UI implements DashletSelectorAccess {
      * @param description the description of this message
      */
     public void notifyMessage(String message, String description) {
-        final Notification notification = new Notification("Message", Notification.Type.TRAY_NOTIFICATION);
-        notification.setCaption(message);
-        notification.setDescription(description);
-        notification.setDelayMsec(1000);
+        m_notification.setCaption(message);
+        m_notification.setDescription(description);
+        m_notification.setDelayMsec(1000);
         if (getUI() != null) {
             if (getPage() != null) {
-                notification.show(getUI().getPage());
+                m_notification.show(getUI().getPage());
             }
         }
     }

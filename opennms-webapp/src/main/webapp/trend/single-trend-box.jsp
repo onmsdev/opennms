@@ -38,11 +38,11 @@
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/opennms-trendline.css" />
 
-<div class="card">
-    <div class="card-header">
-        <span>Trend</span>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Trend</h3>
     </div>
-    <div class="card-body">
+    <div class="alert-box panel-body">
         <jsp:include page="/trend/trend.htm" flush="false">
             <jsp:param name="name" value="${param.name}"/>
         </jsp:include>

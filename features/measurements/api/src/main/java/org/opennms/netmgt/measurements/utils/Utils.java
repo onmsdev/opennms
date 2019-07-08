@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2010-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2010-2015 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2015 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.opennms.netmgt.measurements.api.FetchResults;
-import org.opennms.netmgt.measurements.model.QueryMetadata;
 import org.opennms.netmgt.measurements.model.Source;
 
 /**
@@ -111,6 +110,6 @@ public class Utils {
 
     public static FetchResults createEmtpyFetchResults(final long step, final Map<String, Object> constants) {
         final Map<String, double[]> columns = new HashMap<>();
-        return new FetchResults(new long[0], columns, step, constants, new QueryMetadata());
+        return new FetchResults(new long[0], columns, step, constants);
     }
 }

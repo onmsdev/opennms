@@ -70,8 +70,6 @@ public class CollectorRequestDTO implements RpcRequest {
 
     private Long timeToLiveMs;
 
-    private Map<String, String> tracingInfo = new HashMap<>();
-
     public CollectionAgent getAgent() {
         return agent;
     }
@@ -113,15 +111,6 @@ public class CollectorRequestDTO implements RpcRequest {
     @Override
     public Long getTimeToLiveMs() {
         return timeToLiveMs;
-    }
-
-    @Override
-    public Map<String, String> getTracingInfo() {
-        return tracingInfo;
-    }
-
-    public void addTracingInfo(String key, String value) {
-        tracingInfo.put(key, value);
     }
 
     public Boolean getAttributesNeedUnmarshaling() {

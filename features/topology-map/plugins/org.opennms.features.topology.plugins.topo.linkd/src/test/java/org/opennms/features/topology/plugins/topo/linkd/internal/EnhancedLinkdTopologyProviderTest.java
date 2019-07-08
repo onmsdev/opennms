@@ -30,7 +30,6 @@ package org.opennms.features.topology.plugins.topo.linkd.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -46,10 +45,7 @@ import org.junit.runner.RunWith;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.features.topology.api.Constants;
 import org.opennms.features.topology.api.topo.AbstractVertex;
-import org.opennms.features.topology.api.topo.Criteria;
-import org.opennms.features.topology.api.topo.Criteria.ElementType;
 import org.opennms.features.topology.api.topo.DefaultVertexRef;
-import org.opennms.features.topology.api.topo.Defaults;
 import org.opennms.features.topology.api.topo.Edge;
 import org.opennms.features.topology.api.topo.EdgeRef;
 import org.opennms.features.topology.api.topo.SimpleLeafVertex;
@@ -57,14 +53,12 @@ import org.opennms.features.topology.api.topo.Vertex;
 import org.opennms.features.topology.api.topo.VertexListener;
 import org.opennms.features.topology.api.topo.VertexProvider;
 import org.opennms.features.topology.api.topo.VertexRef;
-import org.opennms.netmgt.enlinkd.LldpOnmsTopologyUpdater;
-import org.opennms.netmgt.enlinkd.NodesOnmsTopologyUpdater;
-import org.opennms.netmgt.enlinkd.OspfOnmsTopologyUpdater;
-import org.opennms.netmgt.enlinkd.model.LldpLink;
-import org.opennms.netmgt.enlinkd.model.OspfLink;
-import org.opennms.netmgt.enlinkd.service.api.ProtocolSupported;
-import org.opennms.netmgt.topologies.service.api.OnmsTopology;
-import org.opennms.netmgt.topologies.service.api.OnmsTopologyDao;
+import org.opennms.features.topology.plugins.topo.linkd.internal.LinkdTopologyProvider.ProtocolSupported;
+import org.opennms.netmgt.dao.api.LldpLinkDao;
+import org.opennms.netmgt.dao.api.OspfLinkDao;
+import org.opennms.netmgt.model.FilterManager;
+import org.opennms.netmgt.model.LldpLink;
+import org.opennms.netmgt.model.OspfLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -80,14 +74,7 @@ public class EnhancedLinkdTopologyProviderTest {
 
     @Autowired
     private EnhancedLinkdMockDataPopulator m_databasePopulator;
-    @Autowired
-    private OnmsTopologyDao m_onmsTopologyDao;    
-    @Autowired
-    private NodesOnmsTopologyUpdater m_nodesOnmsTopologyUpdater;
-    @Autowired
-    private LldpOnmsTopologyUpdater m_lldpOnmsTopologyUpdater;    
-    @Autowired 
-    private OspfOnmsTopologyUpdater m_ospfOnmsTopologyUpdater;
+
 
     @Before
     public void setUp() throws Exception{
@@ -95,74 +82,29 @@ public class EnhancedLinkdTopologyProviderTest {
 
         m_databasePopulator.populateDatabase();
         m_databasePopulator.setUpMock();
-        assertNotNull(m_onmsTopologyDao);
-        assertNotNull(m_nodesOnmsTopologyUpdater);
-        assertNotNull(m_lldpOnmsTopologyUpdater);
-        assertNotNull(m_ospfOnmsTopologyUpdater);
-        
-        m_nodesOnmsTopologyUpdater.register();
-        m_lldpOnmsTopologyUpdater.register();
-        m_ospfOnmsTopologyUpdater.register();
-        m_nodesOnmsTopologyUpdater.runDiscovery();
-        m_lldpOnmsTopologyUpdater.runDiscovery();
-        m_ospfOnmsTopologyUpdater.runDiscovery();
-
     }
 
     @Test
     public void testDataCorrectness(){
-        List<LldpLink> links = m_databasePopulator.getLinks();
+        LldpLinkDao lldpLinkDao = m_databasePopulator.getLldpLinkDao();
+        List<LldpLink> links = lldpLinkDao.findAll();
         assertEquals(16, links.size());
 
-        List<OspfLink> ospfLinks = m_databasePopulator.getOspfLinks();
+        OspfLinkDao ospfLinkDao = m_databasePopulator.getOspfLinkDao();
+        List<OspfLink> ospfLinks = ospfLinkDao.findAll();
         assertEquals(2, ospfLinks.size());
     }
 
     @Test
-    public void testGetDefaultsOnmsException() {
-        m_nodesOnmsTopologyUpdater.unregister();
-        Defaults defaults = m_topologyProvider.getDefaults();
-        assertEquals(Defaults.DEFAULT_SEMANTIC_ZOOM_LEVEL, defaults.getSemanticZoomLevel());
-        assertEquals("D3 Layout", defaults.getPreferredLayout());
-        assertEquals(0, defaults.getCriteria().size());
-    }
-
-    @Test
-    public void testGetDefaultsNoTopologyLoaded() {
-        Defaults defaults = m_topologyProvider.getDefaults();
-        assertEquals(Defaults.DEFAULT_SEMANTIC_ZOOM_LEVEL, defaults.getSemanticZoomLevel());
-        assertEquals("D3 Layout", defaults.getPreferredLayout());
-        assertEquals(0, defaults.getCriteria().size());
-    }
-    
-    @Test
-    public void testGetDefaultTopologyLoaded() {
-        m_topologyProvider.refresh();
-        Defaults defaults = m_topologyProvider.getDefaults();
-        assertEquals(Defaults.DEFAULT_SEMANTIC_ZOOM_LEVEL, defaults.getSemanticZoomLevel());
-        assertEquals("D3 Layout", defaults.getPreferredLayout());
-        List<Criteria> criteria = defaults.getCriteria();
-        assertNotNull(criteria);
-        assertEquals(1, criteria.size());
-        LinkdHopCriteria vertex1criteria = (LinkdHopCriteria)criteria.get(0);
-        assertEquals("1",vertex1criteria.getId());
-        assertEquals(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, vertex1criteria.getNamespace());
-        assertEquals(ElementType.VERTEX, vertex1criteria.getType());
-        assertEquals(m_databasePopulator.getNode(1).getLabel(), vertex1criteria.getLabel());
-        assertEquals(1, vertex1criteria.getVertices().size());
-    }
-
-    @Test
     public void testGetIcon() {
-        m_topologyProvider.refresh();
-        Vertex vertex1 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "1");
-        Vertex vertex2 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "2");
-        Vertex vertex3 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "3");
-        Vertex vertex4 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "4");
-        Vertex vertex5 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "5");
-        Vertex vertex6 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "6");
-        Vertex vertex7 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "7");
-        Vertex vertex8 = m_topologyProvider.getVertex(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD, "8");
+        LinkdVertex vertex1 = LinkdVertex.create(m_databasePopulator.getNode1(), null);
+        LinkdVertex vertex2 = LinkdVertex.create(m_databasePopulator.getNode2(), null);
+        LinkdVertex vertex3 = LinkdVertex.create(m_databasePopulator.getNode3(), null);
+        LinkdVertex vertex4 = LinkdVertex.create(m_databasePopulator.getNode4(), null);
+        LinkdVertex vertex5 = LinkdVertex.create(m_databasePopulator.getNode5(), null);
+        LinkdVertex vertex6 = LinkdVertex.create(m_databasePopulator.getNode6(), null);
+        LinkdVertex vertex7 = LinkdVertex.create(m_databasePopulator.getNode7(), null);
+        LinkdVertex vertex8 = LinkdVertex.create(m_databasePopulator.getNode8(), null);
         Assert.assertTrue("linkd.system.snmp.1.3.6.1.4.1.5813.1.25".equals(vertex1.getIconKey()));
         Assert.assertTrue("linkd.system".equals(vertex2.getIconKey()));
         Assert.assertTrue("linkd.system".equals(vertex3.getIconKey()));
@@ -190,14 +132,14 @@ public class EnhancedLinkdTopologyProviderTest {
         assertEquals("v0", vertexA.getId());
         //LoggerFactory.getLogger(this.getClass()).debug(m_topologyProvider.getVertices().get(0).toString());
         assertTrue(m_topologyProvider.containsVertexId(vertexA));
-        assertTrue(m_topologyProvider.containsVertexId(new DefaultVertexRef("nodes", "v0",m_topologyProvider.getNamespace() + ":" + "v0")));
-        assertFalse(m_topologyProvider.containsVertexId(new DefaultVertexRef("nodes", "v1",m_topologyProvider.getNamespace() + ":" + "v1")));
+        assertTrue(m_topologyProvider.containsVertexId(new DefaultVertexRef("nodes", "v0")));
+        assertFalse(m_topologyProvider.containsVertexId(new DefaultVertexRef("nodes", "v1")));
 
         ((AbstractVertex)vertexA).setIpAddress("10.0.0.4");
 
         // Search by VertexRef
-        VertexRef vertexAref = new DefaultVertexRef(m_topologyProvider.getNamespace(), "v0",m_topologyProvider.getNamespace() + ":" + "v0");
-        VertexRef vertexBref = new DefaultVertexRef(m_topologyProvider.getNamespace(), "v1",m_topologyProvider.getNamespace() + ":" + "v1");
+        VertexRef vertexAref = new DefaultVertexRef(m_topologyProvider.getNamespace(), "v0");
+        VertexRef vertexBref = new DefaultVertexRef(m_topologyProvider.getNamespace(), "v1");
         assertEquals(1, m_topologyProvider.getVertices(Collections.singletonList(vertexAref)).size());
         assertEquals(0, m_topologyProvider.getVertices(Collections.singletonList(vertexBref)).size());
 
@@ -341,7 +283,6 @@ public class EnhancedLinkdTopologyProviderTest {
             //assertTrue(vertex.getIpAddress(), "127.0.0.1".equals(vertex.getIpAddress()) || "64.146.64.214".equals(vertex.getIpAddress()));
         }
 
-        int countNODES = 0;
         int countLLDP = 0;
         int countOSPF = 0;
         int countCDP = 0;
@@ -350,7 +291,6 @@ public class EnhancedLinkdTopologyProviderTest {
         for (Edge edge : m_topologyProvider.getEdges()) {
             LinkdEdge linkdedge = (LinkdEdge) edge;
             switch (linkdedge.getDiscoveredBy()) {
-                case NODES: countNODES++;break;
                 case LLDP: countLLDP++;break;
                 case OSPF: countOSPF++;break;
                 case CDP: countCDP++;break;
@@ -360,7 +300,6 @@ public class EnhancedLinkdTopologyProviderTest {
         }
         assertEquals(8, countLLDP);
         assertEquals(1, countOSPF);
-        assertEquals(0, countNODES);
         assertEquals(0, countCDP);
         assertEquals(0, countISIS);
         assertEquals(0, countBRIDGE);
@@ -424,6 +363,25 @@ public class EnhancedLinkdTopologyProviderTest {
         m_topologyProvider.setParent(vertexId2, groupId);
 
         assertEquals(2, eventsReceived.get());
+    }
+
+    public class TestFilterManager implements FilterManager {
+
+        @Override
+        public void enableAuthorizationFilter(String[] authorizationGroups) {}
+
+        @Override
+        public void disableAuthorizationFilter() {}
+
+        @Override
+        public String[] getAuthorizationGroups() {
+            return new String[0];
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
     }
 
     private VertexRef addVertexToTopr() {

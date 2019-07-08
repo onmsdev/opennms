@@ -82,7 +82,6 @@ public class JUnitKafkaServer extends ExternalResource {
     private KafkaConfig kafkaConfig;
     private KafkaServer kafkaServer;
     private TestingServer zkServer;
-    private static final long CLEANER_BUFFER_SIZE = 2 * 1024 * 1024L;
 
     public JUnitKafkaServer() {
         this("target/kafka-log");
@@ -124,9 +123,6 @@ public class JUnitKafkaServer extends ExternalResource {
         properties.put("zookeeper.connect", zkServer.getConnectString());
         properties.put("offsets.topic.replication.factor", (short)1);
         properties.put("listeners", "PLAINTEXT://" + "localhost:" + String.valueOf(kafkaPort.get()));
-        // This was added as kafka by default allocates  128*1024*1024 bytes. Sometimes kafka server is not shutting down properly
-        // and this is causing OutOfMemory errors. Since test server doesn't need log deduplication, make it 2MB
-        properties.put("log.cleaner.dedupe.buffer.size", CLEANER_BUFFER_SIZE);
 
         System.err.println("Kafka server properties: " + properties);
         kafkaConfig = new KafkaConfig(properties);

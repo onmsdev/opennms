@@ -104,11 +104,11 @@
 	<input type="hidden" name="uei" value="<%=uei%>"/>
 </form>
 
-<div class="card">
-  <div class="card-header">
-    <span>Existing Notifications for UEI <%=uei%></span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Existing Notifications for UEI <%=uei%></h3>
   </div>
-      <table class="table table-sm">
+      <table class="table table-condensed">
       	 <tr><th>Name</th><th>Description</th><th>Rule</th><th>Destination path</th><th>Varbinds</th><th>Actions</th></tr>
       <% for(Notification notif : notifsForUEI) { 
           	String varbindDescription="";
@@ -126,10 +126,8 @@
 	        	<td><a href="javascript: void submitEditForm('<%=notif.getName()%>');">Edit</a></td>
 			</tr>
 <% } %>
-	  </table>
-	<div class="card-footer">
-		<a class="btn btn-secondary" href="javascript: document.newNotificationForm.submit()">Create a new notification</a>
-	</div>
+		<tr><td colspan="6"><a href="javascript: document.newNotificationForm.submit()">Create a new notification</a></td></tr>
+      </table>
 </div> <!-- panel -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="false" />

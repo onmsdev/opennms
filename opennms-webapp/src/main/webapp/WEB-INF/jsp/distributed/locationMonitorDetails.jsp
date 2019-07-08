@@ -46,11 +46,11 @@
 <c:choose>
 
   <c:when test="${model.errors.errorCount > 0}">
-    <div class="card">
-      <div class="card-header">
-        <span><spring:message code="error"/></span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><spring:message code="error"/></h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <ul class="error">
           <c:forEach var="err" items="${model.errors.allErrors}">
             <li><spring:message message="${err}"/></li>
@@ -62,11 +62,11 @@
   
   <c:otherwise>
     <c:set var="monitor" value="${model.locationMonitors[0]}"/>
-    <div class="card">
-      <div class="card-header">
-        <span><spring:message code="distributed.locationMonitorDetails.title"/></span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><spring:message code="distributed.locationMonitorDetails.title"/></h3>
       </div>
-      <table class="table table-sm">
+      <table class="table table-condensed">
         <tr>
           <th><spring:message code="distributed.area"/></th>
           <td>${monitor.area}</td>
@@ -115,11 +115,11 @@
       </table>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <span><spring:message code="distributed.locationMonitorDetails.additionalTitle"/></span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><spring:message code="distributed.locationMonitorDetails.additionalTitle"/></h3>
       </div>
-      <table class="table table-sm">
+      <table class="table table-condensed">
         <c:forEach items="${monitor.additionalDetails}" var="detail">
           <tr>
             <th>
@@ -142,26 +142,26 @@
         }
       </script>
       
-      <div class="card">
-        <div class="card-header">
-          <span>Manage Remote Poller</span>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Manage Remote Poller</h3>
         </div>
-        <div class="card-body">
+        <div class="panel-body">
           <form action="admin/distributed/locationMonitorDelete.htm" method="post" name="deleteForm">
             <input type="hidden" name="monitorId" value="${monitor.id}"/>
           </form>
-          <button class="btn btn-secondary mb-2" type="button" onClick="confirmDelete();">Delete</button>
+          <button class="btn btn-default" type="button" onClick="confirmDelete();">Delete</button>
           <c:choose>
             <c:when test="${monitor.status != 'PAUSED'}">
               <form action="admin/distributed/locationMonitorPause.htm" method="post">
                 <input type="hidden" name="monitorId" value="${monitor.id}"/>
-                <button class="btn btn-secondary" type="submit">Pause</button>
+                <button class="btn btn-default" type="submit">Pause</button>
               </form>
             </c:when>
             <c:otherwise>
               <form action="admin/distributed/locationMonitorResume.htm" method="post">
                 <input type="hidden" name="monitorId" value="${monitor.id}"/>
-                <button class="btn btn-secondary" type="submit">Resume</button>
+                <button class="btn btn-default" type="submit">Resume</button>
               </form>
             </c:otherwise>
           </c:choose>

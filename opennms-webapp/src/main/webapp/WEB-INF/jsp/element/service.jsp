@@ -150,24 +150,17 @@ function doDelete() {
 
         
       <ul class="list-inline">
-         <li class="list-inline-item"><a href="${eventUrl}">View Events</a></li>
-
-          <c:url var="metaDataLink" value="element/service-metadata.jsp">
-              <c:param name="node" value="${service.ipInterface.node.id}"/>
-              <c:param name="ipAddr" value="${service.ipInterface.ipAddress.hostAddress}"/>
-              <c:param name="service" value="${service.serviceName}"/>
-          </c:url>
-
-          <li class="list-inline-item"><a href="<c:out value="${metaDataLink}"/>">Meta-Data</a></li>
+         <li><a href="${eventUrl}">View Events</a></li>
+         
  	
        <sec:authorize url="admin/deleteService">
-         <li class="list-inline-item"><a href="admin/deleteService" onClick="return doDelete()">Delete</a></li>
+         <li><a href="admin/deleteService" onClick="return doDelete()">Delete</a></li>
        </sec:authorize>
 
 	
 
       </ul>
-
+ 
           
 
       <sec:authorize url="admin/deleteService">
@@ -177,11 +170,11 @@ function doDelete() {
       <div class="row">
       <div class="col-md-6">
             <!-- general info box -->
-            <div class="card">
-            <div class="card-header">
-              <span>General</span>
+            <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">General</h3>
             </div>
-            <table class="table table-sm">
+            <table class="table table-condensed">
               <tr>
                 <c:url var="nodeLink" value="element/node.jsp">
                   <c:param name="node" value="${service.ipInterface.node.id}"/>
@@ -219,11 +212,11 @@ function doDelete() {
             </div>
             <!-- simple parameters box -->
             <c:if test="${parameters != null}">
-              <div class="card">
-              <div class="card-header">
-                <span>Service Parameters</span>
+              <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Service Parameters</h3>
               </div>
-              <table class="table table-sm">
+              <table class="table table-condensed">
               <c:forEach var="entry" items="${parameters}">
                 <tr>
                   <th nowrap>${entry.key}</th>
@@ -236,11 +229,11 @@ function doDelete() {
             <!-- XML parameters box -->
             <c:if test="${xmlParams != null}">
               <c:forEach var="entry" items="${xmlParams}">
-                <div class="card">
-                  <div class="card-header">
-                    <span>${entry.key}</span>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">${entry.key}</h3>
                   </div>
-                  <div class="card-body" style="overflow-x:scroll;">${entry.value}</div>
+                  <div class="panel-body" style="overflow-x:scroll;">${entry.value}</div>
                 </div>
               </c:forEach>
             </c:if>

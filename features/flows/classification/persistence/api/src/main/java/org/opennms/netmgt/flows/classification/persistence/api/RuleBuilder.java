@@ -82,11 +82,6 @@ public class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder withOmnidirectional(boolean omnidirectional) {
-        rule.setOmnidirectional(omnidirectional);
-        return this;
-    }
-
     public RuleBuilder withExporterFilter(String exporterFilter) {
         rule.setExporterFilter(exporterFilter);
         return this;
@@ -105,7 +100,6 @@ public class RuleBuilder {
         withDstAddress(rule.getDstAddress());
         withDstPort(rule.getDstPort());
         withProtocol(rule.getProtocol());
-        withOmnidirectional(rule.isOmnidirectional());
         withExporterFilter(rule.getExporterFilter());
         if (rule.getGroup() != null) {
             withGroup(rule.getGroup());

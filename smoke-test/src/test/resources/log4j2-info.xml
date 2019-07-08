@@ -169,6 +169,7 @@
         <KeyValuePair key="bsmd"                 value="INFO" />
         <KeyValuePair key="collectd"             value="INFO" />
         <KeyValuePair key="correlator"           value="INFO" />
+        <KeyValuePair key="dhcpd"                value="INFO" />
         <KeyValuePair key="discovery"            value="INFO" />
         <KeyValuePair key="eventd"               value="INFO" />
         <KeyValuePair key="event-translator"     value="INFO" />

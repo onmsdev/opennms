@@ -31,8 +31,6 @@ package org.opennms.netmgt.provision;
 import java.net.InetAddress;
 import java.util.Map;
 
-import org.opennms.netmgt.model.OnmsNode;
-
 /**
  * Responsible for instantiating detectors, gathering state information or agent specific details,
  * and optionally handling post-processing of the requests.
@@ -49,20 +47,13 @@ public interface ServiceDetectorFactory<T extends ServiceDetector> {
     Class<T> getDetectorClass();
 
     /**
-     * Instantiates a new detector and set bean properties.
-     * One of the ways to set bean properties is using Spring @{@link org.springframework.beans.BeanWrapper}
-     * <pre>
-     * {@code
-     *         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(serviceDetector);
-     *         wrapper.setPropertyValues(properties);
-     * }
-     * </pre>
+     * Instantiates a new detector.
+     *
      * Detectors are treated as protoypes and should only be used for a
      * single call to "isServiceDetected".
      *
-     * @param properties  are used to set properties on detector bean.
      */
-    T createDetector(Map<String, String> properties);
+    T createDetector();
 
     /**
      * Builds the request that will be used to invoke the detector.
@@ -76,11 +67,10 @@ public interface ServiceDetectorFactory<T extends ServiceDetector> {
     DetectRequest buildRequest(String location, InetAddress address, Integer port, Map<String, String> attributes);
 
     /**
-     * Optional implementation.
-     * @param request {@link DetectRequest}
-     * @param results {@link DetectResults}
-     * @param nodeId  {@link OnmsNode#getNodeId()}
+     * 
+     * @param request
+     * @param results
+     * @param nodeId
      */
     void afterDetect(DetectRequest request, DetectResults results, Integer nodeId);
-
 }

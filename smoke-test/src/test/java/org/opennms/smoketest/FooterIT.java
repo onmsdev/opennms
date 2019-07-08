@@ -29,13 +29,28 @@
 package org.opennms.smoketest;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class FooterIT extends OpenNMSSeleniumTestCase {
+
+    @Before
+    public void setUp() throws Exception {
+        m_driver.get(getBaseUrl() + "opennms/login.jsp");
+    }
+
     @Test
-    public void verifyDisplayVersionForLoggedInUser() {
+    public void verifyDisplayVersionForLoggedInUser() throws Exception {
         assertNotNull(findElementByXpath("//*[@id=\"footer\"]/p"));
         assertNotNull(findElementByXpath("//*[@id=\"footer\"]/p[contains(.,'Version')]"));
+    }
+
+    @Test
+    public void verifyDoNotDisplayVersionForAnonymous() throws Exception {
+        final String adminMenuName = "name=nav-admin-top";
+        clickMenuItem(adminMenuName, "Log Out", "j_spring_security_logout");
+        assertNotNull(findElementByXpath("//*[@id=\"footer\"]/p[not(contains(.,'Version'))]"));
     }
 }

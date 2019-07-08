@@ -28,7 +28,6 @@
 
 package org.opennms.netmgt.dao.api;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -43,19 +42,9 @@ public interface GenericPersistenceAccessor {
 
     <T> List<T> findUsingNamedParameters(final String query, String[] paramNames, Object[] values, Integer offset, Integer limit);
 
-    <T> List<T> findAll(Class<T> entityClass);
-
     <T> T get(Class<T> entityType, int entityId);
 
     List findMatching(Criteria criteria);
-
-    <T> T save(T entity);
-
-    <T> void saveAll(Collection<T> entities);
-
-    <T> void deleteAll(Class<T> clazz);
-
-    <T> void deleteAll(Collection<T> entities);
 
     /**
      * Executes a native SQL query.
@@ -67,5 +56,4 @@ public interface GenericPersistenceAccessor {
      * @return The result.
      */
     <T> List<T> executeNativeQuery(String sql, Map<String, Object> parameterMap);
-
 }

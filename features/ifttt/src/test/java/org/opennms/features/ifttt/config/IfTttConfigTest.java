@@ -99,7 +99,6 @@ public class IfTttConfigTest extends XmlTestNoCastor<IfTttConfig> {
 
         TriggerPackage triggerPackage2 = new TriggerPackage();
         triggerPackage2.setCategoryFilter("Foo2");
-        triggerPackage2.setReductionKeyFilter("uei.*");
         triggerPackage2.setOnlyUnacknowledged(true);
 
         TriggerSet triggerSet21 = new TriggerSet();
@@ -146,7 +145,7 @@ public class IfTttConfigTest extends XmlTestNoCastor<IfTttConfig> {
                 {
                         ifTttConfig,
                         "<ifttt-config enabled=\"true\" key=\"key\" pollInterval=\"30\">\n" +
-                                "   <trigger-package categoryFilter=\"Package1\" onlyUnacknowledged=\"true\" reductionKeyFilter=\"\">\n" +
+                                "   <trigger-package categoryFilter=\"Package1\" onlyUnacknowledged=\"true\">\n" +
                                 "      <trigger-set name=\"11\">\n" +
                                 "         <trigger delay=\"111\" eventName=\"111\">\n" +
                                 "            <value1>value1111</value1>\n" +
@@ -172,7 +171,7 @@ public class IfTttConfigTest extends XmlTestNoCastor<IfTttConfig> {
                                 "         </trigger>\n" +
                                 "      </trigger-set>\n" +
                                 "   </trigger-package>\n" +
-                                "   <trigger-package categoryFilter=\"Foo2\" onlyUnacknowledged=\"true\" reductionKeyFilter=\"uei.*\">\n" +
+                                "   <trigger-package categoryFilter=\"Foo2\" onlyUnacknowledged=\"true\">\n" +
                                 "      <trigger-set name=\"21\">\n" +
                                 "         <trigger delay=\"211\" eventName=\"211\">\n" +
                                 "            <value1>value2111</value1>\n" +
@@ -207,13 +206,7 @@ public class IfTttConfigTest extends XmlTestNoCastor<IfTttConfig> {
     @Test
     public void testUnsetCategoryFilter() {
         TriggerPackage triggerPackage = new TriggerPackage();
-        Assert.assertEquals("", triggerPackage.getCategoryFilter());
-    }
-
-    @Test
-    public void testUnsetReductionKeyFilter() {
-        TriggerPackage triggerPackage = new TriggerPackage();
-        Assert.assertEquals("", triggerPackage.getReductionKeyFilter());
+        Assert.assertEquals(".*", triggerPackage.getCategoryFilter());
     }
 
     @Test
@@ -221,13 +214,6 @@ public class IfTttConfigTest extends XmlTestNoCastor<IfTttConfig> {
         TriggerPackage triggerPackage = new TriggerPackage();
         triggerPackage.setCategoryFilter("foo|bar");
         Assert.assertEquals("foo|bar", triggerPackage.getCategoryFilter());
-    }
-
-    @Test
-    public void testSetReductionKeyFilter() {
-        TriggerPackage triggerPackage = new TriggerPackage();
-        triggerPackage.setReductionKeyFilter("uei.*");
-        Assert.assertEquals("uei.*", triggerPackage.getReductionKeyFilter());
     }
 }
 

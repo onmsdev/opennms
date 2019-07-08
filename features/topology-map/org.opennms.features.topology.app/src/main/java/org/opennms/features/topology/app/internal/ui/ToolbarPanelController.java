@@ -30,7 +30,7 @@ package org.opennms.features.topology.app.internal.ui;
 
 import org.opennms.features.topology.app.internal.support.LayoutManager;
 
-import com.vaadin.v7.data.Property;
+import com.vaadin.data.Property;
 
 public interface ToolbarPanelController {
 

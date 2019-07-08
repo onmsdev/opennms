@@ -34,8 +34,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.opennms.core.rpc.api.RpcClient;
-import org.opennms.core.rpc.api.RpcRequest;
-import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.icmp.PingConstants;
 import org.opennms.netmgt.icmp.proxy.strategy.MultiplePingExecutionStrategy;
 import org.opennms.netmgt.icmp.proxy.strategy.SinglePingExecutionStrategy;
@@ -120,8 +118,6 @@ public class PingRequestBuilderImpl implements PingRequestBuilder {
         requestDTO.setRetries(retries);
         requestDTO.setLocation(location);
         requestDTO.setSystemId(systemId);
-        requestDTO.addTracingInfo(RpcRequest.TAG_IP_ADDRESS, InetAddressUtils.toIpAddrString(inetAddress));
-
 
         if (numberOfRequests > 1) {
             return new MultiplePingExecutionStrategy(client, numberOfRequests, callback).execute(requestDTO);

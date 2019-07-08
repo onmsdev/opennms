@@ -33,20 +33,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- application/summary-box.htm -->
-<div class="card">
-  <div class="card-header">
-    <a href="#">Applications with Pending Problems</a>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <a href="#">Applications with Pending Problems</a>
+    </h3>
   </div>
   <c:choose>
     <c:when test="${empty summaries}">
-      <div class="card-body">
-        <p class="mb-0">
+      <div class="panel-body">
+        <p class="noBottomMargin">
           There are no pending problems.
         </p>
       </div>
     </c:when>
     <c:otherwise>
-      <table class="table table-sm severity mb-0">
+      <table class="table table-condensed severity">
         <c:forEach var="summary" items="${summaries}">
           <c:url var="applicationTopoLink" value="topology">
             <c:param name="focus-vertices" value="${summary.application.id}"/>
@@ -62,7 +64,7 @@
         </c:forEach>
       </table>
       <c:if test="${more}">
-        <div class="card-footer text-right">
+        <div class="panel-footer text-right">
           Not all Applications with Pending Problems are shown.
         </div>
       </c:if>

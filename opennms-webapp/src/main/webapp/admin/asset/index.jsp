@@ -44,11 +44,11 @@
 
 <div class="row">
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <span>Import and Export Assets</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Import and Export Assets</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <p>
           <a href="admin/asset/import.jsp">Import Assets</a>
         </p>
@@ -60,11 +60,11 @@
   </div> <!-- column -->
 
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <span>Importing Asset Information</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Importing Asset Information</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <p>
           The asset import page imports a comma-separated value file (.csv),
           (probably exported from spreadsheet) into the assets database.
@@ -72,11 +72,11 @@
       </div>
     </div> <!-- panel -->
 
-    <div class="card">
-      <div class="card-header">
-        <span>Exporting Asset Information</span>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Exporting Asset Information</h3>
       </div>
-      <div class="card-body">
+      <div class="panel-body">
         <p>
           All the nodes with asset information will be exported to a
           comma-separated value file (.csv), which is suitable for use in a

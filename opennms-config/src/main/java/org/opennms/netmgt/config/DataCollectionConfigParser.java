@@ -73,9 +73,8 @@ public class DataCollectionConfigParser {
         this.externalGroupsMap = new ConcurrentHashMap<String, DatacollectionGroup>();
     }
     
-    protected Map<String,DatacollectionGroup> loadExternalGroupMap() {
-        parseExternalResources();
-        return externalGroupsMap;
+    protected Map<String,DatacollectionGroup> getExternalGroupMap() {
+        return Collections.unmodifiableMap(externalGroupsMap);
     }
     
     /**
@@ -85,6 +84,7 @@ public class DataCollectionConfigParser {
      */
     public void parseCollection(SnmpCollection collection) {
         if (collection.getIncludeCollections().size() > 0) {
+            parseExternalResources();
             checkCollection(collection);
             // Add systemDefs and dependencies
             for (IncludeCollection include : collection.getIncludeCollections()) {
@@ -158,7 +158,13 @@ public class DataCollectionConfigParser {
     /**
      * Read all XML files from datacollection directory and parse them to create a list of DatacollectionGroup objects.
      */
-    protected void parseExternalResources() {
+    private void parseExternalResources() {
+        // Ensure that this is called only once.
+        if (externalGroupsMap != null && externalGroupsMap.size() > 0) {
+            LOG.info("parseExternalResources: external data collection groups are already parsed");
+            return;
+        }
+        
         // Check configuration files repository
         File folder = new File(configDirectory);
         if (!folder.exists() || !folder.isDirectory()) {

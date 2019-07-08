@@ -38,7 +38,6 @@
             <cm:property name="settings.index.number_of_replicas" value="" />
             <cm:property name="settings.index.refresh_interval" value="" />
             <cm:property name="settings.index.routing_partition_size" value="" />
-            <cm:property name="eventIndexName" value="cerniosscert101" /> <!-- Set value of OpenNMS instance forwarding document to elastic -->
         </cm:default-properties>
     </cm:property-placeholder>
 
@@ -92,20 +91,7 @@
 		<argument ref="indexStrategy"/>
 		<argument value="${bulkRetryCount}" />
 		<argument ref="elasticFeedbackRepositoryInitializer" />
-		<property name="eventIndexname" value="${eventIndexName}" />
     </bean>
     <service interface="org.opennms.features.situationfeedback.api.FeedbackRepository" ref="elasticFeedbackRepository" />
-    <reference-list interface="org.opennms.features.situationfeedback.api.AlarmFeedbackListener"
-                    availability="optional">
-        <reference-listener bind-method="onBind" unbind-method="onUnbind" ref="elasticFeedbackRepository"/>
-    </reference-list>
-
-    <!-- Health Check -->
-    <service interface="org.opennms.core.health.api.HealthCheck">
-        <bean class="org.opennms.plugins.elasticsearch.rest.ElasticHealthCheck" >
-            <argument ref="jestClient"/>
-            <argument value="Situation Feedback"/>
-        </bean>
-    </service>
 
 </blueprint>

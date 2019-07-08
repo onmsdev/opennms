@@ -55,14 +55,12 @@ import org.opennms.core.ipc.common.kafka.KafkaSinkConstants;
 import org.opennms.core.ipc.common.kafka.KafkaConfigProvider;
 import org.opennms.core.ipc.common.kafka.OnmsKafkaConfigProvider;
 import org.opennms.core.ipc.common.kafka.Utils;
-import org.opennms.core.ipc.sink.model.SinkMessageProtos;
 import org.opennms.core.logging.Logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 public class KafkaMessageConsumerManager extends AbstractMessageConsumerManager implements InitializingBean {
 
@@ -103,13 +101,9 @@ public class KafkaMessageConsumerManager extends AbstractMessageConsumerManager 
                     ConsumerRecords<String, byte[]> records = consumer.poll(100);
                     for (ConsumerRecord<String, byte[]> record : records) {
                         try {
-                            byte[] messageInBytes = getSinkMessageFromProto(record.value());
-                            dispatch(module, module.unmarshal(messageInBytes));
+                            dispatch(module, module.unmarshal(record.value()));
                         } catch (RuntimeException e) {
                             LOG.warn("Unexpected exception while dispatching message", e);
-                        } catch (InvalidProtocolBufferException e) {
-                            LOG.warn("Error parsing procotol buffer in message. The message will be dropped. \n" +
-                                    "Ensure that all components are running the same version of the software.");
                         }
                     }
                 }
@@ -121,11 +115,6 @@ public class KafkaMessageConsumerManager extends AbstractMessageConsumerManager 
             } finally {
                 consumer.close();
             }
-        }
-
-        private byte[] getSinkMessageFromProto(byte[] value) throws InvalidProtocolBufferException {
-            SinkMessageProtos.SinkMessage sinkMessage = SinkMessageProtos.SinkMessage.parseFrom(value);
-            return sinkMessage.getContent().toByteArray();
         }
 
         // Shutdown hook which can be called from a separate thread

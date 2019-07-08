@@ -78,7 +78,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
-        "classpath:/META-INF/opennms/applicationContext-timeseries-tcp.xml"
+        "classpath:/META-INF/opennms/applicationContext-tcp.xml"
 })
 public class TcpOutputStrategyTest {
 

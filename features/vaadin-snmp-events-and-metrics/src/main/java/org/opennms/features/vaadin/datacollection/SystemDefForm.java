@@ -33,11 +33,11 @@ import java.util.List;
 import org.opennms.netmgt.config.datacollection.Collect;
 import org.opennms.netmgt.config.datacollection.SystemDef;
 
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.v7.ui.TextField;
+import com.vaadin.ui.TextField;
 
 /**
  * The Class System Definition Form.
@@ -144,6 +144,7 @@ public class SystemDefForm extends CustomComponent {
      */
     @Override
     public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
         systemDefEditor.setReadOnly(readOnly);
     }
 
@@ -152,7 +153,7 @@ public class SystemDefForm extends CustomComponent {
      */
     @Override
     public boolean isReadOnly() {
-        return systemDefEditor.isReadOnly();
+        return super.isReadOnly() && systemDefEditor.isReadOnly();
     }
 
     /**

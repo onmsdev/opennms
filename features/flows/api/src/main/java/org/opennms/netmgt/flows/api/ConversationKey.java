@@ -37,16 +37,18 @@ public class ConversationKey {
 
     private final String location;
     private final Integer protocol;
-    private final String lowerIp;
-    private final String upperIp;
-    private final String application;
+    private final String srcIp;
+    private final String dstIp;
+    private final Integer srcPort;
+    private final Integer dstPort;
 
-    public ConversationKey(String location, Integer protocol, String lowerIp, String upperIp, String application) {
+    public ConversationKey(String location, Integer protocol, String srcIp, Integer srcPort, String dstIp, Integer dstPort) {
         this.location = location;
         this.protocol = protocol;
-        this.lowerIp = lowerIp;
-        this.upperIp = upperIp;
-        this.application = application;
+        this.srcIp = srcIp;
+        this.srcPort = srcPort;
+        this.dstIp = dstIp;
+        this.dstPort = dstPort;
     }
 
     public String getLocation() {
@@ -57,16 +59,20 @@ public class ConversationKey {
         return protocol;
     }
 
-    public String getLowerIp() {
-        return lowerIp;
+    public String getSrcIp() {
+        return srcIp;
     }
 
-    public String getUpperIp() {
-        return upperIp;
+    public String getDstIp() {
+        return dstIp;
     }
 
-    public String getApplication() {
-        return application;
+    public Integer getSrcPort() {
+        return srcPort;
+    }
+
+    public Integer getDstPort() {
+        return dstPort;
     }
 
     @Override
@@ -75,15 +81,16 @@ public class ConversationKey {
         if (o == null || getClass() != o.getClass()) return false;
         ConversationKey that = (ConversationKey) o;
         return Objects.equals(protocol, that.protocol) &&
-                Objects.equals(application, that.application) &&
+                Objects.equals(srcPort, that.srcPort) &&
+                Objects.equals(dstPort, that.dstPort) &&
                 Objects.equals(location, that.location) &&
-                Objects.equals(lowerIp, that.lowerIp) &&
-                Objects.equals(upperIp, that.upperIp);
+                Objects.equals(srcIp, that.srcIp) &&
+                Objects.equals(dstIp, that.dstIp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, protocol, lowerIp, upperIp, application);
+        return Objects.hash(location, protocol, srcIp, dstIp, srcPort, dstPort);
     }
 
     @Override
@@ -91,9 +98,10 @@ public class ConversationKey {
         return "ConversationKey{" +
                 "location='" + location + '\'' +
                 ", protocol=" + protocol +
-                ", lowerIp='" + lowerIp + '\'' +
-                ", upperIp='" + upperIp + '\'' +
-                ", application='" + application + '\'' +
+                ", srcIp='" + srcIp + '\'' +
+                ", dstIp='" + dstIp + '\'' +
+                ", srcPort=" + srcPort +
+                ", dstPort=" + dstPort +
                 '}';
     }
 }

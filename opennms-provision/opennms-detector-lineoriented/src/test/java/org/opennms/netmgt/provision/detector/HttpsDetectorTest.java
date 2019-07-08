@@ -37,7 +37,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -94,7 +93,7 @@ public class HttpsDetectorTest {
     @Before
     public void setUp() throws Exception {
         MockLogAppender.setupLogging();
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
 
         /* make sure defaults are initialized */
         m_detector.setPort(SSL_PORT);

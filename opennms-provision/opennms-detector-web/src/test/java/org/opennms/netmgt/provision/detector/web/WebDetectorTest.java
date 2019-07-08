@@ -34,7 +34,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,7 +112,7 @@ public class WebDetectorTest implements InitializingBean {
     @Before
     public void setUp() throws Exception {
         MockLogAppender.setupLogging();
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
         m_detector.setPort(80);
         m_detector.setPath("/");
         m_detector.setResponseRange("100-399");

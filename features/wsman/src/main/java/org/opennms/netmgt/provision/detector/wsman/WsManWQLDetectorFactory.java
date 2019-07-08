@@ -35,13 +35,16 @@ import org.opennms.core.wsman.WSManClientFactory;
 import org.opennms.core.wsman.cxf.CXFWSManClientFactory;
 import org.opennms.netmgt.dao.WSManConfigDao;
 import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.provision.DetectRequest;
+import org.opennms.netmgt.provision.DetectResults;
 import org.opennms.netmgt.provision.support.DetectRequestImpl;
 import org.opennms.netmgt.provision.support.GenericServiceDetectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class WsManWQLDetectorFactory extends GenericServiceDetectorFactory<WsManWQLDetector> {
@@ -60,7 +63,7 @@ public class WsManWQLDetectorFactory extends GenericServiceDetectorFactory<WsMan
     }
 
     @Override
-    public WsManWQLDetector createDetector(Map<String, String> properties) {
+    public WsManWQLDetector createDetector() {
         final WsManWQLDetector detector = new WsManWQLDetector();
         detector.setClientFactory(m_factory);
         return detector;

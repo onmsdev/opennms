@@ -42,11 +42,10 @@ import org.opennms.netmgt.provision.ServiceDetectorFactory;
 import org.opennms.netmgt.provision.detector.registry.api.ServiceDetectorRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 public class ServiceDetectorRegistryImpl implements ServiceDetectorRegistry, InitializingBean {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceDetectorRegistryImpl.class);
@@ -68,7 +67,7 @@ public class ServiceDetectorRegistryImpl implements ServiceDetectorRegistry, Ini
             for (ServiceDetectorFactory<?> factory : m_detectorFactories) {
                 // Determine the implementation type
                 Map<String, String> props = new HashMap<>();
-                ServiceDetector detector = factory.createDetector(props);
+                ServiceDetector detector = factory.createDetector();
                 // Register the factory
                 onBind(factory, props);
                 // Add the detector to the service registry
@@ -114,12 +113,12 @@ public class ServiceDetectorRegistryImpl implements ServiceDetectorRegistry, Ini
 
     @Override
     public Map<String, String> getTypes() {
-        return ImmutableMap.copyOf(m_classNameByServiceName);
+        return Collections.unmodifiableMap(m_classNameByServiceName);
     }
 
     @Override
     public Set<String> getServiceNames() {
-        return ImmutableSet.copyOf(m_factoriesByServiceName.keySet());
+        return Collections.unmodifiableSet(m_factoriesByServiceName.keySet());
     }
 
     @Override
@@ -138,13 +137,8 @@ public class ServiceDetectorRegistryImpl implements ServiceDetectorRegistry, Ini
     }
 
     @Override
-    public String getDetectorClassNameFromServiceName(String serviceName) {
-        return m_classNameByServiceName.get(serviceName);
-    }
-
-    @Override
     public Set<String> getClassNames() {
-        return ImmutableSet.copyOf(m_factoriesByClassName.keySet());
+        return Collections.unmodifiableSet(m_factoriesByClassName.keySet());
     }
 
     @Override
@@ -166,11 +160,13 @@ public class ServiceDetectorRegistryImpl implements ServiceDetectorRegistry, Ini
         if (factory == null) {
             return null;
         }
-        final ServiceDetector detector = factory.createDetector(properties);
+        final ServiceDetector detector = factory.createDetector();
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(detector);
+        wrapper.setPropertyValues(properties);
         return detector;
     }
 
     private static String getServiceName(ServiceDetectorFactory<? extends ServiceDetector> factory) {
-        return factory.createDetector(new HashMap<>()).getServiceName();
+        return factory.createDetector().getServiceName();
     }
 }

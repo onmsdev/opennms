@@ -28,27 +28,19 @@
 
 package org.opennms.features.vaadin.dashboard.dashlets;
 
-import java.util.List;
-import java.util.Map;
-
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.HierarchicalContainer;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.ui.*;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsResource;
 import org.opennms.netmgt.model.OnmsResourceType;
 import org.opennms.netmgt.model.ResourceId;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.Property;
-import com.vaadin.v7.data.util.HierarchicalContainer;
-import com.vaadin.v7.ui.AbstractSelect;
-import com.vaadin.v7.ui.Tree;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a Rrd graph selection window.

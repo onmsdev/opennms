@@ -49,12 +49,12 @@
   <jsp:param name="asset" value="status-box" />
 </jsp:include>
 
-<div id="status-overview-box" class="card fix-subpixel" style="display: none;">
-    <div class="card-header">
-        <span>Status Overview</span>
+<div id="status-overview-box" class="panel panel-default fix-subpixel" style="display: none;">
+    <div class="panel-heading">
+        <h3 class="panel-title">Status Overview</h3>
     </div>
-    <div class="card-body">
-        <div id="chart-content" class="row mx-auto">
+    <div class="panel-body">
+        <div id="chart-content" class="row row-centered">
         </div>
     </div>
 </div>

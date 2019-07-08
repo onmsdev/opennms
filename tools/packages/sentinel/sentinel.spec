@@ -16,7 +16,7 @@
 %{!?_descr:%define _descr OpenNMS}
 %{!?packagedir:%define packagedir %{_name}-%version-%{releasenumber}}
 
-%{!?_java:%define _java jre-11}
+%{!?_java:%define _java jre-1.8.0}
 
 %{!?extrainfo:%define extrainfo %{nil}}
 %{!?extrainfo2:%define extrainfo2 %{nil}}
@@ -58,8 +58,8 @@ BuildRequires:	libxslt
 Requires:       openssh
 Requires(post): util-linux
 Requires:       util-linux
-#Requires(pre):  %{_java}
-#Requires:       %{_java}
+Requires(pre):  %{_java}
+Requires:       %{_java}
 Requires(pre):  /usr/bin/getent
 Requires(pre):  /usr/sbin/groupadd
 Requires(pre):  /usr/sbin/useradd
@@ -126,7 +126,6 @@ mv "%{buildroot}%{sentinelinstprefix}/etc/sentinel.conf" "%{buildroot}%{_sysconf
 find %{buildroot}%{sentinelinstprefix} ! -type d | \
     grep -v %{sentinelinstprefix}/bin | \
     grep -v %{sentinelrepoprefix} | \
-    grep -v %{sentinelinstprefix}/etc/featuresBoot.d | \
     sed -e "s|^%{buildroot}|%attr(644,sentinel,sentinel) |" | \
     sort > %{_tmppath}/files.sentinel
 find %{buildroot}%{sentinelinstprefix}/bin ! -type d | \
@@ -145,7 +144,6 @@ rm -rf %{buildroot}
 %defattr(664 sentinel sentinel 775)
 %attr(755,sentinel,sentinel) %{_initrddir}/sentinel
 %attr(644,sentinel,sentinel) %config(noreplace) %{_sysconfdir}/sysconfig/sentinel
-%attr(644,sentinel,sentinel) %{sentinelinstprefix}/etc/featuresBoot.d/.readme
 
 %pre
 ROOT_INST="${RPM_INSTALL_PREFIX0}"
@@ -171,7 +169,6 @@ fi
 
 # Remove the directory used as the local Maven repo cache
 rm -rf "${ROOT_INST}/repositories/.local"
-rm -rf "${ROOT_INST}/.m2"
 
 # Generate an SSH key if necessary
 if [ ! -f "${ROOT_INST}/etc/host.key" ]; then

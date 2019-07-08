@@ -43,8 +43,7 @@ import org.opennms.netmgt.vaadin.core.TransactionAwareBeanProxyFactory;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.v7.ui.Label;
+import com.vaadin.ui.Label;
 
 /**
  * This class represents a Alert Dashlet with minimum details.
@@ -129,7 +128,7 @@ public class BSMDashlet extends AbstractDashlet {
     }
 
     @Override
-    public DashletComponent getWallboardComponent(final UI ui) {
+    public DashletComponent getWallboardComponent() {
         if (m_wallboardComponent == null) {
             m_wallboardComponent = new BSMDashletComponent(1, m_columnCountBoard);
         }
@@ -137,7 +136,7 @@ public class BSMDashlet extends AbstractDashlet {
     }
 
     @Override
-    public DashletComponent getDashboardComponent(final UI ui) {
+    public DashletComponent getDashboardComponent() {
         if (m_dashboardComponent == null) {
             m_dashboardComponent = new BSMDashletComponent(1, m_columnCountPanel);
         }

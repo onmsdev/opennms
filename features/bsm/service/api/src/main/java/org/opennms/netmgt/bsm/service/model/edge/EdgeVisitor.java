@@ -35,6 +35,4 @@ public interface EdgeVisitor<T> {
     T visit(ReductionKeyEdge edge);
 
     T visit(ChildEdge edge);
-
-    T visit(ApplicationEdge edge);
 }

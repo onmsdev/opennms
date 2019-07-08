@@ -33,10 +33,6 @@ import java.util.List;
 public interface ManagerMBean {
 
     /**
-     * <p>init</p>
-     */
-    public void init();
-    /**
      * <p>dumpThreads</p>
      */
     public void dumpThreads();

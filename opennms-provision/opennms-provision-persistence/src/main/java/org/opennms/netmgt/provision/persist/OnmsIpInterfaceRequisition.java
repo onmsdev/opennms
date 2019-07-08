@@ -30,11 +30,9 @@ package org.opennms.netmgt.provision.persist;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.opennms.netmgt.model.PrimaryType;
 import org.opennms.netmgt.provision.persist.requisition.RequisitionInterface;
-import org.opennms.netmgt.provision.persist.requisition.RequisitionMetaData;
 import org.opennms.netmgt.provision.persist.requisition.RequisitionMonitoredService;
 
 /**
@@ -47,7 +45,6 @@ public class OnmsIpInterfaceRequisition {
     
     private RequisitionInterface m_iface;
     private final List<OnmsMonitoredServiceRequisition> m_svcReqs;
-    private final List<OnmsInterfaceMetaDataRequisition> m_metaDataReqs;
 
     /**
      * <p>Constructor for OnmsIpInterfaceRequisition.</p>
@@ -57,7 +54,6 @@ public class OnmsIpInterfaceRequisition {
     public OnmsIpInterfaceRequisition(RequisitionInterface iface) {
         m_iface = iface;
         m_svcReqs = constructSvcReqs();
-        m_metaDataReqs = constructMetaDataRequistions();
     }
     
     RequisitionInterface getInterface() {
@@ -72,12 +68,6 @@ public class OnmsIpInterfaceRequisition {
         return reqs;
     }
 
-    private List<OnmsInterfaceMetaDataRequisition> constructMetaDataRequistions() {
-        return m_iface.getMetaData().stream()
-                .map(OnmsInterfaceMetaDataRequisition::new)
-                .collect(Collectors.toList());
-    }
-
     /**
      * <p>visit</p>
      *
@@ -88,9 +78,6 @@ public class OnmsIpInterfaceRequisition {
         for(OnmsMonitoredServiceRequisition svcReq : m_svcReqs) {
             svcReq.visit(visitor);
         }
-
-        m_metaDataReqs.forEach(r -> r.visit(visitor));
-
         visitor.completeInterface(this);
     }
 

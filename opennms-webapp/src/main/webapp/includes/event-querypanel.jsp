@@ -35,10 +35,12 @@
 %>
 
 <form class="form-inline" name="event_search" action="event/query" method="get" onsubmit="return Blank_TextField_Validator()">
-    <div class="input-group">
-      <input class="form-control" type="text" name="eventtext" placeholder="Event Text"/>
-        <select class="form-control custom-select" name="relativetime">
-          <option value="0" selected>Any Time</option>
+    <div class="form-group">
+      <label for="msgmatchany">Event Text:&nbsp;</label><input class="form-control" type="text" name="msgmatchany" />
+      &nbsp;
+      <label for="relativetime">Time:</label>
+        <select class="form-control" name="relativetime">
+          <option value="0" selected>Any</option>
           <option value="1">Last hour</option>
           <option value="2">Last 4 hours</option>
           <option value="3">Last 8 hours</option>
@@ -47,8 +49,7 @@
           <option value="6">Last week</option>
           <option value="7">Last month</option>
         </select>
-        <div class="input-group-append">
-          <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-        </div>
+        &nbsp;
+        <input class="btn btn-default" type="submit" value="Search" />
     </div>
 </form>

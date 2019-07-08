@@ -36,18 +36,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 
-<div id="application-box" class="card">
+<div id="application-box" class="panel panel-default">
 
-<div class="card-header">
-<span>
+<div class="panel-heading">
+<h3 class="panel-title">
   Application Memberships
   <c:if test="${isAdmin == 'true'}">
     (<a href="<c:url value='admin/applications.htm?edit&ifserviceid=${service.id}'/>">Edit</a>)
   </c:if>
-</span>
+</h3>
 </div>
 
-<table class="table table-sm">
+<table class="table table-condensed">
   <c:if test="${empty applications}">
     <tr>
       <td>This service is not a member of any applications</td>

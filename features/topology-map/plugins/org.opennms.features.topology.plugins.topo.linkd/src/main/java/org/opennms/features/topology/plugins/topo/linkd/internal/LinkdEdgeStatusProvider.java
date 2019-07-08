@@ -44,7 +44,6 @@ import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsSeverity;
-import org.opennms.netmgt.topologies.service.api.OnmsTopology;
 
 import com.google.common.collect.Maps;
 
@@ -90,7 +89,7 @@ public class LinkdEdgeStatusProvider implements EdgeStatusProvider {
 
     @Override
     public String getNamespace() {
-        return OnmsTopology.TOPOLOGY_NAMESPACE_LINKD;
+        return LinkdTopologyProvider.TOPOLOGY_NAMESPACE_LINKD;
     }
 
     @Override
@@ -105,17 +104,15 @@ EDGES:        for (EdgeRef edgeRef : edges) {
                     if (alarm.getIfIndex() == null)
                         continue;
                     int alarmnodeid = alarm.getNode().getId().intValue();
-                    if ( edge.getSourcePort().getVertex().getNodeID() != null 
-                            && edge.getSourcePort().getVertex().getNodeID().intValue() == alarmnodeid
-                            && edge.getSourcePort().getIfIndex() != null
-                            && edge.getSourcePort().getIfIndex().intValue() == alarm.getIfIndex().intValue()) {
+                    if ( edge.getSourceNodeid() != null && edge.getSourceNodeid().intValue() == alarmnodeid
+                            && edge.getSourceIfIndex() != null
+                            && edge.getSourceIfIndex().intValue() == alarm.getIfIndex().intValue()) {
                         retVal.put(edgeRef, new LinkdEdgeStatus(alarm));
                         continue EDGES;
                     }
-                    if ( edge.getTargetPort().getVertex().getNodeID() != null 
-                            && edge.getTargetPort().getVertex().getNodeID().intValue() == alarmnodeid
-                            && edge.getTargetPort().getIfIndex() != null
-                            && edge.getTargetPort().getIfIndex().intValue() == alarm.getIfIndex().intValue()) {
+                    if ( edge.getTargetNodeid() != null && edge.getTargetNodeid().intValue() == alarmnodeid
+                            && edge.getTargetIfIndex() != null
+                            && edge.getTargetIfIndex().intValue() == alarm.getIfIndex().intValue()) {
                         retVal.put(edgeRef, new LinkdEdgeStatus(alarm));
                         continue EDGES;
                     }                
@@ -127,7 +124,7 @@ EDGES:        for (EdgeRef edgeRef : edges) {
 
     @Override
     public boolean contributesTo(String namespace) {
-        return namespace.equals(OnmsTopology.TOPOLOGY_NAMESPACE_LINKD);
+        return namespace.equals(LinkdTopologyProvider.TOPOLOGY_NAMESPACE_LINKD);
     }
 
     public AlarmDao getAlarmDao() {

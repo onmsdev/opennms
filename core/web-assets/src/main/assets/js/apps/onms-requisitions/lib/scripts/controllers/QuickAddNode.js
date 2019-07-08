@@ -122,7 +122,7 @@ const QuickNode = require('../model/QuickNode');
             buttons: {
               main: {
                 label: 'Ok',
-                className: 'btn-secondary'
+                className: 'btn-default'
               }
             }
           });

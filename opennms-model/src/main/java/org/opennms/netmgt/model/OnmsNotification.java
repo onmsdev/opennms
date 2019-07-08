@@ -59,8 +59,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Type;
 import org.opennms.core.network.InetAddressXmlAdapter;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -516,8 +515,8 @@ public class OnmsNotification implements Acknowledgeable, Serializable {
      */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("notifyid", getNotifyId())
+        return new ToStringCreator(this)
+            .append("notifyid", getNotifyId())
             .toString();
     }
 

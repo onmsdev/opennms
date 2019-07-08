@@ -135,31 +135,34 @@ LABEL
   
 </p>
 
-<form role="form" method="post" class="form mb-2 col-md-6" name="setCriticalPath" action="admin/setCriticalPath" onsubmit="return verifyIpAddress();">
+<form role="form" method="post" class="form-inline" name="setCriticalPath" action="admin/setCriticalPath" onsubmit="return verifyIpAddress();">
 
 <input name="node" value=<%=nodeId%> type="hidden"/>
 
-<div class="form-group">
-<label for="criticalIp">Critical path IP address in xxx.xxx.xxx.xxx or xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx format:</label>
+<p>
+<label for="criticalIp">Critical path IP address in xxx.xxx.xxx.xxx or xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx format:</label><br/>
 <input id="criticalIp" class="form-control" type="text" name="criticalIp" size="57" maxlength="55" />
-</div>
+</p>
 
-<div class="form-group">
-<label for="criticalSvc">Critical path service:</label>
+<p>
+<label for="criticalSvc">Critical path service:</label><br/>
 
-  <select id="criticalSvc" class="form-control custom-select" name="criticalSvc" value="ICMP">
+  <select id="criticalSvc" class="form-control" name="criticalSvc" value="ICMP">
         <option value="ICMP">ICMP</option>
   </select>
-</div>
+</p>
 
-<div class="form-group">
-<input type="submit" class="btn btn-secondary" name="task" value="Submit"/>
-<input type="button" class="btn btn-secondary" name="task" value="Cancel" onClick="cancel()"/>
-</div>
+<p>
+<input type="submit" class="btn btn-default" name="task" value="Submit"/>
+&nbsp;
+<input type="button" class="btn btn-default" name="task" value="Cancel" onClick="cancel()"/>
+</p>
 
 <h3>Delete critical path for this node</h3>
 
-<input type="button" class="btn btn-secondary" name="task" value="Delete" onClick="deletePathOutage()"/>
+<p>
+<input type="button" class="btn btn-default" name="task" value="Delete" onClick="deletePathOutage()"/>
+</p>
 
 </form>
 

@@ -33,8 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * This class can be used to help track callbacks issued via the {@link AlarmLifecycleListener}
  * in order to help simplify possible synchronization logic in {@link AlarmLifecycleListener#handleAlarmSnapshot(List)}.
@@ -99,7 +97,4 @@ public class AlarmCallbackStateTracker {
         return deletedAlarmsByReductionKey.contains(reductionKey);
     }
 
-    public Set<Integer> getUpdatedAlarmIds() {
-        return ImmutableSet.copyOf(alarmsUpdatesById);
-    }
 }

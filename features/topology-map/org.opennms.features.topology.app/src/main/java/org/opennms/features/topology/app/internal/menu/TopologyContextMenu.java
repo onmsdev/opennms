@@ -42,8 +42,9 @@ import org.opennms.features.topology.api.topo.VertexRef;
 import org.opennms.features.topology.app.internal.DefaultOperationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.peter.contextmenu.ContextMenu;
+import org.vaadin.peter.contextmenu.client.ContextMenuState;
 
-import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 
@@ -61,20 +62,19 @@ public class TopologyContextMenu extends ContextMenu {
 	 *
 	 * @param menuBar the {@link MenuBar} to convert
 	 */
-	public TopologyContextMenu(UI parentComponent, MenuBar menuBar) {
-		super(parentComponent, true);
+	public TopologyContextMenu(MenuBar menuBar) {
 		addItems(menuBar);
 	}
 
-	public TopologyContextMenu(UI parentComponent) {
-		super(parentComponent, true);
+	public TopologyContextMenu() {
+
 	}
 
 	public void updateMenu(GraphContainer graphContainer, UI mainWindow, OperationManager operationManager, List<VertexRef> targets) {
 		final OperationContext operationContext = new DefaultOperationContext(mainWindow, graphContainer, OperationContext.DisplayLocation.CONTEXTMENU);
 
 		// Clear Menu
-		removeItems();
+		removeAllItems();
 
 		// Rebuild menu
 		MenuBuilder menuBuilder = new MenuBuilder();
@@ -87,47 +87,31 @@ public class TopologyContextMenu extends ContextMenu {
 		addNavigateToItems(menuBuilder, targets, operationContext);
 
 		MenuBar menu = menuBuilder.build(targets, operationContext, this::notifyMenuUpdateListener);
-
-		// Now convert the MenuBar to a context menu
 		addItems(menu);
 	}
 
 	private void addItems(MenuBar menuBar) {
 		for (MenuBar.MenuItem eachItem : menuBar.getItems()) {
-			addItems(() ->
-				this.addItem(
-					eachItem.getText(),
-					eachItem.getIcon(),
-					(Command) selectedItem -> {
-						if (eachItem.getCommand() != null) {
-							eachItem.getCommand().menuSelected(eachItem);
-						}
-					}), eachItem);
+			addItems(() -> this.addItem(eachItem.getText(), eachItem.getIcon()), eachItem);
 		}
 	}
 
-	private void addItems(ItemAddBehaviour<com.vaadin.contextmenu.MenuItem> behaviour, MenuBar.MenuItem child) {
-		com.vaadin.contextmenu.MenuItem contextMenuItem = behaviour.addItem();
+	private void addItems(ItemAddBehaviour<ContextMenuItem> behaviour, MenuBar.MenuItem child) {
+		ContextMenuItem contextMenuItem = behaviour.addItem();
 		contextMenuItem.setEnabled(child.isEnabled());
-		if (child.isSeparator()) {
-			contextMenuItem.addSeparator();
-		}
+		contextMenuItem.setSeparatorVisible(child.isSeparator());
 		if (child.getCommand() != null) {
-			contextMenuItem.setCommand((Command) contextMenuItemClickEvent -> child.getCommand().menuSelected(child));
+			contextMenuItem.addItemClickListener(contextMenuItemClickEvent -> child.getCommand().menuSelected(child));
 		}
 		if (child.hasChildren()) {
 			for (MenuBar.MenuItem eachChild : child.getChildren()) {
-				addItems(() ->
-						contextMenuItem.addItem(
-								eachChild.getText(),
-								eachChild.getIcon(),
-								(Command) selectedItem -> {
-									if (eachChild.getCommand() != null) {
-										eachChild.getCommand().menuSelected(eachChild);
-									}
-								}), eachChild);
+				addItems(() -> contextMenuItem.addItem(eachChild.getText(), eachChild.getIcon()), eachChild);
 			}
 		}
+	}
+
+	public List<ContextMenuState.ContextMenuItemState> getItems() {
+		return getState().getRootItems();
 	}
 
 	public static List<VertexRef> asVertexList(Object target) {

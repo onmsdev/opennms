@@ -48,11 +48,11 @@
   <jsp:param name="breadcrumb" value="<%=breadcrumb3%>" />
 </jsp:include>
 
-<div class="card">
-  <div class="card-header">
-    <span>Discovery Scan Started</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Discovery Scan Started</h3>
   </div>
-  <div class="card-body">
+  <div class="panel-body">
     <p>
       The discovery scan has been submitted. It will execute immediately.
     </p>
@@ -60,7 +60,7 @@
     <p><a href='admin/index.jsp'>Return to the admin page</a></p>
     <p><a href='admin/discovery/index.jsp'>Return to the discovery configuration page</a></p>
 
-  </div> <!-- card-body -->
+  </div> <!-- panel-body -->
 </div> <!-- panel -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="false" />

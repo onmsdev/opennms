@@ -66,8 +66,7 @@ import org.hibernate.annotations.Type;
 import org.opennms.core.network.InetAddressXmlAdapter;
 import org.opennms.netmgt.events.api.EventParameterUtils;
 import org.opennms.netmgt.xml.event.Event;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * <p>OnmsEvent class.</p>
@@ -1013,8 +1012,8 @@ public class OnmsEvent extends OnmsEntity implements Serializable {
 	 */
         @Override
 	public String toString() {
-            return MoreObjects.toStringHelper(this).add("eventid", getId())
-		        .add("eventuei", getEventUei())
+		return new ToStringCreator(this).append("eventid", getId())
+		        .append("eventuei", getEventUei())
 				.toString();
 	}
 

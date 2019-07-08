@@ -44,11 +44,11 @@
   <jsp:param name="breadcrumb" value="List"/>
 </jsp:include>
 
-<div class="card">
-  <div class="card-header">
-    <span>Statistics Report List</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Statistics Report List</h3>
   </div>
-  <div class="card-body">
+  <div class="panel-body">
 
 <c:choose>
   <c:when test="${empty model}">
@@ -113,7 +113,7 @@
     </form>
   </c:otherwise>
 </c:choose>
-  </div> <!-- card-body -->
+  </div> <!-- panel-body -->
 </div> <!-- panel -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="false"/>

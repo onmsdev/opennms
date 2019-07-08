@@ -28,10 +28,6 @@
 
 package org.opennms.core.rpc.jms;
 
-import java.util.Dictionary;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.camel.Component;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.ClassRule;
@@ -46,6 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.Dictionary;
+import java.util.Map;
+import java.util.Properties;
+
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
@@ -53,8 +53,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
         "classpath:/META-INF/opennms/applicationContext-queuingservice-mq-vm.xml",
         "classpath:/META-INF/opennms/applicationContext-rpc-client-jms.xml",
-        "classpath:/META-INF/opennms/applicationContext-rpc-echo.xml",
-        "classpath:/META-INF/opennms/applicationContext-tracer-registry.xml"
+        "classpath:/META-INF/opennms/applicationContext-rpc-echo.xml"
 })
 @JUnitConfigurationEnvironment
 public class EchoRpcBlueprintIT extends org.opennms.core.rpc.camel.EchoRpcBlueprintIT {

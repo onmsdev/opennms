@@ -46,13 +46,13 @@
 
 <%--Align images in the center of the page --%>
 
-<div class="row my-4" id="include-charts">
+<div class="row row-centered" id="include-charts">
 <%--Get collection of charts --%>
 <%
 for (BarChart chartConfig : ChartUtils.getChartCollection()) {
     String chartName = chartConfig.getName();
 %>
-        <img class="mx-auto" src="charts?chart-name=<%=chartName %>" alt="<%=chartName %>" />
+        <img src="charts?chart-name=<%=chartName %>" alt="<%=chartName %>" />
 <%
 }
 %>

@@ -146,9 +146,7 @@ public class CollectCommand implements Action {
         final CompletableFuture<CollectionSet> future = locationAwareCollectorClient.collect()
                 .withAgent(agent)
                 .withSystemId(systemId)
-                // For Service collectors that implement integration api will have proxy collectors.
-                // fetching class name from proxy won't match with class name in collector registry.
-                .withCollectorClassName(className)
+                .withCollector(collector)
                 .withTimeToLive(ttlInMs)
                 .withAttributes(parse(attributes))
                 .execute();

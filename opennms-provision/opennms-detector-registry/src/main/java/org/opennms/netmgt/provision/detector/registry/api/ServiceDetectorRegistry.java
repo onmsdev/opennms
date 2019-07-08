@@ -60,6 +60,4 @@ public interface ServiceDetectorRegistry {
 
     ServiceDetectorFactory<?> getDetectorFactoryByServiceName(String serviceName);
 
-    String getDetectorClassNameFromServiceName(String serviceName);
-
 }

@@ -28,21 +28,15 @@
 
 package org.opennms.features.vaadin.dashboard.dashlets;
 
-import java.util.Map;
-
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.ui.*;
 import org.opennms.features.vaadin.dashboard.config.ui.WallboardConfigUI;
 import org.opennms.features.vaadin.dashboard.config.ui.WallboardProvider;
 import org.opennms.features.vaadin.dashboard.model.DashletConfigurationWindow;
 import org.opennms.features.vaadin.dashboard.model.DashletSpec;
 import org.opennms.netmgt.config.KSC_PerformanceReportFactory;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.NativeSelect;
+import java.util.Map;
 
 /**
  * This class is used to display a custom configuration window for the Ksc dashlet.

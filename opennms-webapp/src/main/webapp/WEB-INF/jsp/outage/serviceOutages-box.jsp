@@ -58,11 +58,11 @@
   <c:param name="filter" value="service=${serviceId}"/>
 </c:url>
 
-<div class="card">
-<div class="card-header">
-  <span><a href="${outageLink}">Recent&nbsp;Outages</a></span>
+<div class="panel panel-default">
+<div class="panel-heading">
+  <h3 class="panel-title"><a href="${outageLink}">Recent&nbsp;Outages</a></h3>
 </div>
-<table class="table table-sm">
+<table class="table table-condensed">
 
 <% if (outages.length == 0) { %>
   <td colspan="3">There have been no outages on this service in the last 24 hours.</td>

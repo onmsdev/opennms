@@ -49,29 +49,38 @@ import org.springframework.security.core.GrantedAuthority;
 
 public class OpenNMSLoginModule extends AbstractKarafLoginModule implements OpenNMSLoginHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(OpenNMSLoginModule.class);
+
+    private Subject m_subject;
     private Map<String, ?> m_sharedState;
+    private Map<String, ?> m_options;
 
     @Override
     public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String, ?> sharedState, final Map<String, ?> options) {
         LOG.info("OpenNMS Login Module initializing: subject={}, callbackHandler={}, sharedState={}, options={}", subject, callbackHandler, sharedState, options);
+        m_subject = subject;
         m_sharedState = sharedState;
+        m_options = options;
         super.initialize(subject, callbackHandler, options);
     }
 
     @Override
     public boolean login() throws LoginException {
-        succeeded = LoginModuleUtils.doLogin(this, subject, m_sharedState, options);
-        return succeeded;
+        return LoginModuleUtils.doLogin(this, m_subject, m_sharedState, m_options);
     }
 
     @Override
     public boolean abort() throws LoginException {
-        return super.abort();
+        LOG.debug("Aborting {} login.", user);
+        clear();
+        return true;
     }
 
     @Override
     public boolean logout() throws LoginException {
-        return super.logout();
+        LOG.debug("Logging out user {}.", user);
+        subject.getPrincipals().removeAll(principals);
+        principals.clear();
+        return true;
     }
 
     public CallbackHandler callbackHandler() {

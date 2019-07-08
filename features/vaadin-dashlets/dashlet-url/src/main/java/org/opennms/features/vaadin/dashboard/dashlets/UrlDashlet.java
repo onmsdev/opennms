@@ -28,23 +28,21 @@
 
 package org.opennms.features.vaadin.dashboard.dashlets;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
+import com.vaadin.server.ExternalResource;
+import com.vaadin.ui.BrowserFrame;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import org.opennms.features.vaadin.dashboard.model.AbstractDashlet;
 import org.opennms.features.vaadin.dashboard.model.AbstractDashletComponent;
 import org.opennms.features.vaadin.dashboard.model.Dashlet;
 import org.opennms.features.vaadin.dashboard.model.DashletComponent;
 import org.opennms.features.vaadin.dashboard.model.DashletSpec;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.BrowserFrame;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.Label;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * This class implements a {@link Dashlet} for displaying an external URL.
@@ -65,7 +63,7 @@ public class UrlDashlet extends AbstractDashlet {
     }
 
     @Override
-    public DashletComponent getWallboardComponent(final UI ui) {
+    public DashletComponent getWallboardComponent() {
         if (m_dashletComponent == null) {
             m_dashletComponent = new AbstractDashletComponent() {
                 private VerticalLayout m_verticalLayout = new VerticalLayout();
@@ -153,7 +151,7 @@ public class UrlDashlet extends AbstractDashlet {
     }
 
     @Override
-    public DashletComponent getDashboardComponent(final UI ui) {
-        return getWallboardComponent(ui);
+    public DashletComponent getDashboardComponent() {
+        return getWallboardComponent();
     }
 }

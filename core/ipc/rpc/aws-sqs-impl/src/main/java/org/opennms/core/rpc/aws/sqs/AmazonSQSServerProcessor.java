@@ -33,11 +33,10 @@ import org.opennms.core.rpc.api.RpcModule;
 import org.opennms.core.rpc.api.RpcRequest;
 import org.opennms.core.rpc.api.RpcResponse;
 import org.opennms.core.rpc.camel.CamelRpcServerProcessor;
-import org.opennms.core.tracing.api.TracerRegistry;
 
 public class AmazonSQSServerProcessor extends CamelRpcServerProcessor {
-    public AmazonSQSServerProcessor(RpcModule<RpcRequest, RpcResponse> module, TracerRegistry tracerRegistry) {
-        super(module, tracerRegistry);
+    public AmazonSQSServerProcessor(RpcModule<RpcRequest, RpcResponse> module) {
+        super(module);
     }
 
     @Override

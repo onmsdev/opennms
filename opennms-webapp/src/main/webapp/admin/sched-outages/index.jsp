@@ -109,21 +109,22 @@
 	<jsp:param name="breadcrumb" value="Scheduled Outages" />
 </jsp:include>
 
-<div class="card">
-	<div class="card-header">
-		<h4 class="pull-left">Scheduled Outages</h4>
-    <form role="form" class="form-inline pull-right" action="admin/sched-outages/editoutage.jsp" method="post" >
+<div class="row">
+  <div class="col-md-4">
+    <form role="form" class="form-inline" action="admin/sched-outages/editoutage.jsp" method="post" >
       <input type="hidden" name="addNew" value="true" />
-		<div class="input-group">
-			<input type="text" class="form-control" value="New Name" size="40" name="newName" />
-			<div class="input-group-append">
-				<button type="submit" class="btn btn-secondary" name="newOutage"><i class="fa fa-plus"></i></button>
-			</div>
-		</div>
+      <input type="text" class="form-control" value="New Name" size="40" name="newName" />
+      <input type="submit" class="btn btn-default" name="newOutage" value="Add new outage" />
     </form>
-  </div> <!-- card-header -->
-<div class="card-body">
-<table id="outages" class="table table-sm table-striped">
+  </div> <!-- column -->
+</div> <!-- row -->
+
+<table id="outages" class="table table-condensed severity top-buffer">
+	<tr>
+		<th colspan="4">&nbsp;</th>
+		<th colspan="4">Affects...</th>
+		<th colspan="2"></th>
+	</tr>
 	<tr>
 		<th>Name</th>
 		<th>Type</th>
@@ -265,7 +266,5 @@
 		}
 	%>
 </table>
-	</div> <!-- card-body -->
-</div> <!-- card -->
 
 <jsp:include page="/includes/bootstrap-footer.jsp" flush="true" />

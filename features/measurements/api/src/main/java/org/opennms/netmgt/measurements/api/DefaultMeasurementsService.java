@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2010-2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2010-2016 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2016 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -88,7 +88,7 @@ public class DefaultMeasurementsService implements MeasurementsService {
         if (!request.getFilters().isEmpty()) {
             RowSortedTable<Long, String, Double> table = results.asRowSortedTable();
             filterEngine.filter(request.getFilters(), table);
-            results = new FetchResults(table, results.getStep(), results.getConstants(), results.getMetadata());
+            results = new FetchResults(table, results.getStep(), results.getConstants());
         }
 
         // Remove any transient values belonging to sources
@@ -107,7 +107,6 @@ public class DefaultMeasurementsService implements MeasurementsService {
         response.setTimestamps(results.getTimestamps());
         response.setColumns(results.getColumns());
         response.setConstants(results.getConstants());
-        response.setMetadata(results.getMetadata());
         return response;
     }
 

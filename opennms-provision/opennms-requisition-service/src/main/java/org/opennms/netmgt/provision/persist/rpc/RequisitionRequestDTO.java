@@ -28,8 +28,6 @@
 
 package org.opennms.netmgt.provision.persist.rpc;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -63,8 +61,6 @@ public class RequisitionRequestDTO implements RpcRequest {
     private RequisitionRequest providerRequest;
 
     private Long timeToLiveMs;
-
-    private Map<String, String> tracingInfo = new HashMap<>();
 
     public String getType() {
         return type;
@@ -114,15 +110,6 @@ public class RequisitionRequestDTO implements RpcRequest {
 
     public void setProviderRequest(String marshaledProviderRequest) {
         this.marshaledProviderRequest = marshaledProviderRequest;
-    }
-
-    @Override
-    public Map<String, String> getTracingInfo() {
-        return tracingInfo;
-    }
-
-    public void addTracingInfo(String key, String value) {
-        tracingInfo.put(key, value);
     }
 
     @Override

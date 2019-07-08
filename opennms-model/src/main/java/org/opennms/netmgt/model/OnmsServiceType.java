@@ -40,8 +40,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import com.google.common.base.MoreObjects;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -132,9 +131,9 @@ public class OnmsServiceType implements Serializable {
      */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("id", getId())
-            .add("name", getName())
+        return new ToStringCreator(this)
+            .append("id", getId())
+            .append("name", getName())
             .toString();
     }
 

@@ -32,7 +32,6 @@ import org.opennms.features.vaadin.jmxconfiggenerator.data.UiModel;
 import org.opennms.features.vaadin.jmxconfiggenerator.jobs.DetectMBeansJob;
 import org.opennms.features.vaadin.jmxconfiggenerator.jobs.GenerateConfigsJob;
 import org.opennms.features.vaadin.jmxconfiggenerator.jobs.JobManager;
-import org.opennms.features.vaadin.jmxconfiggenerator.jobs.Task;
 import org.opennms.features.vaadin.jmxconfiggenerator.ui.ConfigView;
 import org.opennms.features.vaadin.jmxconfiggenerator.ui.HeaderPanel;
 import org.opennms.features.vaadin.jmxconfiggenerator.ui.ProgressWindow;
@@ -48,7 +47,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.ui.VerticalLayout;
 
 @Theme("jmxconfiggenerator")
 @Title("JMX Configuration Generator")
@@ -115,12 +114,12 @@ public class JmxConfigGeneratorUI extends UI {
 				}
 				if (UiState.MbeansDetection == uiState) {
 					showProgressWindow(uiState.getDescription());
-					enqueue(new DetectMBeansJob((JmxConfigGeneratorUI) getUI(), getUiModel().getServiceConfig()));
+					enqueue(new DetectMBeansJob(getUiModel().getServiceConfig()));
 					return false;
 				}
 				if (UiState.ResultConfigGeneration == uiState) {
 					showProgressWindow(uiState.getDescription());
-					enqueue(new GenerateConfigsJob((JmxConfigGeneratorUI) getUI(), getUiModel()));
+					enqueue(new GenerateConfigsJob(getUiModel()));
 					return false;
 				}
 				return true;
@@ -133,7 +132,7 @@ public class JmxConfigGeneratorUI extends UI {
 		});
 	}
 
-	private void enqueue(Task task) {
+	private void enqueue(JobManager.Task task) {
 		jobManager.enqueue(task);
 	}
 

@@ -31,15 +31,12 @@ package org.opennms.features.vaadin.dashboard.dashlets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import com.vaadin.server.Page;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.BaseTheme;
+
 import org.opennms.features.vaadin.components.graph.GraphContainer;
 import org.opennms.netmgt.dao.api.NodeDao;
-
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.Label;
-import com.vaadin.v7.ui.themes.BaseTheme;
 
 public class RrdGraphEntry extends Panel {
     /**
@@ -152,12 +149,7 @@ public class RrdGraphEntry extends Panel {
         /**
          * inject the preview style
          */
-        addAttachListener(new AttachListener() {
-            @Override
-            public void attach(AttachEvent attachEvent) {
-                getUI().getPage().getStyles().add(".preview { width:175px; }");
-            }
-        });
+        Page.getCurrent().getStyles().add(".preview { width:175px; }");
 
         /**
          * initial update

@@ -145,8 +145,4 @@ public final class NodeInfo extends SnmpCollectionResource {
         return m_agent.getStorageResourcePath();
     }
 
-    public int getNodeId(){
-        return m_nodeId;
-    }
-
 } // end class

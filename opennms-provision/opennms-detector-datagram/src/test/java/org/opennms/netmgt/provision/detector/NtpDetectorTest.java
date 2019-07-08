@@ -33,7 +33,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -65,7 +64,7 @@ public class NtpDetectorTest implements InitializingBean {
     public void setUp(){
         MockLogAppender.setupLogging();
 
-        m_detector = m_detectorFactory.createDetector(new HashMap<>());
+        m_detector = m_detectorFactory.createDetector();
         m_detector.setRetries(0);
         assertNotNull(m_detector);
         

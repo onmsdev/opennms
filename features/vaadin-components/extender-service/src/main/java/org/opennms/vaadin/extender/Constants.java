@@ -26,5 +26,4 @@ public interface Constants {
 	String VAADIN_APPLICATION = "Vaadin-Application";
     String ALIAS = "alias";
     String VAADIN_PATH = "/VAADIN";
-    String OSGI_HTTP_WHITEBOARD_SERVLET_PATTERN = "osgi.http.whiteboard.servlet.pattern";
 }

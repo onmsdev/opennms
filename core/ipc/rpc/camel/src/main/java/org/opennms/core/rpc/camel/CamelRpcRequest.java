@@ -28,8 +28,6 @@
 
 package org.opennms.core.rpc.camel;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import org.opennms.core.rpc.api.RpcModule;
@@ -46,12 +44,10 @@ import org.opennms.core.rpc.api.RpcResponse;
 public class CamelRpcRequest<S extends RpcRequest, T extends RpcResponse> {
     private final RpcModule<S,T> module;
     private final S request;
-    private Map<String, String> tracingInfo = new HashMap<>();
 
-    public CamelRpcRequest(RpcModule<S,T> module, S request, Map<String, String> tracingInfo) {
+    public CamelRpcRequest(RpcModule<S,T> module, S request) {
         this.module = Objects.requireNonNull(module);
         this.request = Objects.requireNonNull(request);
-        this.tracingInfo.putAll(tracingInfo);
     }
 
     public RpcModule<S,T> getModule() {
@@ -60,9 +56,5 @@ public class CamelRpcRequest<S extends RpcRequest, T extends RpcResponse> {
 
     public S getRequest() {
         return request;
-    }
-
-    public Map<String, String> getTracingInfo() {
-        return this.tracingInfo;
     }
 }

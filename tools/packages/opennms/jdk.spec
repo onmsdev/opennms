@@ -2,15 +2,15 @@
 %define debug_package %{nil}
 
 %{!?package_arch:%define package_arch noarch}
-%{!?package_version:%define package_version 11.0}
-%{!?package_release:%define package_release 0}
-%{!?package_epoch:%define package_epoch 1}
+%{!?package_version:%define package_version 1.8}
+%{!?package_release:%define package_release 1}
+%{!?package_epoch:%define package_epoch 2000}
 %{!?my_epoch:%define my_epoch %{package_epoch}}
 %{!?my_release:%define my_release %{package_release}}
-%{!?dep_package:%define dep_package java-11-openjdk-devel}
+%{!?dep_package:%define dep_package java-%(echo %{package_version} | sed -e 's,\\\.,_,g')-sun-devel}
 
 Name:			jdk
-Summary:		OpenJDK compatible placeholder
+Summary:		Sun JDK compatible placeholder
 Epoch:			%{my_epoch}
 Version:		%{package_version}
 Release:		%{my_release}

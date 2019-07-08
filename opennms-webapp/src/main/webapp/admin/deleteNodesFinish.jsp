@@ -43,11 +43,11 @@
   <jsp:param name="breadcrumb" value="Node Deletion Completed" />
 </jsp:include>
 
-<div class="card">
-  <div class="card-header">
-    <span>Finished Deleting Nodes</span>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Finished Deleting Nodes</h3>
   </div>
-  <div class="card-body">
+  <div class="panel-body">
     <p>
       OpenNMS should not need to be restarted, but it may take a moment for
       the Categories to be updated.

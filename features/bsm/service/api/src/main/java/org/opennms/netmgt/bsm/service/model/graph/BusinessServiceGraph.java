@@ -42,8 +42,6 @@ public interface BusinessServiceGraph extends DirectedGraph<GraphVertex,GraphEdg
 
     GraphVertex getVertexByIpServiceId(Integer id);
 
-    GraphVertex getVertexByApplicationId(Integer id);
-
     GraphVertex getVertexByEdgeId(Long id);
 
     GraphEdge getGraphEdgeByEdgeId(Long id);
