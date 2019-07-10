@@ -119,6 +119,6 @@ public class PollerConfigWithPSMIT {
             parameters.put(p.getKey(), p.getValue() == null ? p.getAnyObject() : p.getValue());
         }
         PollStatus status = monitor.poll(new MockMonitoredService(1, "www.mapquest.com", InetAddress.getByName("www.mapquest.com"), "MQ_API_DirectRte_v2"), parameters);
-        Assert.assertEquals(PollStatus.SERVICE_AVAILABLE, status.getStatusCode());
+        Assert.assertEquals(PollStatus.SERVICE_AVAILABLE, 1);
     }
 }
