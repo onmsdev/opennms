@@ -405,7 +405,7 @@
     <%-- Remedy Specific TroubleTicket - Start --%>
     <% if ("org.opennms.netmgt.ticketer.remedy.CernerRemedyTicketerPlugin".equalsIgnoreCase(Vault.getProperty("opennms.ticketer.plugin")) && (alarm.getTTicketState() == null || alarm.getTTicketState().toString().equals("CREATE_FAILED") )) { %>
       <input type="hidden" name="nodelabel" value="<%=alarm.getNodeLabel()%>"/>
-      <input class="form-control" type="text" name="remedy.user.comment" value="Add a Comment here"/>
+      <input class="form-control" type="text" name="remedy.user.comment" placeholder="Add a Comment here" required=true/>
       <select class="form-control" name="remedy.urgency">
         <option value="1-Critical">1-Critical</option>
         <option value="2-High">2-High</option>
